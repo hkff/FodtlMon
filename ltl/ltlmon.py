@@ -2,7 +2,7 @@ from ltl.ltl import *
 
 
 def prg(formula, trace):
-
+    # print(formula)
     if isinstance(formula, Predicate):
         return true() if formula in AP else false()
 
@@ -36,5 +36,6 @@ def prg(formula, trace):
     elif isinstance(formula, Next):
         return formula.inner
 
-a = G(F(True))
-
+    else:
+        print("Error " + formula)
+        return None

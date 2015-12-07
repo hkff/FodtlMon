@@ -1,5 +1,7 @@
 __author__ = 'hkff'
 
+from enum import Enum
+
 #############################
 # Abstract operators
 #############################
@@ -41,12 +43,18 @@ class true(Atom):
     """
     symbol = "true"
 
+    def eval(self):
+        return True
+
 
 class false(Atom):
     """
     False
     """
     symbol = "false"
+
+    def eval(self):
+        return False
 
 
 class Parameter(Exp):
@@ -95,6 +103,19 @@ class Predicate(Exp):
         args = ",".join([str(p) for p in self.args])
         return "%s(%s)" % (self.name, args)
 
+    @staticmethod
+    def parse(string: str):
+        string = string.strip()
+        if string.endswith(")"):
+            name = string[0: string.find("(")]
+            args = string[string.find("(")+1:-1].split(",")
+            arguments = []
+            [arguments.append(Variable(ar)) for ar in args]
+        else:
+            print("Invalid predicate format !")
+            return
+        return Predicate(name, arguments)
+
 P = Predicate
 
 
@@ -135,9 +156,33 @@ class BExp(Exp):
 class And(BExp):
     symbol = "and"
 
+    def eval(self):
+        if isinstance(self.left, true):
+            if isinstance(self.right, true): return true()
+            elif isinstance(self.right, false): return false()
+            else: return self.right
+        elif isinstance(self.left, false):
+            return false()
+        else:
+            if isinstance(self.right, true): return self.left
+            elif isinstance(self.right, false): return false()
+            else: return self
+
 
 class Or(BExp):
     symbol = "or"
+
+    def eval(self):
+        if isinstance(self.left, true):
+            return true()
+        elif isinstance(self.left, false):
+            if isinstance(self.right, true): return true()
+            elif isinstance(self.right, false): return false()
+            else: return self.right
+        else:
+            if isinstance(self.right, true): return true()
+            elif isinstance(self.right, false): return self.left
+            else: return self
 
 
 class Neg(UExp):
@@ -203,6 +248,18 @@ class Event:
     def __str__(self):
         return "{" + " | ".join([str(p) for p in self.predicates]) + "}"
 
+    @staticmethod
+    def parse(string):
+        string = string.strip()
+        predicates = []
+        if string.startswith("{") and string.endswith("}"):
+            prs = string[1:-1].split("|")
+            [predicates.append(Predicate.parse(p)) for p in prs]
+        else:
+            print("Invalid event format ! A trace should be between {}")
+            return
+        return Event(predicates)
+
     def push_predicate(self, predicate):
         self.predicates.append(predicate)
         return self
@@ -215,13 +272,27 @@ class Trace:
         self.events = events
 
     def __str__(self):
-        return "[" + ",".join([str(e) for e in self.events]) + "]"
+        return "[" + ";".join([str(e) for e in self.events]) + "]"
+
+    @staticmethod
+    def parse(string):
+        string = string.strip()
+        events = []
+        evs = string.split(";")
+        [events.append(Event.parse(e)) if e != "" else None for e in evs]
+        return Trace(events)
 
     def push_event(self, event):
         self.events.append(event)
         return self
 
     e = push_event
+
+
+class Boolean3(Enum):
+    Top = "\u22A4"
+    Bottom = "\u22A5"
+    Unknown = "?"
 
 #############################
 # Test
