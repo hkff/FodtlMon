@@ -29,42 +29,60 @@ class Ltlmon(Mon):
     """
     LTL monitor using progression technique
     """
-    def prg(self, formula, trace):
+
+    def monitor(self, formula, trace, reduction=False):
+        counter = 0
+        b3 = Boolean3.Unknown
+        res = Boolean3.Unknown
+        for e in trace.events:
+            counter += 1
+            res = self.prg(formula, e, red=reduction)
+            b3 = B3(res.eval())
+            if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
+        print("%s after %s events" % (b3, counter))
+        return res.eval()
+
+    def prg(self, formula, trace, red=False):
         # print(formula)
         if isinstance(formula, Predicate):
             # Todo : Check if Predicate is in AP
-            return true() if trace.contains(formula) else false()
+            res = true() if trace.contains(formula) else false()
 
-        if isinstance(formula, true):
-            return true()
+        elif isinstance(formula, true):
+            res = true()
 
-        if isinstance(formula, false):
-            return false()
+        elif isinstance(formula, false):
+            res = false()
 
-        if isinstance(formula, Neg):
-            return Neg(self.prg(formula.inner, trace))
+        elif isinstance(formula, Neg):
+            res = Neg(self.prg(formula.inner, trace, red=red))
 
         elif isinstance(formula, Or):
-            return Or(self.prg(formula.left, trace), self.prg(formula.right, trace))
+            res = Or(self.prg(formula.left, trace, red=red), self.prg(formula.right, trace, red=red))
 
         elif isinstance(formula, And):
-            return And(self.prg(formula.left, trace), self.prg(formula.right, trace))
+            res = And(self.prg(formula.left, trace, red=red), self.prg(formula.right, trace, red=red))
 
         elif isinstance(formula, Always):
-            return And(self.prg(formula.inner, trace), G(formula.inner))
+            res = And(self.prg(formula.inner, trace, red=red), G(formula.inner))
 
         elif isinstance(formula, Future):
-            return Or(self.prg(formula.inner, trace), F(formula.inner))
+            res = Or(self.prg(formula.inner, trace, red=red), F(formula.inner))
 
         elif isinstance(formula, Until):
-            return Or(self.prg(formula.right, trace), And(self.prg(formula.left, trace), U(formula.left, formula.right)))
+            res = Or(self.prg(formula.right, trace, red=red),
+                     And(self.prg(formula.left, trace, red=red), U(formula.left, formula.right)))
 
         elif isinstance(formula, Release):
-            return Or(self.prg(formula.left, trace), And(self.prg(formula.right, trace), R(formula.left, formula.right)))
+            res = Or(self.prg(formula.left, trace, red=red),
+                     And(self.prg(formula.right, trace, red=red), R(formula.left, formula.right)))
 
         elif isinstance(formula, Next):
-            return formula.inner
+            res = formula.inner
 
         else:
-            print("Error " + formula)
+            print("Error " + str(formula))
             return None
+
+        if res is not None:
+            return res.eval() if red else res

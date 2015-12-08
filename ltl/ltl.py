@@ -53,6 +53,9 @@ class Atom(Exp):
     def __str__(self):
         return str(self.symbol)
 
+    def eval(self):
+        return self
+
 
 class true(Atom):
     """
@@ -60,18 +63,12 @@ class true(Atom):
     """
     symbol = "true"
 
-    def eval(self):
-        return True
-
 
 class false(Atom):
     """
     False
     """
     symbol = "false"
-
-    def eval(self):
-        return False
 
 
 class Parameter(Exp):
@@ -127,7 +124,7 @@ class Predicate(Exp):
             name = string[0: string.find("(")]
             args = string[string.find("(")+1:-1].split(",")
             arguments = []
-            [arguments.append(Variable(ar)) for ar in args]
+            [arguments.append(Constant(ar)) for ar in args]
         else:
             print("Invalid predicate format !")
             return
@@ -135,7 +132,12 @@ class Predicate(Exp):
 
     def equal(self, p):
         # To check
-        return p.name == self.name
+        res = p.name == self.name and len(p.args) == len(self.args)
+        if res:
+            for a1, a2 in zip(self.args, p.args):
+                if not a1.equal(a2):
+                    return False
+        return res
 
 P = Predicate
 
@@ -179,9 +181,10 @@ class And(BExp):
 
     def eval(self):
         if isinstance(self.left, true):
-            if isinstance(self.right, true): return true()
-            elif isinstance(self.right, false): return false()
-            else: return self.right.eval()
+            # if isinstance(self.right, true): return true()
+            # elif isinstance(self.right, false): return false()
+            # else:
+            return self.right.eval()
         elif isinstance(self.left, false):
             return false()
         else:
@@ -197,9 +200,10 @@ class Or(BExp):
         if isinstance(self.left, true):
             return true()
         elif isinstance(self.left, false):
-            if isinstance(self.right, true): return true()
-            elif isinstance(self.right, false): return false()
-            else: return self.right.eval()
+            # if isinstance(self.right, true): return true()
+            # elif isinstance(self.right, false): return false()
+            # else:
+            return self.right.eval()
         else:
             if isinstance(self.right, true): return true()
             elif isinstance(self.right, false): return self.left.eval()
@@ -208,6 +212,11 @@ class Or(BExp):
 
 class Neg(UExp):
     symbol = "not"
+
+    def eval(self):
+        if isinstance(self.inner, true): return false()
+        elif isinstance(self.inner, false): return true()
+        else: return self
 
 
 ##
@@ -263,6 +272,9 @@ class R(Release):
 # Trace / Events
 #############################
 class Event:
+    """
+    Event that contains a set of predicates
+    """
     def __init__(self, predicates=[]):
         self.predicates = predicates
 
@@ -295,6 +307,9 @@ class Event:
 
 
 class Trace:
+    """
+    Trace that contains a set of event
+    """
     def __init__(self, events=[]):
         self.events = events
 
@@ -334,6 +349,9 @@ class Boolean3(Enum):
     Bottom = "\u22A5"
     Unknown = "?"
 
+    def __str__(self):
+        return self.value
+
 
 def B3(formula):
     """
@@ -348,10 +366,3 @@ def B3(formula):
     else:
         return Boolean3.Unknown
 
-#############################
-# Test
-#############################
-a = G( And(true(), false()))
-aa = Always(True)
-
-t = Trace()

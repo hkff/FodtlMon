@@ -36,6 +36,7 @@ def main(argv):
     monitor = None
     formula = None
     trace = None
+    reduction = False
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
@@ -46,15 +47,16 @@ def main(argv):
                         "\n  -1 \t--ltl           " + "\t use LTL monitor" + \
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
-                        "\n  -4 \t--fodtl          " + "\t use FODTL monitor" + \
+                        "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
+                        "\n  -r \t--reduction     " + "\t use on-fly reduction" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234",
-                                   ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl", "fodtl"])
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234r",
+                                   ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl", "fodtl", "reduction"])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -86,17 +88,19 @@ def main(argv):
             formula = arg
         elif opt in ("-t", "--trace"):
             trace = arg
+        elif opt in ("-r", "--reduction"):
+            reduction = True
 
     # print(argv)
 
     if None not in (monitor, trace, formula):
         tr = Trace().parse(trace)
         fl = eval(formula)
-        res = monitor.prg(fl, tr)
-        print(tr.contains(P.parse('P(a)')))
+        res = monitor.monitor(fl, tr, reduction=reduction)
+        # print(tr.contains(P.parse('P(b)')))
         print(res)
-        print(res.eval())
-        print(B3(res.eval()).value)
+        # print(res.eval())
+        # print(B3(res.eval()).value)
 
 # Call the main
 if __name__ == '__main__':
