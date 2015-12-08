@@ -37,6 +37,8 @@ def main(argv):
     formula = None
     trace = None
     reduction = False
+    online = False
+    fuzzer = False
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
@@ -49,14 +51,17 @@ def main(argv):
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
                         "\n  -r \t--reduction     " + "\t use on-fly reduction" + \
+                        "\n  -l \t--online        " + "\t use on line monitoring" + \
+                        "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234r",
-                                   ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl", "fodtl", "reduction"])
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234rlz",
+                                   ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
+                                    "fodtl", "reduction", "live", "fuzzer"])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -74,7 +79,7 @@ def main(argv):
         elif opt in ("-o", "--output"):
             output_file = arg
         elif opt in ("-1", "--ltl"):
-            monitor = Ltlmon()
+            monitor = Ltlmon
         elif opt in ("-2", "--fotl"):
             print("Not yet implemented !")
             return
@@ -90,17 +95,25 @@ def main(argv):
             trace = arg
         elif opt in ("-r", "--reduction"):
             reduction = True
+        elif opt in ("-l", "--online"):
+            online = True
+            monitor = runtime_monitor
+        elif opt in ("-z", "--fuzzer"):
+            fuzzer = True
 
     # print(argv)
-
     if None not in (monitor, trace, formula):
         tr = Trace().parse(trace)
         fl = eval(formula)
-        res = monitor.monitor(fl, tr, reduction=reduction)
+        mon = monitor(fl, tr)
+        res = mon.monitor(reduction=reduction)
         # print(tr.contains(P.parse('P(b)')))
         print(res)
         # print(res.eval())
         # print(B3(res.eval()).value)
+        mon.push_event(Event.parse("{P(b)}"))
+        res = mon.monitor()
+        print(res)
 
 # Call the main
 if __name__ == '__main__':
