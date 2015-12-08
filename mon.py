@@ -87,12 +87,13 @@ def main(argv):
         elif opt in ("-t", "--trace"):
             trace = arg
 
-    print(argv)
+    # print(argv)
 
     if None not in (monitor, trace, formula):
         tr = Trace().parse(trace)
         fl = eval(formula)
         res = monitor.prg(fl, tr)
+        print(tr.contains(P.parse('P(a)')))
         print(res)
         print(res.eval())
         print(B3(res.eval()).value)

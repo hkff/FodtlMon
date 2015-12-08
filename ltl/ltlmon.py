@@ -22,7 +22,7 @@ class Mon:
     """
     Abstract monitor
     """
-    pass
+    AP = []
 
 
 class Ltlmon(Mon):
@@ -32,7 +32,8 @@ class Ltlmon(Mon):
     def prg(self, formula, trace):
         # print(formula)
         if isinstance(formula, Predicate):
-            return true() if formula in AP else false()
+            # Todo : Check if Predicate is in AP
+            return true() if trace.contains(formula) else false()
 
         if isinstance(formula, true):
             return true()

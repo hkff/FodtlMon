@@ -133,6 +133,10 @@ class Predicate(Exp):
             return
         return Predicate(name, arguments)
 
+    def equal(self, p):
+        # To check
+        return p.name == self.name
+
 P = Predicate
 
 
@@ -177,11 +181,11 @@ class And(BExp):
         if isinstance(self.left, true):
             if isinstance(self.right, true): return true()
             elif isinstance(self.right, false): return false()
-            else: return self.right
+            else: return self.right.eval()
         elif isinstance(self.left, false):
             return false()
         else:
-            if isinstance(self.right, true): return self.left
+            if isinstance(self.right, true): return self.left.eval()
             elif isinstance(self.right, false): return false()
             else: return self
 
@@ -195,10 +199,10 @@ class Or(BExp):
         elif isinstance(self.left, false):
             if isinstance(self.right, true): return true()
             elif isinstance(self.right, false): return false()
-            else: return self.right
+            else: return self.right.eval()
         else:
             if isinstance(self.right, true): return true()
-            elif isinstance(self.right, false): return self.left
+            elif isinstance(self.right, false): return self.left.eval()
             else: return self
 
 
@@ -281,6 +285,12 @@ class Event:
         self.predicates.append(predicate)
         return self
 
+    def contains(self, predicate):
+        for p in self.predicates:
+            if p.equal(predicate):
+                return True
+        return False
+
     p = push_predicate
 
 
@@ -302,6 +312,16 @@ class Trace:
     def push_event(self, event):
         self.events.append(event)
         return self
+
+    def contains(self, f):
+        if isinstance(f, Event):
+            return f in self.events
+        elif isinstance(f, Predicate):
+            for e in self.events:
+                if e.contains(f): return True
+            return False
+        else:
+            return False
 
     e = push_event
 
