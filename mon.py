@@ -39,13 +39,17 @@ def main(argv):
     reduction = False
     online = False
     fuzzer = False
+    iformula = None
+    itrace = None
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
                         "\n  -i \t--input= [file] " + "\t the input file" + \
                         "\n  -o \t--output= [path]" + "\t the output file" + \
                         "\n  -f \t--formula       " + "\t the formula" + \
+                        "\n     \t--iformula      " + "\t path to file that contains the formula" + \
                         "\n  -t \t--trace         " + "\t the trace" + \
+                        "\n     \t--itrace        " + "\t path to file that contains the trace" + \
                         "\n  -1 \t--ltl           " + "\t use LTL monitor" + \
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
@@ -61,7 +65,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234rlz",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "reduction", "live", "fuzzer"])
+                                    "fodtl", "reduction", "live", "fuzzer", "itrace=", "iformula="])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -100,6 +104,18 @@ def main(argv):
             monitor = runtime_monitor
         elif opt in ("-z", "--fuzzer"):
             fuzzer = True
+        elif opt in ("--iformula"):
+            iformula = arg
+        elif opt in ("--itrace"):
+            itrace = arg
+
+    if itrace is not None:
+        with open(itrace, "r") as f:
+            trace = f.read()
+
+    if iformula is not None:
+        with open(iformula, "r") as f:
+            formula = f.read()
 
     # print(argv)
     if None not in (monitor, trace, formula):
