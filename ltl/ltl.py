@@ -43,6 +43,12 @@ class Exp:
     def nnf(self):
         pass
 
+    def and_(self, exp):
+        return And(self, exp)
+
+    def or_(self, exp):
+        return Or(self, exp)
+
 
 class Atom(Exp):
     """
@@ -63,12 +69,28 @@ class true(Atom):
     """
     symbol = "true"
 
+    def and_(self, exp):
+        if isinstance(exp, true): return true()
+        elif isinstance(exp, false): return false()
+        else: return super().and_(exp)
+
+    def or_(self, exp):
+        return self
+
 
 class false(Atom):
     """
     False
     """
     symbol = "false"
+
+    def and_(self, exp):
+        return self
+
+    def or_(self, exp):
+        if isinstance(exp, true): return true()
+        elif isinstance(exp, false): return false()
+        else: return super().and_(exp)
 
 
 class Parameter(Exp):
@@ -109,9 +131,9 @@ class Predicate(Exp):
     """
     Predicate
     """
-    def __init__(self, name="", args=[]):
+    def __init__(self, name="", args=None):
         self.name = name
-        self.args = args
+        self.args = [] if args is None else args
 
     def __str__(self):
         args = ",".join([str(p) for p in self.args])
@@ -180,34 +202,48 @@ class And(BExp):
     symbol = "and"
 
     def eval(self):
-        if isinstance(self.left, true):
-            # if isinstance(self.right, true): return true()
-            # elif isinstance(self.right, false): return false()
-            # else:
-            return self.right.eval()
-        elif isinstance(self.left, false):
-            return false()
-        else:
-            if isinstance(self.right, true): return self.left.eval()
-            elif isinstance(self.right, false): return false()
-            else: return self
+        return self.left.and_(self.right)
+        # if isinstance(self.left, true):
+        #     # if isinstance(self.right, true): return true()
+        #     # elif isinstance(self.right, false): return false()
+        #     # else:
+        #     return self.right.eval()
+        # elif isinstance(self.left, false):
+        #     return false()
+        # else:
+        #     if isinstance(self.right, true): return self.left.eval()
+        #     elif isinstance(self.right, false): return false()
+        #     else: return And(self.left.eval(), self.right.eval()).eval()
+
+    def and_(self, exp):
+        return self.left.and_(self.right)
+
+    def or_(self, exp):
+        return self.left.or_(self.right)
 
 
 class Or(BExp):
     symbol = "or"
 
     def eval(self):
-        if isinstance(self.left, true):
-            return true()
-        elif isinstance(self.left, false):
-            # if isinstance(self.right, true): return true()
-            # elif isinstance(self.right, false): return false()
-            # else:
-            return self.right.eval()
-        else:
-            if isinstance(self.right, true): return true()
-            elif isinstance(self.right, false): return self.left.eval()
-            else: return self
+        return self.left.or_(self.right)
+        # if isinstance(self.left, true):
+        #     return true()
+        # elif isinstance(self.left, false):
+        #     # if isinstance(self.right, true): return true()
+        #     # elif isinstance(self.right, false): return false()
+        #     # else:
+        #     return self.right.eval()
+        # else:
+        #     if isinstance(self.right, true): return true()
+        #     elif isinstance(self.right, false): return self.left.eval()
+        #     else: return Or(self.left.eval(), self.right.eval())
+
+    def and_(self, exp):
+        return self.left.and_(self.right)
+
+    def or_(self, exp):
+        return self.left.or_(self.right)
 
 
 class Neg(UExp):
@@ -275,8 +311,8 @@ class Event:
     """
     Event that contains a set of predicates
     """
-    def __init__(self, predicates=[]):
-        self.predicates = predicates
+    def __init__(self, predicates=None):
+        self.predicates = [] if predicates is None else predicates
 
     def __str__(self):
         return "{" + " | ".join([str(p) for p in self.predicates]) + "}"
@@ -310,8 +346,8 @@ class Trace:
     """
     Trace that contains a set of event
     """
-    def __init__(self, events=[]):
-        self.events = events
+    def __init__(self, events=None):
+        self.events = [] if events is None else events
 
     def __str__(self):
         return "[" + ";".join([str(e) for e in self.events]) + "]"

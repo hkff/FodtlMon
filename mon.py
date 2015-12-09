@@ -108,12 +108,12 @@ def main(argv):
         mon = monitor(fl, tr)
         res = mon.monitor(reduction=reduction)
         # print(tr.contains(P.parse('P(b)')))
-        print(res)
-        # print(res.eval())
+        print("Result %s" % res)
+        print("Evaluation %s " % res.eval())
         # print(B3(res.eval()).value)
-        mon.push_event(Event.parse("{P(b)}"))
-        res = mon.monitor()
-        print(res)
+        # mon.push_event(Event.parse("{P(b)}"))
+        # res = mon.monitor()
+        # print(res)
 
 # Call the main
 if __name__ == '__main__':

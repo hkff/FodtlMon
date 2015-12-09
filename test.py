@@ -23,20 +23,20 @@ import inspect
 import imp
 from random import random
 
-
-a = G(And(Next("e"), false()))
-#print(Ltlmon(a).prg(a, "PHI"))
-
-d = P("send", [V("a"), V("b")])
-print(d)
-print(Event.parse("{P(a) | P(b)}"))
-print(Trace.parse("{P(a) | P(b,d)}; {O(c)}"))
-print(Boolean3.Bottom.value)
-print(Boolean3.Top.value)
-print(Boolean3.Unknown.value)
-print(Trace.parse("{data('d') | data('t') | read('d')}; {data('g')}"))
-print(Trace.parse("{P(o)}"))
-print(Trace.parse(""))
+#
+# a = G(And(Next("e"), false()))
+# #print(Ltlmon(a).prg(a, "PHI"))
+#
+# d = P("send", [V("a"), V("b")])
+# print(d)
+# print(Event.parse("{P(a) | P(b)}"))
+# print(Trace.parse("{P(a) | P(b,d)}; {O(c)}"))
+# print(Boolean3.Bottom.value)
+# print(Boolean3.Top.value)
+# print(Boolean3.Unknown.value)
+# print(Trace.parse("{data('d') | data('t') | read('d')}; {data('g')}"))
+# print(Trace.parse("{P(o)}"))
+# print(Trace.parse(""))
 #print(Ltlmon().prg(G(true()), "PHI"))
 
 
@@ -44,11 +44,11 @@ class Fuzzer:
     """
     Monitors tester
     """
-    def __init__(self, language, alphabet=[], constants=[]):
+    def __init__(self, language, alphabet=None, constants=None):
         self.nodes = []
         self.language = language
-        self.constants = constants
-        self.alphabet = alphabet
+        self.constants = [] if constants is None else constants
+        self.alphabet = [] if alphabet is None else alphabet
 
     def init_fuzzer(self):
         ltl = imp.load_source("ltl", "ltl/ltl.py")
@@ -76,24 +76,27 @@ class Fuzzer:
             i = int(random() * 100) % len(self.alphabet)
             j = int(random() * 100) % len(self.constants)
             res = P(self.alphabet[i], [Constant(self.constants[j])])
-        print(res)
-        #print(node)
-        print(self.gen_trace(2))
-        #Ltlmon(res, Trace()).monitor(reduction=False)
         return res
 
-    def gen_trace(self, length):
+    def gen_trace(self, length, max_depth=2, depth=0):
         trace = Trace()
         for x in range(length):
-            print("x " + str(x) + " " + str(trace))
             i = int(random() * 10) % len(self.alphabet)
             j = int(random() * 10) % len(self.constants)
-            res = P(self.alphabet[i], [Constant(self.constants[j])])
-            print(res)
-            e = Event()#.push_predicate(res)
+            dp = int(random() * 10) % max_depth if depth == 0 else depth
+            e = Event()
+            for y in range(dp):
+                res = P(self.alphabet[i], [Constant(self.constants[j])])
+                e.push_predicate(res)
             trace.push_event(e)
         return trace
 
 f = Fuzzer("ltl", alphabet=["P", "F"], constants=["a", "b", "c"])
 f.init_fuzzer()
-f.gen(5)
+formula = f.gen(5)
+trace = f.gen_trace(3, depth=1)
+print("Monitoring formula : %s with trace : %s" % (formula, trace))
+Ltlmon(formula, trace).monitor(reduction=False)
+
+# for x in range(10):
+#     print(f.gen_trace(3, depth=1))
