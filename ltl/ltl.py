@@ -89,7 +89,7 @@ class true(Atom):
     def and_(self, exp):
         if isinstance(exp, true): return true()
         elif isinstance(exp, false): return false()
-        else: return super().and_(exp)
+        else: return exp
 
     def or_(self, exp):
         return self
@@ -107,7 +107,7 @@ class false(Atom):
     def or_(self, exp):
         if isinstance(exp, true): return true()
         elif isinstance(exp, false): return false()
-        else: return super().or_(exp)
+        else: return exp
 
 
 class Parameter(Exp):

@@ -128,7 +128,7 @@ fuzzer.init_fuzzer()
 
 with open("tests/logs.log", "w+") as f:
     for x in range(100):
-        formula = fuzzer.gen(5)
+        formula = fuzzer.gen(2)
         trace = fuzzer.gen_trace(3, depth=1)
         print2("\n\n============ LTLMON : ", file=f)
         print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
