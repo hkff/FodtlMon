@@ -107,7 +107,7 @@ class false(Atom):
     def or_(self, exp):
         if isinstance(exp, true): return true()
         elif isinstance(exp, false): return false()
-        else: return super().and_(exp)
+        else: return super().or_(exp)
 
 
 class Parameter(Exp):
@@ -193,7 +193,6 @@ class Predicate(Exp):
         return "%s('%s', %s)" % (self.__class__.__name__, self.name, "[" + args + "]")
 
 
-
 P = Predicate
 
 
@@ -261,7 +260,7 @@ class And(BExp):
     ltlfo = "/\\"
 
     def eval(self):
-        return self.left.and_(self.right)
+        return self.left.eval().and_(self.right.eval())
         # if isinstance(self.left, true):
         #     # if isinstance(self.right, true): return true()
         #     # elif isinstance(self.right, false): return false()
@@ -287,7 +286,7 @@ class Or(BExp):
     ltlfo = "\/"
 
     def eval(self):
-        return self.left.or_(self.right)
+        return self.left.eval().or_(self.right.eval())
         # if isinstance(self.left, true):
         #     return true()
         # elif isinstance(self.left, false):
@@ -315,7 +314,7 @@ class Neg(UExp):
     def eval(self):
         if isinstance(self.inner, true): return false()
         elif isinstance(self.inner, false): return true()
-        else: return self
+        else: return Neg(self.inner.eval())
 
 
 ##
@@ -370,7 +369,11 @@ class U(Until):
 class Release(BExp):
     symbol = "release"
     tspass = "unless"
-    ltlfo = "W"
+    ltlfo = ""
+
+    def toLTLFO(self):
+        """ Change to until form """
+        return "~(~(%s) U ~(%s))" % (self.left.toLTLFO(), self.right.toLTLFO())
 
 
 class R(Release):

@@ -114,7 +114,6 @@ def main(argv):
         print("TSPASS       : %s" % fl.toTSPASS())
         print("LTLFO        : %s" % fl.toLTLFO())
         print("Result       : %s" % res)
-        print("Evaluation   : %s \n" % res.eval())
         # print(B3(res.eval()).value)
         # mon.push_event(Event.parse("{P(b)}"))
         # res = mon.monitor()

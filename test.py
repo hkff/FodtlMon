@@ -51,7 +51,11 @@ def ltlfo2mon(formula:Formula, trace:Trace):
     fl = formula.toLTLFO() if isinstance(formula, Formula) else formula
     tr = trace.toLTLFO() if isinstance(trace, Trace) else trace
     cmd = "echo \"%s\" | java -jar tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
-    os.system(cmd)
+    p = os.popen(cmd)
+    res = p.readline()[:-1]
+    p.close()
+    print(res)
+    return res
 
 
 class Fuzzer:
@@ -108,18 +112,38 @@ class Fuzzer:
             trace.push_event(e)
         return trace
 
-f = Fuzzer("ltl", alphabet=["P", "D"], constants=["a", "b", "c"])
-f.init_fuzzer()
-formula = f.gen(5)
-trace = f.gen_trace(3, depth=1)
 
-print("Formula  : %s\nFormula C  : %s\nTrace    : %s" % (formula, formula.toCODE(), trace))
-Ltlmon(formula, trace).monitor(reduction=False)
-print("LTLFO")
-fl = formula.toLTLFO()
-tr = trace.toLTLFO()
-print("Formula : %s\nTrace   : %s" % (fl, tr))
-ltlfo2mon(fl, tr)
+###########################
+# Main
+###########################
+def print2(*args, file=None):
+    print(*args)
+    if file is not None:
+        file.write(*args)
+        file.write("\n")
 
-# for x in range(10):
-#     print(f.gen_trace(3, depth=1))
+fuzzer = Fuzzer("ltl", alphabet=["P"], constants=["a", "b", "c"])
+fuzzer.init_fuzzer()
+
+with open("tests/logs.log", "w+") as f:
+    for x in range(1):
+        formula = fuzzer.gen(5)
+        trace = fuzzer.gen_trace(3, depth=1)
+        print2("\n============ LTLMON : ", file=f)
+        print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
+        res1 = Ltlmon(formula, trace).monitor(reduction=True)
+        f.write(res1)
+
+        print2("\n============ LTLFO2MON : ", file=f)
+        fl = formula.toLTLFO()
+        tr = trace.toLTLFO()
+        print2("Formula : %s\nTrace   : %s" % (fl, tr), file=f)
+        res2 = ltlfo2mon(fl, tr)
+        f.write(res2)
+
+        if res1 != res2:
+            print2("\n## Result are different ! ", file=f)
+            print2(res1, file=f)
+            print2(res2, file=f)
+            input("Press Enter to continue")
+

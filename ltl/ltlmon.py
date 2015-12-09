@@ -17,6 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from ltl.ltl import *
 
+DEBUG = True
+
+
+def debug(*args):
+    if DEBUG:
+        print(*args)
+
 
 class Mon:
     """
@@ -43,14 +50,16 @@ class Ltlmon(Mon):
     def monitor(self, reduction=False):
         counter = 0
         b3 = Boolean3.Unknown
-        res = Boolean3.Unknown
+        res = self.formula
         for e in self.trace.events:
             counter += 1
-            res = self.prg(self.formula, e, red=reduction)
+            res = self.prg(res, e, red=reduction)
+            debug(res)
             b3 = B3(res.eval())
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        print("Result Progression: %s after %s events." % (b3, counter))
-        return res #.eval()
+        ret = "Result Progression: %s after %s events." % (b3, counter)
+        print(ret)
+        return ret
 
     def prg(self, formula, trace, red=False):
         # print(formula)
@@ -114,10 +123,10 @@ class runtime_monitor(Ltlmon):
         for e in self.trace.events[self.counter:]:
             self.counter += 1
             res = self.prg(self.formula, e, red=reduction)
+            self.formula = res
             b3 = B3(res.eval())
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        print("%s after %s events" % (b3, self.counter))
-        self.formula = res
+        print("Result Progression: %s after %s events." % (b3, self.counter))
         return res
 
     def push_event(self, event):
