@@ -76,7 +76,8 @@ class Fuzzer:
                 if obj.__module__ == "ltl.ltl":
                     # Get only classes inherit from Exp
                     if obj.__base__ is UExp or obj.__base__ is BExp or obj in (true, false, Predicate):
-                        self.nodes.append(obj)
+                        if obj is not Release and obj is not R:
+                            self.nodes.append(obj)
 
     def gen(self, depth):
         if depth == 0:
@@ -126,12 +127,14 @@ fuzzer = Fuzzer("ltl", alphabet=["P"], constants=["a", "b", "c"])
 fuzzer.init_fuzzer()
 
 with open("tests/logs.log", "w+") as f:
-    for x in range(1):
+    for x in range(100):
         formula = fuzzer.gen(5)
         trace = fuzzer.gen_trace(3, depth=1)
-        print2("\n============ LTLMON : ", file=f)
+        print2("\n\n============ LTLMON : ", file=f)
         print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
+        res0 = Ltlmon(formula, trace).monitor(reduction=False)
         res1 = Ltlmon(formula, trace).monitor(reduction=True)
+        f.write(res0)
         f.write(res1)
 
         print2("\n============ LTLFO2MON : ", file=f)
@@ -141,9 +144,14 @@ with open("tests/logs.log", "w+") as f:
         res2 = ltlfo2mon(fl, tr)
         f.write(res2)
 
-        if res1 != res2:
+        if res1 != res2 != res0:
             print2("\n## Result are different ! ", file=f)
+            print2(res0, file=f)
             print2(res1, file=f)
             print2(res2, file=f)
-            input("Press Enter to continue")
+            debug = input("Debug y/n : ")
+            if debug == "y":
+                 Ltlmon(formula, trace).monitor(reduction=True)
+                 input()
+
 

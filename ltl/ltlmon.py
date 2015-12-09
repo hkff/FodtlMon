@@ -20,7 +20,7 @@ from ltl.ltl import *
 DEBUG = True
 
 
-def debug(*args):
+def Debug(*args):
     if DEBUG:
         print(*args)
 
@@ -54,7 +54,7 @@ class Ltlmon(Mon):
         for e in self.trace.events:
             counter += 1
             res = self.prg(res, e, red=reduction)
-            debug(res)
+            Debug(res)
             b3 = B3(res.eval())
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
         ret = "Result Progression: %s after %s events." % (b3, counter)

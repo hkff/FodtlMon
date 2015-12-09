@@ -62,3 +62,53 @@ Result Progression: ⊤ after 2 events.
 
 Result Progression: ? after 3 events.
 Result Progression: ⊤ after 2 events.
+
+
+============ LTLMON :
+Formula   : always(((next(P(c)) or next(future(P(a)))) and P(a)))
+Formula C : Always(And(Or(Next(Predicate('P', [Constant('c')])),Next(Future(Predicate('P', [Constant('a')])))),Predicate('P', [Constant('a')])))
+Trace     : {P(a)};{P(c)};{P(a)}
+(P(c) and future(P(a)))
+(true and (false or F(P(a))))
+true
+Result Progression: ⊤ after 3 events.
+
+============ LTLFO2MON :
+Formula : (G (((X P('c')) \/ (X (F P('a')))) /\ P('a')))
+Trace   : {P('a')},{P('c')},{P('a')}
+Result Progression: ⊥ after 2 events.
+
+## Result are different !
+Result Progression: ⊤ after 3 events.
+Result Progression: ⊥ after 2 events.
+Debug y/n : y
+(P(c) and future(P(a)))
+(true and (false or F(P(a))))
+true
+Result Progression: ⊤ after 3 events.
+
+
+============ LTLMON :
+Formula   : always(future(next(P(c))))
+Formula C : Always(Future(Next(Predicate('P', [Constant('c')]))))
+Trace     : {P(a)};{P(b)};{P(b)}
+((P(c) or F(next(P(c)))) and G(future(next(P(c)))))
+((false or (P(c) or F(next(P(c))))) and ((P(c) or F(next(P(c)))) and G(future(next(P(c))))))
+Result Progression: ⊥ after 2 events.
+(P(c) and F(next(P(c))))
+false
+Result Progression: ⊥ after 2 events.
+
+============ LTLFO2MON :
+Formula : (G (F (X P('c'))))
+Trace   : {P('a')},{P('b')},{P('b')}
+Result Progression: ? after 3 events.
+
+## Result are different !
+Result Progression: ⊥ after 2 events.
+Result Progression: ⊥ after 2 events.
+Result Progression: ? after 3 events.
+Debug y/n : y
+(P(c) and F(next(P(c))))
+false
+Result Progression: ⊥ after 2 events.
