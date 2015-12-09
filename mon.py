@@ -108,6 +108,7 @@ def main(argv):
         mon = monitor(fl, tr)
         res = mon.monitor(reduction=reduction)
         print("")
+        print("Trace        : %s" % tr)
         print("Formula      : %s" % fl)
         print("PPrint       : %s" % fl.prefix_print())
         print("TSPASS       : %s" % fl.toTSPASS())

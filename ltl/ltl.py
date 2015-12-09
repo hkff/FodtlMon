@@ -16,17 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'hkff'
-
 from enum import Enum
+
 
 #############################
 # Abstract operators
 #############################
 
-
-class Exp:
+class Formula:
     """
-    Abstract expression
+    Abstract formula
     """
     symbol = ""
     tspass = ""
@@ -41,6 +40,9 @@ class Exp:
 
     def prefix_print(self):
         return str(self)
+
+    def toCODE(self):
+        return self.__class__.__name__ + "()"
 
     def reduce(self):
         pass
@@ -59,6 +61,10 @@ class Exp:
 
     def or_(self, exp):
         return Or(self, exp)
+
+
+class Exp(Formula):
+    pass
 
 
 class Atom(Exp):
@@ -116,6 +122,9 @@ class Parameter(Exp):
 
     def equal(self, o):
         return (o is not None) and isinstance(o, Parameter) and (o.name == self.name)
+
+    def toCODE(self):
+        return "%s('%s')" % (self.__class__.__name__, self.name)
 
 
 class Variable(Parameter):
@@ -179,6 +188,11 @@ class Predicate(Exp):
         args = ",".join([p.toLTLFO() for p in self.args])
         return "%s(%s)" % (self.name, args)
 
+    def toCODE(self):
+        args = ",".join([p.toCODE() for p in self.args])
+        return "%s('%s', %s)" % (self.__class__.__name__, self.name, "[" + args + "]")
+
+
 
 P = Predicate
 
@@ -204,6 +218,9 @@ class UExp(Exp):
     def toLTLFO(self):
         return "(%s %s)" % (self.ltlfo, self.inner.toLTLFO())
 
+    def toCODE(self):
+        return "%s(%s)" % (self.__class__.__name__, self.inner.toCODE())
+
 
 class BExp(Exp):
     """
@@ -226,6 +243,9 @@ class BExp(Exp):
 
     def toLTLFO(self):
         return "(%s %s %s)" % (self.left.toLTLFO(), self.ltlfo, self.right.toLTLFO())
+
+    def toCODE(self):
+        return "%s(%s,%s)" % (self.__class__.__name__, self.left.toCODE(), self.right.toCODE())
 
 
 #############################
@@ -394,6 +414,9 @@ class Event:
 
     p = push_predicate
 
+    def toLTLFO(self):
+        return "{" + ",".join([p.toLTLFO() for p in self.predicates]) + "}"
+
 
 class Trace:
     """
@@ -403,7 +426,7 @@ class Trace:
         self.events = [] if events is None else events
 
     def __str__(self):
-        return "[" + ";".join([str(e) for e in self.events]) + "]"
+        return ";".join([str(e) for e in self.events])
 
     @staticmethod
     def parse(string):
@@ -428,6 +451,9 @@ class Trace:
             return False
 
     e = push_event
+
+    def toLTLFO(self):
+        return ",".join([e.toLTLFO() for e in self.events])
 
 
 class Boolean3(Enum):

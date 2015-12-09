@@ -22,6 +22,7 @@ from ltl.ltlmon import *
 import inspect
 import imp
 from random import random
+import os
 
 #
 # a = G(And(Next("e"), false()))
@@ -38,6 +39,19 @@ from random import random
 # print(Trace.parse("{P(o)}"))
 # print(Trace.parse(""))
 #print(Ltlmon().prg(G(true()), "PHI"))
+
+
+def ltlfo2mon(formula:Formula, trace:Trace):
+    """
+    Run ltlfo2mon
+    :param formula: Formula | ltlfo string formula
+    :param trace: Trace | ltlfo string trace
+    :return:
+    """
+    fl = formula.toLTLFO() if isinstance(formula, Formula) else formula
+    tr = trace.toLTLFO() if isinstance(trace, Trace) else trace
+    cmd = "echo \"%s\" | java -jar tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
+    os.system(cmd)
 
 
 class Fuzzer:
@@ -61,8 +75,11 @@ class Fuzzer:
                         self.nodes.append(obj)
 
     def gen(self, depth):
-        if depth < 0:
-            return
+        if depth == 0:
+            i = int(random() * 100) % len(self.alphabet)
+            j = int(random() * 100) % len(self.constants)
+            return P(self.alphabet[i], [Constant(self.constants[j])])
+
         res = None
         n = int(random()*10)
         node = self.nodes[n % len(self.nodes)]
@@ -91,12 +108,18 @@ class Fuzzer:
             trace.push_event(e)
         return trace
 
-f = Fuzzer("ltl", alphabet=["P", "F"], constants=["a", "b", "c"])
+f = Fuzzer("ltl", alphabet=["P", "D"], constants=["a", "b", "c"])
 f.init_fuzzer()
 formula = f.gen(5)
 trace = f.gen_trace(3, depth=1)
-print("Monitoring formula : %s with trace : %s" % (formula, trace))
+
+print("Formula  : %s\nFormula C  : %s\nTrace    : %s" % (formula, formula.toCODE(), trace))
 Ltlmon(formula, trace).monitor(reduction=False)
+print("LTLFO")
+fl = formula.toLTLFO()
+tr = trace.toLTLFO()
+print("Formula : %s\nTrace   : %s" % (fl, tr))
+ltlfo2mon(fl, tr)
 
 # for x in range(10):
 #     print(f.gen_trace(3, depth=1))

@@ -1,0 +1,8 @@
+Formula : always(always((always((P(b) or P(b))) until not(not(D(c))))))
+Trace   : {P(b)};{D(a)};{P(b)}
+Result Progression: ? after 3 events.
+LTLFO
+Formula : (G (G ((G (P('b') \/ P('b'))) U (~ (~ D('c'))))))
+Trace   : {P('b')},{D('a')},{P('b')}
+Result Progression: ⊥ after 2 events.
+

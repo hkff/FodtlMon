@@ -49,7 +49,7 @@ class Ltlmon(Mon):
             res = self.prg(self.formula, e, red=reduction)
             b3 = B3(res.eval())
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        print("%s after %s events" % (b3, counter))
+        print("Result Progression: %s after %s events." % (b3, counter))
         return res #.eval()
 
     def prg(self, formula, trace, red=False):
