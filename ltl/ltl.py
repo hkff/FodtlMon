@@ -28,8 +28,19 @@ class Exp:
     """
     Abstract expression
     """
+    symbol = ""
+    tspass = ""
+    ltlfo = ""
+    code = ""
+
     def toTSPASS(self):
-        pass
+        return str(self)
+
+    def toLTLFO(self):
+        return str(self)
+
+    def prefix_print(self):
+        return str(self)
 
     def reduce(self):
         pass
@@ -124,6 +135,9 @@ class Constant(Parameter):
     def equal(self, o):
         return (o is not None) and isinstance(o, Constant) and (o.name == self.name)
 
+    def toLTLFO(self):
+        return "'%s'" % self.name
+
 C = Constant
 
 
@@ -161,6 +175,11 @@ class Predicate(Exp):
                     return False
         return res
 
+    def toLTLFO(self):
+        args = ",".join([p.toLTLFO() for p in self.args])
+        return "%s(%s)" % (self.name, args)
+
+
 P = Predicate
 
 
@@ -176,6 +195,15 @@ class UExp(Exp):
     def __str__(self):
         return "%s(%s)" % (self.symbol, self.inner)
 
+    def prefix_print(self):
+        return "(%s %s)" % (self.symbol, self.inner.prefix_print())
+
+    def toTSPASS(self):
+        return "(%s %s)" % (self.tspass, self.inner.toTSPASS())
+
+    def toLTLFO(self):
+        return "(%s %s)" % (self.ltlfo, self.inner.toLTLFO())
+
 
 class BExp(Exp):
     """
@@ -190,6 +218,15 @@ class BExp(Exp):
     def __str__(self):
         return "(%s %s %s)" % (self.left, self.symbol, self.right)
 
+    def prefix_print(self):
+        return "(%s %s %s)" % (self.symbol, self.left, self.right)
+
+    def toTSPASS(self):
+        return "(%s %s %s)" % (self.left.toTSPASS(), self.tspass, self.right.toTSPASS())
+
+    def toLTLFO(self):
+        return "(%s %s %s)" % (self.left.toLTLFO(), self.ltlfo, self.right.toLTLFO())
+
 
 #############################
 # LTL Operators
@@ -200,6 +237,8 @@ class BExp(Exp):
 ##
 class And(BExp):
     symbol = "and"
+    tspass = "&&"
+    ltlfo = "/\\"
 
     def eval(self):
         return self.left.and_(self.right)
@@ -224,6 +263,8 @@ class And(BExp):
 
 class Or(BExp):
     symbol = "or"
+    tspass = "||"
+    ltlfo = "\/"
 
     def eval(self):
         return self.left.or_(self.right)
@@ -248,6 +289,8 @@ class Or(BExp):
 
 class Neg(UExp):
     symbol = "not"
+    tspass = "~"
+    ltlfo = "~"
 
     def eval(self):
         if isinstance(self.inner, true): return false()
@@ -262,6 +305,8 @@ class Neg(UExp):
 # Always
 class Always(UExp):
     symbol = "always"
+    tspass = "always"
+    ltlfo = "G"
 
 
 class G(Always):
@@ -271,6 +316,8 @@ class G(Always):
 # Future
 class Future(UExp):
     symbol = "future"
+    tspass = "sometime"
+    ltlfo = "F"
 
 
 class F(Future):
@@ -280,6 +327,8 @@ class F(Future):
 # Next
 class Next(UExp):
     symbol = "next"
+    tspass = "next"
+    ltlfo = "X"
 
 
 class X(Next):
@@ -289,6 +338,8 @@ class X(Next):
 # Until
 class Until(BExp):
     symbol = "until"
+    tspass = "until"
+    ltlfo = "U"
 
 
 class U(Until):
@@ -298,6 +349,8 @@ class U(Until):
 # Release
 class Release(BExp):
     symbol = "release"
+    tspass = "unless"
+    ltlfo = "W"
 
 
 class R(Release):
