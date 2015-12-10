@@ -112,3 +112,16 @@ Debug y/n : y
 (P(c) and F(next(P(c))))
 false
 Result Progression: ⊥ after 2 events.
+
+============ LTLMON :
+Formula   : ((P(a) until P(b)) until always(P(c)))
+Formula C : Until(Until(Predicate('P', [Constant('a')]),Predicate('P', [Constant('b')])),Always(Predicate('P', [Constant('c')])))
+Trace     : {P(b)};{P(a)};{P(a)};{P(a)};{P(c)}
+Result Progression: ? after 5 events.
+============ LTLFO2MON :
+Formula : ((P('a') U P('b')) U (G P('c')))
+Trace   : {P('b')},{P('a')},{P('a')},{P('a')},{P('c')}
+Result Progression: ⊥ after 5 events.
+## Result are different !
+Result Progression: ? after 5 events.
+Result Progression: ⊥ after 5 events.

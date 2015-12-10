@@ -50,13 +50,13 @@ class Ltlmon(Mon):
     LTL monitor using progression technique
     """
 
-    def monitor(self, reduction=False):
+    def monitor(self):
         counter = 0
         b3 = Boolean3.Unknown
         res = self.formula
         for e in self.trace.events:
             counter += 1
-            res = self.prg(res, e, red=reduction)
+            res = self.prg(res, e)
             Debug(res)
             b3 = B3(res.eval()) if isinstance(res, Formula) else res
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
@@ -64,7 +64,7 @@ class Ltlmon(Mon):
         print(ret)
         return ret
 
-    def prg(self, formula, trace, red=False):
+    def prg(self, formula, trace):
         # print(formula)
         if isinstance(formula, Predicate):
             # Todo : Check if Predicate is in AP
@@ -77,27 +77,27 @@ class Ltlmon(Mon):
             res = false()
 
         elif isinstance(formula, Neg):
-            res = Neg(self.prg(formula.inner, trace, red=red))
+            res = Neg(self.prg(formula.inner, trace)).eval()
 
         elif isinstance(formula, Or):
-            res = Or(self.prg(formula.left, trace, red=red), self.prg(formula.right, trace, red=red))
+            res = Or(self.prg(formula.left, trace), self.prg(formula.right, trace)).eval()
 
         elif isinstance(formula, And):
-            res = And(self.prg(formula.left, trace, red=red), self.prg(formula.right, trace, red=red))
+            res = And(self.prg(formula.left, trace), self.prg(formula.right, trace)).eval()
 
         elif isinstance(formula, Always):
-            res = And(self.prg(formula.inner, trace, red=red), G(formula.inner))
+            res = And(self.prg(formula.inner, trace), G(formula.inner)).eval()
 
         elif isinstance(formula, Future):
-            res = Or(self.prg(formula.inner, trace, red=red), F(formula.inner))
+            res = Or(self.prg(formula.inner, trace), F(formula.inner)).eval()
 
         elif isinstance(formula, Until):
-            res = Or(self.prg(formula.right, trace, red=red),
-                     And(self.prg(formula.left, trace, red=red), U(formula.left, formula.right)))
+            res = Or(self.prg(formula.right, trace),
+                     And(self.prg(formula.left, trace), U(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Release):
-            res = Or(self.prg(formula.left, trace, red=red),
-                     And(self.prg(formula.right, trace, red=red), R(formula.left, formula.right)))
+            res = Or(self.prg(formula.left, trace),
+                     And(self.prg(formula.right, trace), R(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Next):
             res = formula.inner
@@ -106,9 +106,7 @@ class Ltlmon(Mon):
             print("Error " + str(formula))
             return None
 
-        if res is not None:
-            # print("res %s formula %s eval %s" %(res, formula, res.eval()))
-            return res.eval() if red else res
+        return res
 
 
 class runtime_monitor(Ltlmon):
@@ -118,13 +116,13 @@ class runtime_monitor(Ltlmon):
         self.previous = []
         self.counter = 0
 
-    def monitor(self, reduction=False):
+    def monitor(self):
         #      for e in self.trace.events[self.counter:]:
         b3 = Boolean3.Unknown
         res = Boolean3.Unknown
         for e in self.trace.events[self.counter:]:
             self.counter += 1
-            res = self.prg(self.formula, e, red=reduction)
+            res = self.prg(self.formula, e)
             self.formula = res
             b3 = B3(res.eval())
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break

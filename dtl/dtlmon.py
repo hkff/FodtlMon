@@ -28,13 +28,13 @@ class Dtlmon(Ltlmon):
         super().__init__(formula, trace)
         self.KV = {}
 
-    def prg(self, formula, trace, red=True):
+    def prg(self, formula, trace):
         if isinstance(formula, At):
             # Check in KV
             res = self.KV.get(formula.agent)
             return Boolean3.Unknown if res is None else res
         else:
-            return super().prg(formula, trace, red=red)
+            return super().prg(formula, trace)
 
     def update_kv(self, agent, value):
         self.KV[agent] = value

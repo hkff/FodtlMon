@@ -142,9 +142,7 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
             trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
             print2("\n\n============ LTLMON : ", file=f)
             print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
-            # res0 = Ltlmon(formula, trace).monitor(reduction=False)
-            res1 = Ltlmon(formula, trace).monitor(reduction=True)
-            # f.write(res0)
+            res1 = Ltlmon(formula, trace).monitor()
             f.write(res1)
 
             print2("\n============ LTLFO2MON : ", file=f)
@@ -154,9 +152,9 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
             res2 = str(ltlfo2mon(fl, tr))
             f.write(res2)
 
-            res11 = res1.replace("Result Progression: ", "")[0]
-            res22 = res2.replace("Result Progression: ", "")[0]
-            if res11 != res22:
+            # res11 = res1.replace("Result Progression: ", "")[0]
+            # res22 = res2.replace("Result Progression: ", "")[0]
+            if res1 != res2:
                 errors += 1
                 print2("\n## Result are different ! ", file=f)
                 # print2(res0, file=f)
@@ -165,10 +163,10 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
                 if interactive:
                     debug = input("Debug y/n : ")
                     if debug == "y":
-                         Ltlmon(formula, trace).monitor(reduction=True)
+                         Ltlmon(formula, trace).monitor()
                          input()
 
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 # main call
-run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=5, formula_depth=2, formula_nbr=10000)
+run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=5, formula_depth=2, formula_nbr=100)

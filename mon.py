@@ -37,7 +37,6 @@ def main(argv):
     monitor = None
     formula = None
     trace = None
-    reduction = False
     online = False
     fuzzer = False
     iformula = None
@@ -55,7 +54,6 @@ def main(argv):
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
-                        "\n  -r \t--reduction     " + "\t use on-fly reduction" + \
                         "\n  -l \t--online        " + "\t use on line monitoring" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
@@ -64,9 +62,9 @@ def main(argv):
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234rlz",
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234lz",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "reduction", "live", "fuzzer", "itrace=", "iformula="])
+                                    "fodtl", "live", "fuzzer", "itrace=", "iformula="])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -97,8 +95,6 @@ def main(argv):
             formula = arg
         elif opt in ("-t", "--trace"):
             trace = arg
-        elif opt in ("-r", "--reduction"):
-            reduction = True
         elif opt in ("-l", "--online"):
             online = True
             monitor = runtime_monitor
@@ -122,7 +118,7 @@ def main(argv):
         tr = Trace().parse(trace)
         fl = eval(formula)
         mon = monitor(fl, tr)
-        res = mon.monitor(reduction=reduction)
+        res = mon.monitor()
         print("")
         print("Trace        : %s" % tr)
         print("Formula      : %s" % fl)
