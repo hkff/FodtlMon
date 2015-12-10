@@ -122,40 +122,44 @@ class Fuzzer:
 # Main tester
 ###########################
 def print2(*args, file=None):
-    print(*args)
+    # print(*args)
     if file is not None:
         file.write(*args)
         file.write("\n")
 
 
-def run_tests():#formula_nbr, alphabet, constants):
-    fuzzer = Fuzzer("ltl", alphabet=["P"], constants=["a", "b", "c"])
+def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1,
+              alphabet=None, constants=None, interactive=False, output_file="tests/logs.log"):
+
+    fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
     fuzzer.init_fuzzer()
     errors = 0
-    interactive = False
-    nbr = 10000
-    with open("tests/logs.log", "w+") as f:
+    nbr = formula_nbr
+    with open(output_file, "w+") as f:
         for x in range(nbr):
-            formula = fuzzer.gen(2)
-            trace = fuzzer.gen_trace(3, depth=1, preds=formula.walk(filter_type=P))
+            print("## %s / %s" % (x, nbr))
+            formula = fuzzer.gen(formula_depth)
+            trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
             print2("\n\n============ LTLMON : ", file=f)
             print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
-            res0 = Ltlmon(formula, trace).monitor(reduction=False)
+            # res0 = Ltlmon(formula, trace).monitor(reduction=False)
             res1 = Ltlmon(formula, trace).monitor(reduction=True)
-            f.write(res0)
+            # f.write(res0)
             f.write(res1)
 
             print2("\n============ LTLFO2MON : ", file=f)
             fl = formula.toLTLFO()
             tr = trace.toLTLFO()
             print2("Formula : %s\nTrace   : %s" % (fl, tr), file=f)
-            res2 = ltlfo2mon(fl, tr)
+            res2 = str(ltlfo2mon(fl, tr))
             f.write(res2)
 
-            if res1 != res2 != res0:
+            res11 = res1.replace("Result Progression: ", "")[0]
+            res22 = res2.replace("Result Progression: ", "")[0]
+            if res11 != res22:
                 errors += 1
                 print2("\n## Result are different ! ", file=f)
-                print2(res0, file=f)
+                # print2(res0, file=f)
                 print2(res1, file=f)
                 print2(res2, file=f)
                 if interactive:
@@ -167,4 +171,4 @@ def run_tests():#formula_nbr, alphabet, constants):
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 # main call
-run_tests()
+run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=5, formula_depth=2, formula_nbr=1000)

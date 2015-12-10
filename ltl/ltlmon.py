@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from ltl.ltl import *
 
-DEBUG = True
+DEBUG = False
 
 
 def Debug(*args):
@@ -104,6 +104,7 @@ class Ltlmon(Mon):
             return None
 
         if res is not None:
+            # print("res %s formula %s eval %s" %(res, formula, res.eval()))
             return res.eval() if red else res
 
 

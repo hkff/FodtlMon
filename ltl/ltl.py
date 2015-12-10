@@ -63,7 +63,7 @@ class Formula:
         return Or(self, exp)
 
     def size(self):
-        return 1 + [s.size() for s in self.children()]
+        return 1 + sum([s.size() for s in self.children()])
 
     def children(self):
         return []
@@ -124,9 +124,6 @@ class Atom(Exp):
     def __str__(self):
         return str(self.symbol)
 
-    def eval(self):
-        return self
-
 
 class true(Atom):
     """
@@ -134,13 +131,16 @@ class true(Atom):
     """
     symbol = "true"
 
-    def and_(self, exp):
-        if isinstance(exp, true): return true()
-        elif isinstance(exp, false): return false()
-        else: return exp
+    def eval(self):
+        return true()
 
-    def or_(self, exp):
-        return self
+    # def and_(self, exp):
+    #     if isinstance(exp, true): return true()
+    #     elif isinstance(exp, false): return false()
+    #     else: return exp
+    #
+    # def or_(self, exp):
+    #     return self
 
 
 class false(Atom):
@@ -149,13 +149,16 @@ class false(Atom):
     """
     symbol = "false"
 
-    def and_(self, exp):
-        return self
+    def eval(self):
+        return false()
 
-    def or_(self, exp):
-        if isinstance(exp, true): return true()
-        elif isinstance(exp, false): return false()
-        else: return exp
+    # def and_(self, exp):
+    #     return self
+    #
+    # def or_(self, exp):
+    #     if isinstance(exp, true): return true()
+    #     elif isinstance(exp, false): return false()
+    #     else: return exp
 
 
 class Parameter(Exp):
@@ -323,24 +326,21 @@ class And(BExp):
     ltlfo = "/\\"
 
     def eval(self):
-        return self.left.eval().and_(self.right.eval())
-        # if isinstance(self.left, true):
-        #     # if isinstance(self.right, true): return true()
-        #     # elif isinstance(self.right, false): return false()
-        #     # else:
-        #     return self.right.eval()
-        # elif isinstance(self.left, false):
-        #     return false()
-        # else:
-        #     if isinstance(self.right, true): return self.left.eval()
-        #     elif isinstance(self.right, false): return false()
-        #     else: return And(self.left.eval(), self.right.eval()).eval()
+        # return self.left.eval().and_(self.right.eval())
+        if isinstance(self.left, true):
+            return self.right
+        elif isinstance(self.left, false):
+            return false()
+        else:
+            if isinstance(self.right, true): return self.left
+            elif isinstance(self.right, false): return false()
+            else: return self
 
-    def and_(self, exp):
-        return self.left.and_(self.right)
-
-    def or_(self, exp):
-        return self.left.or_(self.right)
+    # def and_(self, exp):
+    #     return self.left.and_(self.right)
+    #
+    # def or_(self, exp):
+    #     return self.left.or_(self.right)
 
 
 class Or(BExp):
@@ -349,24 +349,21 @@ class Or(BExp):
     ltlfo = "\/"
 
     def eval(self):
-        return self.left.eval().or_(self.right.eval())
-        # if isinstance(self.left, true):
-        #     return true()
-        # elif isinstance(self.left, false):
-        #     # if isinstance(self.right, true): return true()
-        #     # elif isinstance(self.right, false): return false()
-        #     # else:
-        #     return self.right.eval()
-        # else:
-        #     if isinstance(self.right, true): return true()
-        #     elif isinstance(self.right, false): return self.left.eval()
-        #     else: return Or(self.left.eval(), self.right.eval())
+        # return self.left.eval().or_(self.right.eval())
+        if isinstance(self.left, true):
+            return true()
+        elif isinstance(self.left, false):
+            return self.right
+        else:
+            if isinstance(self.right, true): return true()
+            elif isinstance(self.right, false): return self.left
+            else: return self
 
-    def and_(self, exp):
-        return self.left.and_(self.right)
-
-    def or_(self, exp):
-        return self.left.or_(self.right)
+    # def and_(self, exp):
+    #     return self.left.and_(self.right)
+    #
+    # def or_(self, exp):
+    #     return self.left.or_(self.right)
 
 
 class Neg(UExp):
@@ -377,7 +374,8 @@ class Neg(UExp):
     def eval(self):
         if isinstance(self.inner, true): return false()
         elif isinstance(self.inner, false): return true()
-        else: return Neg(self.inner.eval())
+        elif isinstance(self.inner, Neg): return self.inner
+        else: return self
 
 
 ##
@@ -462,6 +460,8 @@ class Event:
         predicates = []
         if string.startswith("{") and string.endswith("}"):
             prs = string[1:-1].split("|")
+            if len(prs) == 1 and prs[0] is "":
+                return Event()
             [predicates.append(Predicate.parse(p)) for p in prs]
         else:
             print("Invalid event format ! A trace should be between {}")
@@ -474,8 +474,9 @@ class Event:
 
     def contains(self, predicate):
         for p in self.predicates:
-            if p.equal(predicate):
-                return True
+            if isinstance(p, Predicate):
+                if p.equal(predicate):
+                    return True
         return False
 
     p = push_predicate
@@ -521,6 +522,10 @@ class Trace:
     def toLTLFO(self):
         return ",".join([e.toLTLFO() for e in self.events])
 
+
+#############################
+# Three valued boolean
+#############################
 
 class Boolean3(Enum):
     """
