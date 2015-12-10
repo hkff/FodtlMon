@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import getopt
 from ltl.ltlmon import *
+from dtl.dtlmon import *
 
 
 ###################
@@ -88,8 +89,7 @@ def main(argv):
             print("Not yet implemented !")
             return
         elif opt in ("-3", "--dtl"):
-            print("Not yet implemented !")
-            return
+            monitor = Dtlmon
         elif opt in ("-4", "--fodtl"):
             print("Not yet implemented !")
             return

@@ -41,6 +41,9 @@ class Mon:
     def prg(self, *args, **kargs):
         pass
 
+    def push_event(self, event):
+        self.trace.push_event(event)
+
 
 class Ltlmon(Mon):
     """
@@ -55,7 +58,7 @@ class Ltlmon(Mon):
             counter += 1
             res = self.prg(res, e, red=reduction)
             Debug(res)
-            b3 = B3(res.eval())
+            b3 = B3(res.eval()) if isinstance(res, Formula) else res
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
         ret = "Result Progression: %s after %s events." % (b3, counter)
         print(ret)
@@ -117,8 +120,6 @@ class runtime_monitor(Ltlmon):
 
     def monitor(self, reduction=False):
         #      for e in self.trace.events[self.counter:]:
-        #     self.formula = res
-        #    return res
         b3 = Boolean3.Unknown
         res = Boolean3.Unknown
         for e in self.trace.events[self.counter:]:
@@ -130,5 +131,3 @@ class runtime_monitor(Ltlmon):
         print("Result Progression: %s after %s events." % (b3, self.counter))
         return res
 
-    def push_event(self, event):
-        self.trace.push_event(event)
