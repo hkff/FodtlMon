@@ -100,7 +100,7 @@ class Fuzzer:
             res = P(self.alphabet[i], [Constant(self.constants[j])])
         return res
 
-    def gen_trace(self, length, max_depth=2, depth=0):
+    def gen_trace(self, length, max_depth=2, depth=0, preds=None):
         trace = Trace()
         for x in range(length):
             i = int(random() * 10) % len(self.alphabet)
@@ -109,13 +109,17 @@ class Fuzzer:
             e = Event()
             for y in range(dp):
                 res = P(self.alphabet[i], [Constant(self.constants[j])])
-                e.push_predicate(res)
+                if preds is not None:
+                    if res.isIn(preds):
+                        e.push_predicate(res)
+                else:
+                    e.push_predicate(res)
             trace.push_event(e)
         return trace
 
 
 ###########################
-# Main
+# Main tester
 ###########################
 def print2(*args, file=None):
     print(*args)
@@ -123,35 +127,44 @@ def print2(*args, file=None):
         file.write(*args)
         file.write("\n")
 
-fuzzer = Fuzzer("ltl", alphabet=["P"], constants=["a", "b", "c"])
-fuzzer.init_fuzzer()
 
-with open("tests/logs.log", "w+") as f:
-    for x in range(100):
-        formula = fuzzer.gen(2)
-        trace = fuzzer.gen_trace(3, depth=1)
-        print2("\n\n============ LTLMON : ", file=f)
-        print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
-        res0 = Ltlmon(formula, trace).monitor(reduction=False)
-        res1 = Ltlmon(formula, trace).monitor(reduction=True)
-        f.write(res0)
-        f.write(res1)
+def run_tests():#formula_nbr, alphabet, constants):
+    fuzzer = Fuzzer("ltl", alphabet=["P"], constants=["a", "b", "c"])
+    fuzzer.init_fuzzer()
+    errors = 0
+    interactive = False
+    nbr = 10000
+    with open("tests/logs.log", "w+") as f:
+        for x in range(nbr):
+            formula = fuzzer.gen(2)
+            trace = fuzzer.gen_trace(3, depth=1, preds=formula.walk(filter_type=P))
+            print2("\n\n============ LTLMON : ", file=f)
+            print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
+            res0 = Ltlmon(formula, trace).monitor(reduction=False)
+            res1 = Ltlmon(formula, trace).monitor(reduction=True)
+            f.write(res0)
+            f.write(res1)
 
-        print2("\n============ LTLFO2MON : ", file=f)
-        fl = formula.toLTLFO()
-        tr = trace.toLTLFO()
-        print2("Formula : %s\nTrace   : %s" % (fl, tr), file=f)
-        res2 = ltlfo2mon(fl, tr)
-        f.write(res2)
+            print2("\n============ LTLFO2MON : ", file=f)
+            fl = formula.toLTLFO()
+            tr = trace.toLTLFO()
+            print2("Formula : %s\nTrace   : %s" % (fl, tr), file=f)
+            res2 = ltlfo2mon(fl, tr)
+            f.write(res2)
 
-        if res1 != res2 != res0:
-            print2("\n## Result are different ! ", file=f)
-            print2(res0, file=f)
-            print2(res1, file=f)
-            print2(res2, file=f)
-            debug = input("Debug y/n : ")
-            if debug == "y":
-                 Ltlmon(formula, trace).monitor(reduction=True)
-                 input()
+            if res1 != res2 != res0:
+                errors += 1
+                print2("\n## Result are different ! ", file=f)
+                print2(res0, file=f)
+                print2(res1, file=f)
+                print2(res2, file=f)
+                if interactive:
+                    debug = input("Debug y/n : ")
+                    if debug == "y":
+                         Ltlmon(formula, trace).monitor(reduction=True)
+                         input()
 
+        print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
+# main call
+run_tests()

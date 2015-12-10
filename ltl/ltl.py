@@ -62,6 +62,54 @@ class Formula:
     def or_(self, exp):
         return Or(self, exp)
 
+    def size(self):
+        return 1 + [s.size() for s in self.children()]
+
+    def children(self):
+        return []
+
+    def walk(self, filters: str=None, filter_type: type=None, pprint=False, depth=-1):
+        """
+        Iterate tree in pre-order wide-first search order
+
+        :param filters: filter by python expression
+        :param filter_type: Filter by class
+        :return:
+        """
+        children = self.children()
+        if children is None:
+            children = []
+        res = []
+
+        if depth == 0:
+            return res
+        elif depth != -1:
+            depth -= 1
+
+        for child in children:
+            if isinstance(child, Formula):
+                tmp = child.walk(filters=filters, filter_type=filter_type, pprint=pprint, depth=depth)
+                if tmp:
+                    res.extend(tmp)
+
+        if filter_type is None:
+            if filters is not None:
+                if eval(filters) is True:
+                    res.append(self)
+            else:
+                res.append(self)
+        elif isinstance(self, filter_type):
+            if filters is not None:
+                if eval(filters) is True:
+                    res.append(self)
+            else:
+                res.append(self)
+
+        if pprint:
+            res = [str(x) + " " for x in res]
+            res = "\n".join(res)
+        return res
+
 
 class Exp(Formula):
     pass
@@ -176,12 +224,13 @@ class Predicate(Exp):
         return Predicate(name, arguments)
 
     def equal(self, p):
-        # To check
-        res = p.name == self.name and len(p.args) == len(self.args)
-        if res:
-            for a1, a2 in zip(self.args, p.args):
-                if not a1.equal(a2):
-                    return False
+        res = False
+        if isinstance(p, Predicate):
+            res = p.name == self.name and len(p.args) == len(self.args)
+            if res:
+                for a1, a2 in zip(self.args, p.args):
+                    if not a1.equal(a2):
+                        return False
         return res
 
     def toLTLFO(self):
@@ -192,6 +241,14 @@ class Predicate(Exp):
         args = ",".join([p.toCODE() for p in self.args])
         return "%s('%s', %s)" % (self.__class__.__name__, self.name, "[" + args + "]")
 
+    def children(self):
+        return self.args
+
+    def isIn(self, preds):
+        for x in preds:
+            if self.equal(x):
+                return True
+        return False
 
 P = Predicate
 
@@ -220,6 +277,9 @@ class UExp(Exp):
     def toCODE(self):
         return "%s(%s)" % (self.__class__.__name__, self.inner.toCODE())
 
+    def children(self):
+        return [self.inner]
+
 
 class BExp(Exp):
     """
@@ -245,6 +305,9 @@ class BExp(Exp):
 
     def toCODE(self):
         return "%s(%s,%s)" % (self.__class__.__name__, self.left.toCODE(), self.right.toCODE())
+
+    def children(self):
+        return [self.left, self.right]
 
 
 #############################
