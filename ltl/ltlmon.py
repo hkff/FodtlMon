@@ -101,7 +101,7 @@ class Ltlmon(Mon):
                      And(self.prg(formula.right, trace), R(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Next):
-            res = formula.inner.eval()  # TODO check
+            res = formula.inner#.eval()  # TODO check
 
         else:
             print("Error " + str(formula))

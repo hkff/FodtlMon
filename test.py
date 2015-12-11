@@ -169,4 +169,4 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 # main call
-run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=1000)
+run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=5000)

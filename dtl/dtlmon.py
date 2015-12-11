@@ -54,4 +54,48 @@ class Dtlmon(Ltlmon):
 
     def update_kv(self):
         if len(self.events) > 0:
-            self.KV.update(self.events.pop())
+            # TODO : add empty event
+            self.KV.update(self.events.pop(0))
+
+
+#############################
+# Distributed system
+#############################
+
+class Actor:
+    """
+    Actor class
+    """
+    def __init__(self, name="", formula=None, trace=None):
+        self.name = name
+        self.formula = formula
+        self.trace = trace
+        self.monitor = None
+        self.submons = []
+
+
+class System:
+    """
+    Distributed system representation
+    """
+    def __init__(self, actors=None):
+        self.actors = [] if actors is None else actors
+        self.mons = []
+
+    def add_actors(self, actor):
+        if isinstance(actor, list):
+            self.actors.extend(actor)
+        elif isinstance(actor, Actor):
+            self.actors.append(actor)
+        return self
+
+    def generate_monitors(self):
+        for a in self.actors:
+            remotes = a.formula.walk(filter_type=At)  # Get all remote formula
+            for f in remotes:
+                remote_actor = self.get_actor(f.agent)
+                remote_actor.submons.append(Dtlmon(formula=None, trace=None))
+                f.fid = len(remote_actor.submons)
+                mon = Dtlmon(f, Trace())
+                self.mons.append(mon)
+
