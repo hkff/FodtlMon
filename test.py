@@ -137,7 +137,7 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
     nbr = formula_nbr
     with open(output_file, "w+") as f:
         for x in range(nbr):
-            print("## %s / %s" % (x, nbr))
+            print("## %s / %s  Errors %s" % (x, nbr, errors))
             formula = fuzzer.gen(formula_depth)
             trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
             print2("\n\n============ LTLMON : ", file=f)
@@ -169,4 +169,4 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 # main call
-run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=5, formula_depth=2, formula_nbr=100)
+run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=100)

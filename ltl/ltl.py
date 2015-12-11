@@ -374,7 +374,7 @@ class Neg(UExp):
     def eval(self):
         if isinstance(self.inner, true): return false()
         elif isinstance(self.inner, false): return true()
-        elif isinstance(self.inner, Neg): return self.inner
+        elif isinstance(self.inner, Neg): return self.inner.inner
         else: return self
 
 
