@@ -16,3 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'hkff'
+from dtl.dtlmon import *
+
+
+def run_dtl_tests():
+    s = System()
+    f1 = G(At(agent="alice", inner=F(P.parse("P(a)"))))
+    e = KVector.Entry("alice_b5bbaaef43512013e6319a76353c3d01", agent="alice", value=Boolean3.Bottom, timestamp=1)
+    bob = Actor(name="bob", formula=f1, trace=Trace.parse("{P(a)}; {}"), KV_events=[KVector.Entry(""), e])
+    f2 = true()
+    alice = Actor(name="alice", formula=f2, trace=Trace())
+    s.add_actors([bob, alice])
+    print(s)
+    s.generate_monitors()
+    print(s)
+    print(s.get_actor("alice").submons[0].formula)
+
+    print(s.get_actor("bob").monitor.monitor())
+

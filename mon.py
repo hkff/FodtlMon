@@ -19,8 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 import getopt
-from ltl.ltlmon import *
-from dtl.dtlmon import *
+from ltl.test import *
+from dtl.test import *
 
 
 ###################
@@ -104,6 +104,13 @@ def main(argv):
             iformula = arg
         elif opt in ("--itrace"):
             itrace = arg
+
+    if fuzzer:
+        if monitor is Ltlmon:
+            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=5000)
+        elif monitor is Dtlmon:
+            run_dtl_tests()
+        return
 
     if itrace is not None:
         with open(itrace, "r") as f:

@@ -17,12 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'hkff'
 
-from ltl.ltl import *
 from ltl.ltlmon import *
 import inspect
 import imp
 from random import random
-import os
 
 #
 # a = G(And(Next("e"), false()))
@@ -39,23 +37,6 @@ import os
 # print(Trace.parse("{P(o)}"))
 # print(Trace.parse(""))
 #print(Ltlmon().prg(G(true()), "PHI"))
-
-
-def ltlfo2mon(formula:Formula, trace:Trace):
-    """
-    Run ltlfo2mon
-    :param formula: Formula | ltlfo string formula
-    :param trace: Trace | ltlfo string trace
-    :return:
-    """
-    fl = formula.toLTLFO() if isinstance(formula, Formula) else formula
-    tr = trace.toLTLFO() if isinstance(trace, Trace) else trace
-    cmd = "echo \"%s\" | java -jar tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
-    p = os.popen(cmd)
-    res = p.readline()[:-1]
-    p.close()
-    # print(res)
-    return res
 
 
 class Fuzzer:
@@ -128,7 +109,7 @@ def print2(*args, file=None):
         file.write("\n")
 
 
-def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1,
+def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1,
               alphabet=None, constants=None, interactive=False, output_file="tests/logs.log"):
 
     fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
@@ -167,6 +148,3 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
                          input()
 
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
-
-# main call
-run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=5000)

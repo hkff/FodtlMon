@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from ltl.ltl import *
-
+import os
 DEBUG = False
 
 
@@ -108,3 +108,20 @@ class Ltlmon(Mon):
             return None
 
         return res
+
+
+def ltlfo2mon(formula:Formula, trace:Trace):
+    """
+    Run ltlfo2mon
+    :param formula: Formula | ltlfo string formula
+    :param trace: Trace | ltlfo string trace
+    :return:
+    """
+    fl = formula.toLTLFO() if isinstance(formula, Formula) else formula
+    tr = trace.toLTLFO() if isinstance(trace, Trace) else trace
+    cmd = "echo \"%s\" | java -jar tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
+    p = os.popen(cmd)
+    res = p.readline()[:-1]
+    p.close()
+    # print(res)
+    return res
