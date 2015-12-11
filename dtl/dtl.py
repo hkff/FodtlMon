@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'hkff'
 from ltl.ltl import *
-
+from hashlib import md5
 
 #############################
 # Localisation Operators
@@ -51,6 +51,9 @@ class At(UExp):
 
     def __str__(self):
         return "@_{%s}(%s)" % (self.agent, self.inner)
+
+    def compute_hash(self):
+        self.fid = "%s_%s" % (self.agent, md5(str(self.inner).encode()).hexdigest())
 
 
 #############################

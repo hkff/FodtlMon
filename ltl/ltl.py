@@ -327,13 +327,13 @@ class And(BExp):
 
     def eval(self):
         # return self.left.eval().and_(self.right.eval())
-        if isinstance(self.left, true):
+        if isinstance(self.left, true) or self.left is Boolean3.Top:
             return self.right
-        elif isinstance(self.left, false):
+        elif isinstance(self.left, false) or self.left is Boolean3.Bottom:
             return false()
         else:
-            if isinstance(self.right, true): return self.left
-            elif isinstance(self.right, false): return false()
+            if isinstance(self.right, true) or self.right is Boolean3.Top: return self.left
+            elif isinstance(self.right, false) or self.right is Boolean3.Bottom: return false()
             else: return self
 
     # def and_(self, exp):
@@ -350,13 +350,13 @@ class Or(BExp):
 
     def eval(self):
         # return self.left.eval().or_(self.right.eval())
-        if isinstance(self.left, true):
+        if isinstance(self.left, true) or self.left is Boolean3.Top:
             return true()
-        elif isinstance(self.left, false):
+        elif isinstance(self.left, false) or self.left is Boolean3.Bottom:
             return self.right
         else:
-            if isinstance(self.right, true): return true()
-            elif isinstance(self.right, false): return self.left
+            if isinstance(self.right, true) or self.right is Boolean3.Top: return true()
+            elif isinstance(self.right, false) or self.right is Boolean3.Bottom: return self.left
             else: return self
 
     # def and_(self, exp):
@@ -372,8 +372,8 @@ class Neg(UExp):
     ltlfo = "~"
 
     def eval(self):
-        if isinstance(self.inner, true): return false()
-        elif isinstance(self.inner, false): return true()
+        if isinstance(self.inner, true) or self.inner is Boolean3.Top: return false()
+        elif isinstance(self.inner, false) or self.inner is Boolean3.Bottom: return true()
         elif isinstance(self.inner, Neg): return self.inner.inner
         else: return self
 

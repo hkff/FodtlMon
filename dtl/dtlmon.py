@@ -24,10 +24,10 @@ class Dtlmon(Ltlmon):
     DTL monitor using progression technique
     """
 
-    def __init__(self, formula, trace):
+    def __init__(self, formula, trace, KV_events=None):
         super().__init__(formula, trace)
         self.KV = KVector()
-        self.events = []
+        self.KV_events = [] if KV_events is None else KV_events
 
     def monitor(self):
         # counter = 0
@@ -49,13 +49,15 @@ class Dtlmon(Ltlmon):
             # Check in KV
             res = self.KV.has(formula.fid)
             return Boolean3.Unknown if res == -1 else self.KV.entries[res].value
+        elif isinstance(formula, Boolean3):
+            return formula
         else:
             return super().prg(formula, trace)
 
     def update_kv(self):
-        if len(self.events) > 0:
+        if len(self.KV_events) > 0:
             # TODO : add empty event
-            self.KV.update(self.events.pop(0))
+            self.KV.update(self.KV_events.pop(0))
 
 
 #############################
@@ -66,12 +68,16 @@ class Actor:
     """
     Actor class
     """
-    def __init__(self, name="", formula=None, trace=None):
+    def __init__(self, name="", formula=None, trace=None, KV_events=None):
         self.name = name
         self.formula = formula
         self.trace = trace
         self.monitor = None
         self.submons = []
+        self.KV_events = [] if KV_events is None else KV_events
+
+    def __str__(self):
+        return "{%s; %s; %s; %s; %s}" % (self.name, self.formula, self.trace, self.monitor, self.submons)
 
 
 class System:
@@ -82,6 +88,9 @@ class System:
         self.actors = [] if actors is None else actors
         self.mons = []
 
+    def __str__(self):
+        return " | ".join([str(a) for a in self.actors])
+
     def add_actors(self, actor):
         if isinstance(actor, list):
             self.actors.extend(actor)
@@ -89,13 +98,32 @@ class System:
             self.actors.append(actor)
         return self
 
+    def get_actor(self, name):
+        return next((x for x in self.actors if x.name == name), None)
+
     def generate_monitors(self):
         for a in self.actors:
             remotes = a.formula.walk(filter_type=At)  # Get all remote formula
             for f in remotes:
+                f.compute_hash()
+            for f in remotes:
                 remote_actor = self.get_actor(f.agent)
-                remote_actor.submons.append(Dtlmon(formula=None, trace=None))
-                f.fid = len(remote_actor.submons)
-                mon = Dtlmon(f, Trace())
-                self.mons.append(mon)
+                remote_actor.submons.append(Dtlmon(formula=f.inner, trace=Trace()))
+            a.monitor = Dtlmon(a.formula, a.trace, a.KV_events)
+        for a in self.actors:
+            a.monitor.KV = KVector([KVector.Entry("alice_b5bbaaef43512013e6319a76353c3d01", agent="alice", value=Boolean3.Unknown, timestamp=0)])
 
+
+s = System()
+f1 = G(At(agent="alice", inner=F(P.parse("P(a)"))))
+e = KVector.Entry("alice_b5bbaaef43512013e6319a76353c3d01", agent="alice", value=Boolean3.Bottom, timestamp=1)
+bob = Actor(name="bob", formula=f1, trace=Trace.parse("{P(a)}; {}"), KV_events=[KVector.Entry(""), e])
+f2 = true()
+alice = Actor(name="alice", formula=f2, trace=Trace())
+s.add_actors([bob, alice])
+print(s)
+s.generate_monitors()
+print(s)
+print(s.get_actor("alice").submons[0].formula)
+
+print(s.get_actor("bob").monitor.monitor())
