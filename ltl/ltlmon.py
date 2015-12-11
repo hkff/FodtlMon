@@ -61,7 +61,7 @@ class Ltlmon(Mon):
             b3 = B3(res.eval()) if isinstance(res, Formula) else res
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
         ret = "Result Progression: %s after %s events." % (b3, counter)
-        print(ret)
+        # print(ret)
         return ret
 
     def prg(self, formula, trace):
@@ -100,7 +100,7 @@ class Ltlmon(Mon):
                      And(self.prg(formula.right, trace), R(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Next):
-            res = formula.inner
+            res = formula.inner.eval()  # TODO check
 
         else:
             print("Error " + str(formula))

@@ -54,7 +54,7 @@ def ltlfo2mon(formula:Formula, trace:Trace):
     p = os.popen(cmd)
     res = p.readline()[:-1]
     p.close()
-    print(res)
+    # print(res)
     return res
 
 
@@ -137,20 +137,20 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
     nbr = formula_nbr
     with open(output_file, "w+") as f:
         for x in range(nbr):
-            print("## %s / %s  Errors %s" % (x, nbr, errors))
+            print("## %s / %s  Errors %s" % (x+1, nbr, errors))
             formula = fuzzer.gen(formula_depth)
             trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
             print2("\n\n============ LTLMON : ", file=f)
             print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
             res1 = Ltlmon(formula, trace).monitor()
-            f.write(res1)
+            print2(res1, file=f)
 
             print2("\n============ LTLFO2MON : ", file=f)
             fl = formula.toLTLFO()
             tr = trace.toLTLFO()
             print2("Formula : %s\nTrace   : %s" % (fl, tr), file=f)
             res2 = str(ltlfo2mon(fl, tr))
-            f.write(res2)
+            print2(res2, file=f)
 
             # res11 = res1.replace("Result Progression: ", "")[0]
             # res22 = res2.replace("Result Progression: ", "")[0]
@@ -169,4 +169,4 @@ def run_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, tra
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 # main call
-run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=100)
+run_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=1000)

@@ -26,15 +26,32 @@ class Dtlmon(Ltlmon):
 
     def __init__(self, formula, trace):
         super().__init__(formula, trace)
-        self.KV = {}
+        self.KV = KVector()
+        self.events = []
+
+    def monitor(self):
+        counter = 0
+        b3 = Boolean3.Unknown
+        res = self.formula
+        for e in self.trace.events:
+            self.update_kv()
+            counter += 1
+            res = self.prg(res, e)
+            Debug(res)
+            b3 = B3(res.eval()) if isinstance(res, Formula) else res
+            if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
+        ret = "Result Progression: %s after %s events." % (b3, counter)
+        # print(ret)
+        return ret
 
     def prg(self, formula, trace):
         if isinstance(formula, At):
             # Check in KV
-            res = self.KV.get(formula.agent)
-            return Boolean3.Unknown if res is None else res
+            res = self.KV.has(formula.fid)
+            return Boolean3.Unknown if res == -1 else self.KV.entries[res].value
         else:
             return super().prg(formula, trace)
 
-    def update_kv(self, agent, value):
-        self.KV[agent] = value
+    def update_kv(self):
+        if len(self.events) > 0:
+            self.KV.update(self.events.pop())
