@@ -30,17 +30,17 @@ class Dtlmon(Ltlmon):
         self.events = []
 
     def monitor(self):
-        counter = 0
+        # counter = 0
         b3 = Boolean3.Unknown
         res = self.formula
-        for e in self.trace.events:
+        for e in self.trace.events[self.counter:]:
             self.update_kv()
-            counter += 1
+            self.counter += 1
             res = self.prg(res, e)
             Debug(res)
             b3 = B3(res.eval()) if isinstance(res, Formula) else res
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        ret = "Result Progression: %s after %s events." % (b3, counter)
+        ret = "Result Progression: %s after %s events." % (b3, self.counter)
         # print(ret)
         return ret
 

@@ -34,6 +34,7 @@ class Mon:
     def __init__(self, formula, trace):
         self.formula = formula
         self.trace = trace
+        self.counter = 0
 
     def monitor(self, *args, **kargs):
         pass
@@ -51,16 +52,16 @@ class Ltlmon(Mon):
     """
 
     def monitor(self):
-        counter = 0
+        # counter = 0
         b3 = Boolean3.Unknown
         res = self.formula
-        for e in self.trace.events:
-            counter += 1
+        for e in self.trace.events[self.counter:]:
+            self.counter += 1
             res = self.prg(res, e)
             Debug(res)
             b3 = B3(res.eval()) if isinstance(res, Formula) else res
             if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        ret = "Result Progression: %s after %s events." % (b3, counter)
+        ret = "Result Progression: %s after %s events." % (b3, self.counter)
         # print(ret)
         return ret
 
@@ -107,25 +108,3 @@ class Ltlmon(Mon):
             return None
 
         return res
-
-
-class runtime_monitor(Ltlmon):
-
-    def __init__(self, formula, trace):
-        super().__init__(formula, trace)
-        self.previous = []
-        self.counter = 0
-
-    def monitor(self):
-        #      for e in self.trace.events[self.counter:]:
-        b3 = Boolean3.Unknown
-        res = Boolean3.Unknown
-        for e in self.trace.events[self.counter:]:
-            self.counter += 1
-            res = self.prg(self.formula, e)
-            self.formula = res
-            b3 = B3(res.eval())
-            if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        print("Result Progression: %s after %s events." % (b3, self.counter))
-        return res
-
