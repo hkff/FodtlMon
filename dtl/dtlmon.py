@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from dtl.dtl import *
 from ltl.ltlmon import *
-
+import json
 
 class Dtlmon(Ltlmon):
     """
@@ -112,3 +112,39 @@ class System:
             a.monitor = Dtlmon(a.formula, a.trace, a.KV_events)
         for a in self.actors:
             a.monitor.KV = KVector([KVector.Entry("alice_b5bbaaef43512013e6319a76353c3d01", agent="alice", value=Boolean3.Unknown, timestamp=0)])
+
+    @staticmethod
+    def parseJSON(js):
+        """
+        {
+            actors:
+            [
+                {
+                    actorName : "",
+                    formula: "",
+                    KV_events: [],
+                    trace: []
+                }
+            ]
+        }
+        :param json:
+        :return:
+        """
+        decoded = json.JSONDecoder().decode(js)
+        print(decoded)
+        actors = decoded["actors"]
+        s = System()
+        for a in actors:
+            # Getting actor info
+            a_name = a["name"]
+            a_formula = a["formula"]
+            a_trace = a["trace"]
+            a_KV_events = a["KV_events"]
+
+            # Creating the actor
+            a_formula = eval(a_formula)
+            actor = Actor(name=a_name, formula=a_formula, trace=Trace.parse(a_trace), KV_events=a_KV_events)
+
+            # Add actor to the system
+            s.add_actors(actor)
+        s.generate_monitors()

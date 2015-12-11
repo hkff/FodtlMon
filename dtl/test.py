@@ -33,4 +33,4 @@ def run_dtl_tests():
     print(s.get_actor("alice").submons[0].formula)
 
     print(s.get_actor("bob").monitor.monitor())
-
+    System.parseJSON('{"actors": [  {"name": "bob", "formula": "ll", "trace": "kk"}, {"name": "alice", "formula": "ll", "trace": "kk"}   ]}')
