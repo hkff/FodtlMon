@@ -75,7 +75,7 @@ class IKVector:
     def __init__(self, entries=None):
         self.entries = [] if entries is None else entries
 
-    def create_entry(self, entry):
+    def add_entry(self, entry):
         raise Exception("Unimplemented method !")
 
     def has(self, entry):
@@ -122,6 +122,9 @@ class KVector(IKVector):
         if i != -1:
             if entry.time_compare(self.entries[i]) == 1:
                 self.entries[i] = entry
+
+    def add_entry(self, entry):
+        self.entries.append(entry)
 
 
 class KVector_H(IKVector):

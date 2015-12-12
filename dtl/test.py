@@ -33,6 +33,11 @@ def run_dtl_tests():
     print(s)
     print(s.get_actor("alice").submons[0].trace)
     s.run()
+    print(s.get_actor("alice").monitor.KV)
+    print(s.get_actor("bob").monitor.KV)
     # s.run()
     #print(s.get_actor("bob").monitor.monitor())
-    #System.parseJSON('{"actors": [  {"name": "bob", "formula": "ll", "trace": "kk"}, {"name": "alice", "formula": "ll", "trace": "kk"}   ]}')
+    System.parseJSON('{"actors": [  '
+                     '{"name": "bob", "formula": "true()", "trace": "{}", "events": ["alice->"]}, '
+                     '{"name": "alice", "formula": "true()", "trace": "{}", "events": ["->bob", ""] }'
+                     ']}')
