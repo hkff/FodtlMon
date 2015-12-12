@@ -35,6 +35,7 @@ class Mon:
         self.formula = formula
         self.trace = trace
         self.counter = 0
+        self.last = Boolean3.Unknown
 
     def monitor(self, *args, **kargs):
         pass
@@ -53,15 +54,14 @@ class Ltlmon(Mon):
 
     def monitor(self):
         # counter = 0
-        b3 = Boolean3.Unknown
         res = self.formula
         for e in self.trace.events[self.counter:]:
             self.counter += 1
             res = self.prg(res, e)
             Debug(res)
-            b3 = B3(res.eval()) if isinstance(res, Formula) else res
-            if b3 == Boolean3.Top or b3 == Boolean3.Bottom: break
-        ret = "Result Progression: %s after %s events." % (b3, self.counter)
+            self.last = B3(res.eval()) if isinstance(res, Formula) else res
+            if self.last == Boolean3.Top or self.last == Boolean3.Bottom: break
+        ret = "Result Progression: %s after %s events." % (self.last, self.counter)
         # print(ret)
         return ret
 

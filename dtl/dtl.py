@@ -19,6 +19,7 @@ __author__ = 'hkff'
 from ltl.ltl import *
 from hashlib import md5
 
+
 #############################
 # Localisation Operators
 #############################
@@ -60,7 +61,31 @@ class At(UExp):
 # Knowledge vectors
 #############################
 
-class KVector:
+class IKVector:
+    """
+    KVector interface
+    """
+    class IEntry:
+        """
+        KVector Entry interface
+        """
+        def time_compare(self, other):
+            pass
+
+    def __init__(self, entries=None):
+        self.entries = [] if entries is None else entries
+
+    def create_entry(self, entry):
+        raise Exception("Unimplemented method !")
+
+    def has(self, entry):
+        raise Exception("Unimplemented method !")
+
+    def update(self, entry):
+        raise Exception("Unimplemented method !")
+
+
+class KVector(IKVector):
     """
     Knowledge vector
     """
@@ -83,9 +108,6 @@ class KVector:
             else:
                 return None
 
-    def __init__(self, entries=None):
-        self.entries = [] if entries is None else entries
-
     def __str__(self):
         return ",".join([str(e) for e in self.entries])
 
@@ -101,3 +123,9 @@ class KVector:
             if entry.time_compare(self.entries[i]) == 1:
                 self.entries[i] = entry
 
+
+class KVector_H(IKVector):
+    """
+    Knowledge vector second implementation
+    """
+    pass
