@@ -41,6 +41,7 @@ def main(argv):
     fuzzer = False
     iformula = None
     itrace = None
+    isys = None
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
@@ -54,7 +55,7 @@ def main(argv):
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
-                        "\n  -l \t--online        " + "\t use on line monitoring" + \
+                        "\n     \t--sys= [file]   " + "\t Run a system from json file" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
@@ -62,9 +63,9 @@ def main(argv):
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234lz",
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234sz",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "live", "fuzzer", "itrace=", "iformula="])
+                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula="])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -95,9 +96,8 @@ def main(argv):
             formula = arg
         elif opt in ("-t", "--trace"):
             trace = arg
-        elif opt in ("-l", "--online"):
-            online = True
-            monitor = runtime_monitor
+        elif opt in ("--sys"):
+            isys = arg
         elif opt in ("-z", "--fuzzer"):
             fuzzer = True
         elif opt in ("--iformula"):
@@ -119,6 +119,13 @@ def main(argv):
     if iformula is not None:
         with open(iformula, "r") as f:
             formula = f.read()
+
+    if isys is not None:
+        with open(isys, "r") as f:
+            js = f.read()
+            s = System.parseJSON(js)
+            s.run()
+        return
 
     # print(argv)
     if None not in (monitor, trace, formula):

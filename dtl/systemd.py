@@ -229,7 +229,6 @@ class System:
         :return:
         """
         decoded = json.JSONDecoder().decode(js)
-        print(decoded)
         actors = decoded["actors"]
         s = System()
         for a in actors:
