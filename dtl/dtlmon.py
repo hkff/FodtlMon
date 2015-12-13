@@ -23,14 +23,15 @@ class Dtlmon(Ltlmon):
     """
     DTL monitor using progression technique
     """
-    def __init__(self, formula, trace, actor=None, parent=None):
+    def __init__(self, formula, trace, actor=None, parent=None, fid=""):
         super().__init__(formula, trace)
         self.KV = KVector()
         self.actor = actor
         self.last = Boolean3.Unknown
         self.parent = self if parent is None else parent
+        self.fid = fid
 
-    def monitor(self):
+    def monitor(self, once=False):
         # counter = 0
         res = self.formula
         for e in self.get_trace().events[self.counter:]:
@@ -38,7 +39,7 @@ class Dtlmon(Ltlmon):
             res = self.prg(res, e)
             Debug(res)
             self.last = B3(res.eval()) if isinstance(res, Formula) else res
-            if self.last == Boolean3.Top or self.last == Boolean3.Bottom: break
+            if self.last == Boolean3.Top or self.last == Boolean3.Bottom or once: break
         ret = "Result Progression: %s after %s events." % (self.last, self.counter)
         # print(ret)
         return ret

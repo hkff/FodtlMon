@@ -85,16 +85,22 @@ class Actor:
         """
         self.monitor.update_kv(kv)
 
-    def run(self):
+    def get_kv(self):
+        return self.monitor.get_kv()
+
+    def run(self, once=True):
         """
         Run main monitor and all sub monitors
+        :param : once
         :return:
         """
         print("- Actor %s " % self.name)
         for m in self.submons:
-            res = m.monitor()
+            res = m.monitor(once=once)
             print("   | Submonitor %s : %s" % (self.name, res))
-        res = self.monitor.monitor()
+            print("%s %s %s %s lst %s" % (self.name, m.fid, m.last, m.counter, m.last))
+            self.get_kv().update(KVector.Entry(m.fid, agent=self.name, value=m.last, timestamp=m.counter))
+        res = self.monitor.monitor(once=once)
         print("  Main monitor %s : %s" % (self.name, res))
 
 
@@ -161,7 +167,7 @@ class System:
             # Create the remote sub monitors for each @Formula
             for f in remotes:
                 remote_actor = self.get_actor(f.agent)
-                remote_actor.submons.append(Dtlmon(formula=f.inner, trace=remote_actor.trace, parent=remote_actor.monitor))
+                remote_actor.submons.append(Dtlmon(formula=f.inner, trace=remote_actor.trace, parent=remote_actor.monitor, fid=f.fid))
                 submons.append({"fid": f.fid, "actor": remote_actor.name})
 
             # Create the com entry in the system
@@ -178,9 +184,10 @@ class System:
         for a in self.actors:
             a.monitor.KV = copy.deepcopy(kv)
 
-    def run(self):
+    def run(self, once=True):
         """
         Run the system
+        :param once
         :return:
         """
         print("\n====== System round %s" % self.turn)
@@ -193,11 +200,13 @@ class System:
                     pass
                 elif e.e_type == Actor.Event.EventType.IN:
                     # Update KV and check pop the send
-                    pass
+                    print("%s received a message from %s ..." % (a.name, e.target))
+                    a.update_kv(self.get_actor(e.target).get_kv())
+                    print("%s %s" % (a.name, a.get_kv()))
 
         print("\n== Running monitors on each actor...")
         for a in self.actors:
-            a.run()
+            a.run(once=once)
         self.turn += 1
 
     def update_events(self, e):

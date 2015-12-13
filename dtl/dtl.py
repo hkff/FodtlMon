@@ -72,6 +72,9 @@ class IKVector:
         def time_compare(self, other):
             pass
 
+        def update(self, e):
+            pass
+
     def __init__(self, entries=None):
         self.entries = [] if entries is None else entries
 
@@ -108,6 +111,12 @@ class KVector(IKVector):
             else:
                 return None
 
+        def update(self, e):
+            self.fid = e.fid
+            self.agent = e.agent
+            self.value = e.value
+            self.timestamp = e.timestamp
+
     def __str__(self):
         return ",".join([str(e) for e in self.entries])
 
@@ -121,7 +130,7 @@ class KVector(IKVector):
         i = self.has(entry)
         if i != -1:
             if entry.time_compare(self.entries[i]) == 1:
-                self.entries[i] = entry
+                self.entries[i].update(entry)
 
     def add_entry(self, entry):
         self.entries.append(entry)
