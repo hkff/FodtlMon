@@ -3,7 +3,7 @@
   [
     {
       "name": "bob",
-      "formula": "true()",
+      "formula": "P('send(a)')",
       "trace": "{}",
       "events": ["alice->"]
     },

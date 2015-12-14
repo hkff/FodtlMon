@@ -206,8 +206,13 @@ class Predicate(Exp):
     Predicate
     """
     def __init__(self, name="", args=None):
-        self.name = name
-        self.args = [] if args is None else args
+        if args is None:
+            p = Predicate.parse(name)
+            self.name = p.name
+            self.args = p.args
+        else:
+            self.name = name
+            self.args = args
 
     def __str__(self):
         args = ",".join([str(p) for p in self.args])
