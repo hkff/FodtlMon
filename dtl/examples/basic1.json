@@ -1,0 +1,18 @@
+{
+  "actors":
+  [
+    {
+      "name": "bob",
+      "formula": "true()",
+      "trace": "{}",
+      "events": ["alice->"]
+    },
+    {
+      "name": "alice",
+      "formula": "true()",
+      "trace": "{}",
+      "events": ["->bob", ""]
+    }
+  ]
+
+}

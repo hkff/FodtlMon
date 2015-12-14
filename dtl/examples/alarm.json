@@ -1,0 +1,18 @@
+{
+  "actors":
+  [
+    {
+      "name": "alarm",
+      "formula": "Always(Or(Not(At('sensor', P.parse('M()'))), P.parse('R()')))",
+      "trace": "{}; {R()}; {R()}",
+      "events": ["", "sensor->"]
+    },
+    {
+      "name": "sensor",
+      "formula": "true()",
+      "trace": "{M()}",
+      "events": [""]
+    }
+  ]
+
+}
