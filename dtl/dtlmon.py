@@ -30,15 +30,14 @@ class Dtlmon(Ltlmon):
         self.last = Boolean3.Unknown
         self.parent = self if parent is None else parent
         self.fid = fid
+        self.rewrite = copy.deepcopy(self.formula)
 
     def monitor(self, once=False):
-        # counter = 0
-        res = self.formula
         for e in self.get_trace().events[self.counter:]:
             self.counter += 1
-            res = self.prg(res, e)
-            Debug(res)
-            self.last = B3(res.eval()) if isinstance(res, Formula) else res
+            self.rewrite = self.prg(self.rewrite, e)
+            Debug(self.rewrite)
+            self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
             if self.last == Boolean3.Top or self.last == Boolean3.Bottom or once: break
         ret = "Result Progression: %s after %s events." % (self.last, self.counter)
         # print(ret)

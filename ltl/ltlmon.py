@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from ltl.ltl import *
 import os
+import copy
 DEBUG = False
 
 
@@ -36,6 +37,7 @@ class Mon:
         self.trace = trace
         self.counter = 0
         self.last = Boolean3.Unknown
+        self.rewrite = copy.deepcopy(self.formula)
 
     def monitor(self, *args, **kargs):
         pass
@@ -52,15 +54,13 @@ class Ltlmon(Mon):
     LTL monitor using progression technique
     """
 
-    def monitor(self):
-        # counter = 0
-        res = self.formula
+    def monitor(self, once=False):
         for e in self.trace.events[self.counter:]:
             self.counter += 1
-            res = self.prg(res, e)
-            Debug(res)
-            self.last = B3(res.eval()) if isinstance(res, Formula) else res
-            if self.last == Boolean3.Top or self.last == Boolean3.Bottom: break
+            self.rewrite = self.prg(self.rewrite, e)
+            Debug(self.rewrite)
+            self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
+            if self.last == Boolean3.Top or self.last == Boolean3.Bottom or once: break
         ret = "Result Progression: %s after %s events." % (self.last, self.counter)
         # print(ret)
         return ret

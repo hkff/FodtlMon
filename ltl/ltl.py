@@ -377,6 +377,8 @@ class Neg(UExp):
         elif isinstance(self.inner, Neg): return self.inner.inner
         else: return self
 
+Not = Neg
+
 
 ##
 # Temporal operators
