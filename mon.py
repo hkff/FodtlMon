@@ -42,6 +42,8 @@ def main(argv):
     iformula = None
     itrace = None
     isys = None
+    rounds = 1
+    l2m = False
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
@@ -52,10 +54,12 @@ def main(argv):
                         "\n  -t \t--trace         " + "\t the trace" + \
                         "\n     \t--itrace        " + "\t path to file that contains the trace" + \
                         "\n  -1 \t--ltl           " + "\t use LTL monitor" + \
+                        "\n     \t--l2m           " + "\t call ltl2mon also" + \
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
                         "\n     \t--sys= [file]   " + "\t Run a system from json file" + \
+                        "\n     \t--rounds= int   " + "\t Number of rounds to run in the system" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
@@ -63,9 +67,9 @@ def main(argv):
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234sz",
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234z",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula="])
+                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m"])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -96,18 +100,22 @@ def main(argv):
             formula = arg
         elif opt in ("-t", "--trace"):
             trace = arg
-        elif opt in ("--sys"):
+        elif opt in "--sys":
             isys = arg
+        elif opt in "--rounds":
+            rounds = int(arg)
         elif opt in ("-z", "--fuzzer"):
             fuzzer = True
-        elif opt in ("--iformula"):
+        elif opt in "--iformula":
             iformula = arg
-        elif opt in ("--itrace"):
+        elif opt in "--itrace":
             itrace = arg
+        elif opt in "--l2m":
+            l2m = True
 
     if fuzzer:
         if monitor is Ltlmon:
-            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=5000)
+            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=10000)
         elif monitor is Dtlmon:
             run_dtl_tests()
         return
@@ -124,7 +132,8 @@ def main(argv):
         with open(isys, "r") as f:
             js = f.read()
             s = System.parseJSON(js)
-            s.run()
+            for x in range(rounds):
+                s.run()
         return
 
     # print(argv)
@@ -140,6 +149,9 @@ def main(argv):
         print("TSPASS       : %s" % fl.toTSPASS())
         print("LTLFO        : %s" % fl.toLTLFO())
         print("Result       : %s" % res)
+        if l2m:
+            res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO())
+            print("ltl2mon : %s" % res)
         # print(B3(res.eval()).value)
         # mon.push_event(Event.parse("{P(b)}"))
         # res = mon.monitor()
