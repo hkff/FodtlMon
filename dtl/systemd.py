@@ -192,17 +192,26 @@ class System:
         """
         print("\n====== System round %s" % self.turn)
         print("== Updating actors events...")
+        # Handling OUT messages
         for a in self.actors:
             if self.turn < len(a.events):
                 e = a.events[self.turn]
                 if e.e_type == Actor.Event.EventType.OUT:
                     # register
-                    pass
-                elif e.e_type == Actor.Event.EventType.IN:
+                    self.coms["%s->%s" % (a.name, e.target)].append(copy.deepcopy(self.get_actor(e.target).get_kv()))
+
+        # Handling IN messages
+        for a in self.actors:
+            if self.turn < len(a.events):
+                e = a.events[self.turn]
+                if e.e_type == Actor.Event.EventType.IN:
                     # Update KV and check pop the send
                     print("%s received a message from %s ..." % (a.name, e.target))
-                    a.update_kv(self.get_actor(e.target).get_kv())
-                    print("%s %s" % (a.name, a.get_kv()))
+                    if len(self.coms["%s->%s" % (e.target, a.name)]) > 0:
+                        a.update_kv(self.coms["%s->%s" % (e.target, a.name)].pop(0))
+                        print(" - IN %s %s" % (a.name, a.get_kv()))
+                    else:
+                        print(" - Error %s trying to receive a message from %s that was not sent by %s" % (a.name, e.target, e.target))
 
         print("\n== Running monitors on each actor...")
         for a in self.actors:
