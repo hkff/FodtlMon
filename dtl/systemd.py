@@ -94,14 +94,15 @@ class Actor:
         :param : once
         :return:
         """
-        print("- Actor %s " % self.name)
+        print("\n- Actor %s " % self.name)
         for m in self.submons:
             res = m.monitor(once=once)
-            print("   | Submonitor %s : %s %s" % (self.name, res, m.formula))
+            print("   | Submonitor %s : %s" % (self.name, res))
             # print("%s %s %s %s lst %s" % (self.name, m.fid, m.last, m.counter, m.last))
             self.get_kv().update(KVector.Entry(m.fid, agent=self.name, value=m.last, timestamp=m.counter))
         res = self.monitor.monitor(once=once)
-        print("  Main monitor %s : %s %s" % (self.name, res, self.formula))
+        print("  Main monitor %s : %s %s" % (self.name, res, self.monitor.rewrite))
+        print(self.get_kv())
 
 
 #############################
@@ -190,7 +191,7 @@ class System:
         :param once
         :return:
         """
-        print("\n====== System round %s" % self.turn)
+        print("\n====== System round %s ======" % self.turn)
         print("== Updating actors events...")
         # Handling OUT messages
         for a in self.actors:

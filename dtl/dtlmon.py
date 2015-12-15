@@ -47,7 +47,14 @@ class Dtlmon(Ltlmon):
         if isinstance(formula, At):
             # Check in KV
             res = self.KV.has(formula.fid)
-            return Boolean3.Unknown if res == -1 else self.get_kv().entries[res].value
+            # return Boolean3.Unknown if res == -1 else self.get_kv().entries[res].value
+            x = self.get_kv().entries[res].value
+            if x is Boolean3.Unknown:
+                return formula
+            elif x is Boolean3.Top:
+                return true()
+            else:
+                return false()
         elif isinstance(formula, Boolean3):
             return formula
         else:

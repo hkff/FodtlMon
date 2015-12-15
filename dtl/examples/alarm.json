@@ -3,15 +3,15 @@
   [
     {
       "name": "alarm",
-      "formula": "Always(Or(Not(At('sensor', P.parse('M()'))), P.parse('R()')))",
-      "trace": "{}; {R()}; {R()}",
-      "events": ["", "sensor->"]
+      "formula": "Always(Or(Not(At('sensor', P('M()'))), P('R()')))",
+      "trace": "{}; {R()}; {}",
+      "events": ["", "sensor->", "sensor->"]
     },
     {
       "name": "sensor",
       "formula": "true()",
       "trace": "{M()}",
-      "events": [""]
+      "events": ["", "->alarm", "->alarm"]
     }
   ]
 
