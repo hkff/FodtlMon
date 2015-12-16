@@ -22,6 +22,7 @@ import getopt
 from ltl.test import *
 from dtl.test import *
 from fotl.test import *
+from fodtl.test import *
 
 ###################
 # Main
@@ -93,8 +94,7 @@ def main(argv):
         elif opt in ("-3", "--dtl"):
             monitor = Dtlmon
         elif opt in ("-4", "--fodtl"):
-            print("Not yet implemented !")
-            return
+            monitor = Fodtlmon
         elif opt in ("-f", "--formula"):
             formula = arg
         elif opt in ("-t", "--trace"):
@@ -144,6 +144,7 @@ def main(argv):
         print("")
         print("Trace        : %s" % tr)
         print("Formula      : %s" % fl)
+        print("Code         : %s" % fl.toCODE())
         print("PPrint       : %s" % fl.prefix_print())
         print("TSPASS       : %s" % fl.toTSPASS())
         print("LTLFO        : %s" % fl.toLTLFO())
@@ -151,10 +152,6 @@ def main(argv):
         if l2m:
             res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO())
             print("ltl2mon : %s" % res)
-        # print(B3(res.eval()).value)
-        # mon.push_event(Event.parse("{P(b)}"))
-        # res = mon.monitor()
-        # print(res)
 
 # Call the main
 if __name__ == '__main__':

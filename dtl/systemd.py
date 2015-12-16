@@ -105,6 +105,9 @@ class Actor:
         print("  Main monitor %s : %s" % (self.name, res))
         # print(self.get_kv())
 
+    def push_event(self, event):
+        self.monitor.push_event(event)
+
 
 #############################
 # Distributed system
