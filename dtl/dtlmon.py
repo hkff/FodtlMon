@@ -46,9 +46,10 @@ class Dtlmon(Ltlmon):
     def prg(self, formula, trace):
         if isinstance(formula, At):
             # Check in KV
-            res = self.KV.has(formula.fid)
+            res = self.KV.get_entry(formula.fid)
             # return Boolean3.Unknown if res == -1 else self.get_kv().entries[res].value
-            x = self.get_kv().entries[res].value
+            # x = self.get_kv().entries[res].value
+            x = res.value
             if x is Boolean3.Unknown:
                 return formula
             elif x is Boolean3.Top:

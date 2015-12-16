@@ -5,7 +5,8 @@
       "name": "alarm",
       "formula": "Always(Or(Not(At('sensor', P('M()'))), P('R()')))",
       "trace": "{}; {R()}; {}",
-      "events": ["", "sensor->", "sensor->"]
+      "events": ["", "sensor->", "sensor->"],
+      "speed": 2
     },
     {
       "name": "sensor",

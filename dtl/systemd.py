@@ -65,13 +65,14 @@ class Actor:
                 else:
                     return Actor.Event(target=res[0], e_type=Actor.Event.EventType.IN)
 
-    def __init__(self, name="", formula=None, trace=None, events=None):
+    def __init__(self, name="", formula=None, trace=None, events=None, speed=1):
         self.name = name
         self.formula = formula
         self.trace = trace
         self.monitor = None
         self.submons = []
         self.events = [] if events is None else events
+        self.speed = speed
 
     def __str__(self):
         evs = "[%s]" % ",".join(str(e) for e in self.events)
@@ -217,7 +218,8 @@ class System:
 
         print("\n== Running monitors on each actor...")
         for a in self.actors:
-            a.run(once=once)
+            for i in range(a.speed):
+                a.run(once=once)
         self.turn += 1
 
     def update_events(self, e):
@@ -241,7 +243,8 @@ class System:
                      actorName : <String>,
                      formula: <String>,
                      events: ["->b", "b->"],
-                     trace: []
+                     trace: [],
+                     speed: 1,2,3...
                     }
                 ]
         }
@@ -249,15 +252,18 @@ class System:
         :return:
         """
         decoded = json.JSONDecoder().decode(js)
-        actors = decoded["actors"]
+        actors = decoded.get("actors")
+        if actors is None:
+            raise Exception("No actors found in the system !")
         s = System()
         for a in actors:
             # Getting actor info
-            a_name = a["name"]
-            a_formula = a["formula"]
-            a_trace = a["trace"]
-            sa_events = a["events"]
+            a_name = a.get("name")
+            a_formula = a.get("formula")
+            a_trace = a.get("trace")
+            sa_events = a.get("events")
             a_events = []
+            a_speed = 1 if a.get("speed") is None else int(a["speed"])
 
             # Parsing actor info
             for e in sa_events:
@@ -266,7 +272,7 @@ class System:
             a_trace = Trace.parse(a_trace)
 
             # Creating the actor
-            actor = Actor(name=a_name, formula=a_formula, trace=a_trace, events=a_events)
+            actor = Actor(name=a_name, formula=a_formula, trace=a_trace, events=a_events, speed=a_speed)
 
             # Add actor to the system
             s.add_actors(actor)

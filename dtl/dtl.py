@@ -65,33 +65,6 @@ class IKVector:
     """
     KVector interface
     """
-    class IEntry:
-        """
-        KVector Entry interface
-        """
-        def time_compare(self, other):
-            pass
-
-        def update(self, e):
-            pass
-
-    def __init__(self, entries=None):
-        self.entries = [] if entries is None else entries
-
-    def add_entry(self, entry):
-        raise Exception("Unimplemented method !")
-
-    def has(self, entry):
-        raise Exception("Unimplemented method !")
-
-    def update(self, entry):
-        raise Exception("Unimplemented method !")
-
-
-class KVector(IKVector):
-    """
-    Knowledge vector
-    """
     class Entry:
         def __init__(self, fid, agent="", value=Boolean3.Unknown, timestamp=0):
             self.fid = fid
@@ -117,6 +90,27 @@ class KVector(IKVector):
             self.value = e.value
             self.timestamp = e.timestamp
 
+    def __init__(self, entries=None):
+        self.entries = [] if entries is None else entries
+
+    def add_entry(self, entry):
+        raise Exception("Unimplemented method !")
+
+    def has(self, entry):
+        raise Exception("Unimplemented method !")
+
+    def get_entry(self, entry):
+        raise Exception("Unimplemented method !")
+
+    def update(self, entry):
+        raise Exception("Unimplemented method !")
+
+
+class KVector(IKVector):
+    """
+    Knowledge vector
+    """
+
     def __str__(self):
         return ",".join([str(e) for e in self.entries])
 
@@ -127,17 +121,57 @@ class KVector(IKVector):
             return next((self.entries.index(x) for x in self.entries if x.fid == entry), -1)
 
     def update(self, entry):
-        i = self.has(entry)
-        if i != -1:
-            if entry.time_compare(self.entries[i]) == 1:
-                self.entries[i].update(entry)
+        # i = self.has(entry)
+        i = self.get_entry(entry)
+        if i is not None:
+            if entry.time_compare(i) == 1:
+                i.update(entry)
 
     def add_entry(self, entry):
         self.entries.append(entry)
 
+    def get_entry(self, entry):
+        if isinstance(entry, IKVector.Entry):
+            return next((x for x in self.entries if x.fid == entry.fid), None)
+        else:
+            return next((x for x in self.entries if x.fid == entry), None)
 
-class KVector_H(IKVector):
+
+class KVector_H(KVector):
     """
     Knowledge vector second implementation
     """
-    pass
+    def __init__(self, entries=None):
+        self.entries = {} if entries is None else entries
+
+    def __str__(self):
+        return ",".join([",".join([str(x) for x in self.entries[e]]) for e in self.entries])
+
+    def add_entry(self, entry):
+        e = self.entries.get(entry.agent)
+        if e is None:
+            self.entries[entry.agent] = [entry]
+        else:
+            self.entries[entry.agent].append(entry)
+
+    def has(self, entry):
+        if isinstance(entry, KVector_H.Entry):
+            e = self.entries.get(entry.agent)
+            if e is None:
+                return -1
+            else:
+                return next((e.index(x) for x in e if x.fid == entry.fid), -1)
+        return -1
+
+    def get_entry(self, entry):
+        if isinstance(entry, IKVector.Entry):
+            e = self.entries.get(entry.agent)
+            if e is None: return e
+            return next((x for x in e if x.fid == entry.fid), None)
+        else:
+            n = entry.split("_")[0]
+            e = self.entries.get(n)
+            if e is None: return e
+            x = next((x for x in e if x.fid == entry), None)
+            return x
+
