@@ -106,7 +106,6 @@ class Ltlmon(Mon):
         else:
             print("Error " + str(formula))
             return None
-        print("%s %s " %(type(formula), res))
         return res
 
 
