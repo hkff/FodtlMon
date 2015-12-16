@@ -101,8 +101,8 @@ class Actor:
             # print("%s %s %s %s lst %s" % (self.name, m.fid, m.last, m.counter, m.last))
             self.get_kv().update(KVector.Entry(m.fid, agent=self.name, value=m.last, timestamp=m.counter))
         res = self.monitor.monitor(once=once)
-        print("  Main monitor %s : %s %s" % (self.name, res, self.monitor.rewrite))
-        print(self.get_kv())
+        print("  Main monitor %s : %s" % (self.name, res))
+        # print(self.get_kv())
 
 
 #############################
@@ -199,7 +199,8 @@ class System:
                 e = a.events[self.turn]
                 if e.e_type == Actor.Event.EventType.OUT:
                     # register
-                    self.coms["%s->%s" % (a.name, e.target)].append(copy.deepcopy(self.get_actor(e.target).get_kv()))
+                    # print("Sending %s %s" % (a.name, a.get_kv()))
+                    self.coms["%s->%s" % (a.name, e.target)].append(copy.deepcopy(a.get_kv()))
 
         # Handling IN messages
         for a in self.actors:
