@@ -21,7 +21,7 @@ import sys
 import getopt
 from ltl.test import *
 from dtl.test import *
-
+from fotl.test import *
 
 ###################
 # Main
@@ -89,8 +89,7 @@ def main(argv):
         elif opt in ("-1", "--ltl"):
             monitor = Ltlmon
         elif opt in ("-2", "--fotl"):
-            print("Not yet implemented !")
-            return
+            monitor = Fotlmon
         elif opt in ("-3", "--dtl"):
             monitor = Dtlmon
         elif opt in ("-4", "--fodtl"):
