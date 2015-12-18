@@ -38,7 +38,7 @@ class Forall(UExp):
         return "![%s](%s)" % (",".join([v.toTSPASS() for v in self.var]), self.inner.toTSPASS())
 
     def toLTLFO(self):
-        return "A(%s)(%s)" % (",".join([v.toLTLFO() for v in self.var]), self.inner.toLTLFO())
+        return "A %s:data. (%s)" % (",".join([v.toLTLFO() for v in self.var]), self.inner.toLTLFO())
 
     def prefix_print(self):
         return str(self)
