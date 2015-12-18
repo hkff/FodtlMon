@@ -22,22 +22,6 @@ import inspect
 import imp
 from random import random
 
-#
-# a = G(And(Next("e"), false()))
-# #print(Ltlmon(a).prg(a, "PHI"))
-#
-# d = P("send", [V("a"), V("b")])
-# print(d)
-# print(Event.parse("{P(a) | P(b)}"))
-# print(Trace.parse("{P(a) | P(b,d)}; {O(c)}"))
-# print(Boolean3.Bottom.value)
-# print(Boolean3.Top.value)
-# print(Boolean3.Unknown.value)
-# print(Trace.parse("{data('d') | data('t') | read('d')}; {data('g')}"))
-# print(Trace.parse("{P(o)}"))
-# print(Trace.parse(""))
-#print(Ltlmon().prg(G(true()), "PHI"))
-
 
 class Fuzzer:
     """
@@ -138,7 +122,6 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
             if res1 != res2:
                 errors += 1
                 print2("\n## Result are different ! ", file=f)
-                # print2(res0, file=f)
                 print2(res1, file=f)
                 print2(res2, file=f)
                 if interactive:

@@ -25,7 +25,21 @@ class Fotlmon(Ltlmon):
     """
     def prg(self, formula, event, valuation=None):
         if isinstance(formula, Forall):
-            return self.prg(ForallConj(), event, valuation)
+            elems = []
+            # (f, valuation)
+            # for (action <- event if action._1 == p.name) {
+            #   var vNew: Valuation = v
+            #   for ((variable, i) <- p.args.zipWithIndex) {
+            #     vNew += ((variable.name, action._2(i)))
+            #   }
+            #   elems += ((psi, vNew))
+            # }
+            return self.prg(ForallConj(elems), event, valuation)
+        elif isinstance(formula, ForallConj):
+            e = []
+            for x in formula.inner:
+                e.append((self.prg(x[0], event, valuation), valuation))
+            return ForallConj(e).eval()
         else:
             return super().prg(formula, event, valuation)
 
@@ -36,15 +50,17 @@ class ForallConj(UExp):
     """
     symbol = "\u2227"
 
-    def __init__(self, var=None, inner=None):
+    def __init__(self, inner=None):
         super().__init__(inner)
-        self.var = [] if var is None else var
-        if not isinstance(self.var, list):
-            self.var = [self.var]
-
 
     def eval(self):
-        return self
+        new_elems = list(filter(lambda x: x[0] is not true(), self.inner))
+        if len(list(filter(lambda x: x[0] is false(), self.inner))) > 0:
+            return Boolean3.Bottom
+        elif len(new_elems) == 0:
+            return Boolean3.Top
+        else:
+            return ForallConj(new_elems)
 
     def __str__(self):
         return "%s %s (%s)" % (self.symbol, ",".join([str(v) for v in self.var]), self.inner)

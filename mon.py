@@ -150,6 +150,7 @@ def main(argv):
         print("LTLFO        : %s" % fl.toLTLFO())
         print("Result       : %s" % res)
         if l2m:
+            print(fl.toLTLFO())
             res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO())
             print("ltl2mon : %s" % res)
 
