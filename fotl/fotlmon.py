@@ -25,6 +25,6 @@ class Fotlmon(Ltlmon):
     """
     def prg(self, formula, trace, valuation=None):
         if isinstance(formula, Forall):
-            pass
+            return Boolean3.Unknown
         else:
-            return super().prg(formula, trace)
+            return super().prg(formula, trace, valuation)

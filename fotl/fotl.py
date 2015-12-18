@@ -70,4 +70,4 @@ class Exists(Neg, Forall):
         return "?[%s](%s)" % (",".join([v.toTSPASS() for v in self.var]), self.inner.toTSPASS())
 
     def toLTLFO(self):
-        return "E(%s)(%s)" % (",".join([v.toLTLFO() for v in self.var]), self.inner.toLTLFO())
+        return "E %s:data. (%s)" % (",".join([v.toLTLFO() for v in self.var]), self.inner.toLTLFO())

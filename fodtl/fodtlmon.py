@@ -29,6 +29,6 @@ class Fodtlmon(Dtlmon, Fotlmon):
 
     def prg(self, formula, trace, valuation=None):
         if isinstance(formula, Forall):
-            Fotlmon.prg(self, formula, trace, valuation=valuation)
+            Fotlmon.prg(self, formula, valuation)
         else:
-            return Dtlmon.prg(self, formula, trace)
+            return Dtlmon.prg(self, formula, valuation)
