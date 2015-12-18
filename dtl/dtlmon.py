@@ -43,7 +43,7 @@ class Dtlmon(Ltlmon):
     #     # print(ret)
     #     return ret
 
-    def prg(self, formula, trace, valuation=None):
+    def prg(self, formula, event, valuation=None):
         if isinstance(formula, At):
             # Check in KV
             res = self.KV.get_entry(formula.fid)
@@ -59,7 +59,7 @@ class Dtlmon(Ltlmon):
         elif isinstance(formula, Boolean3):
             return formula
         else:
-            return super().prg(formula, trace, valuation)
+            return super().prg(formula, event, valuation)
 
     def get_kv(self):
         return self.parent.KV

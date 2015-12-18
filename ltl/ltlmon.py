@@ -65,11 +65,11 @@ class Ltlmon(Mon):
         # print(ret)
         return ret
 
-    def prg(self, formula, trace, valuation=None):
+    def prg(self, formula, event, valuation=None):
         # print(formula)
         if isinstance(formula, Predicate):
             # Todo : Check if Predicate is in AP
-            res = true() if trace.contains(formula) else false()
+            res = true() if event.contains(formula) else false()
 
         elif isinstance(formula, true):
             res = true()
@@ -78,27 +78,27 @@ class Ltlmon(Mon):
             res = false()
 
         elif isinstance(formula, Neg):
-            res = Neg(self.prg(formula.inner, trace, valuation)).eval()
+            res = Neg(self.prg(formula.inner, event, valuation)).eval()
 
         elif isinstance(formula, Or):
-            res = Or(self.prg(formula.left, trace, valuation), self.prg(formula.right, trace, valuation)).eval()
+            res = Or(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, And):
-            res = And(self.prg(formula.left, trace, valuation), self.prg(formula.right, trace, valuation)).eval()
+            res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, Always):
-            res = And(self.prg(formula.inner, trace, valuation), G(formula.inner)).eval()
+            res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
 
         elif isinstance(formula, Future):
-            res = Or(self.prg(formula.inner, trace, valuation), F(formula.inner)).eval()
+            res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
 
         elif isinstance(formula, Until):
-            res = Or(self.prg(formula.right, trace, valuation),
-                     And(self.prg(formula.left, trace, valuation), U(formula.left, formula.right)).eval()).eval()
+            res = Or(self.prg(formula.right, event, valuation),
+                     And(self.prg(formula.left, event, valuation), U(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Release):
-            res = Or(self.prg(formula.left, trace, valuation),
-                     And(self.prg(formula.right, trace, valuation), R(formula.left, formula.right)).eval()).eval()
+            res = Or(self.prg(formula.left, event, valuation),
+                     And(self.prg(formula.right, event, valuation), R(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Next):
             res = formula.inner

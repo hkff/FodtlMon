@@ -24,10 +24,10 @@ class Fodtlmon(Dtlmon, Fotlmon):
     Fodtl monitoring using progression technique
     """
 
-    def __init__(self, formula, trace, actor=None, parent=None, fid=""):
-        Dtlmon.__init__(self, formula, trace, actor=actor, parent=parent, fid=fid)
+    def __init__(self, formula, event, actor=None, parent=None, fid=""):
+        Dtlmon.__init__(self, formula, event, actor=actor, parent=parent, fid=fid)
 
-    def prg(self, formula, trace, valuation=None):
+    def prg(self, formula, event, valuation=None):
         if isinstance(formula, Forall):
             Fotlmon.prg(self, formula, valuation)
         else:

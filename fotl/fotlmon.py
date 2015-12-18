@@ -23,8 +23,28 @@ class Fotlmon(Ltlmon):
     """
     Fotl monitoring using progression technique
     """
-    def prg(self, formula, trace, valuation=None):
+    def prg(self, formula, event, valuation=None):
         if isinstance(formula, Forall):
-            return Boolean3.Unknown
+            return self.prg(ForallConj(), event, valuation)
         else:
-            return super().prg(formula, trace, valuation)
+            return super().prg(formula, event, valuation)
+
+
+class ForallConj(UExp):
+    """
+    Forall Conjunction (internal for monitor)
+    """
+    symbol = "\u2227"
+
+    def __init__(self, var=None, inner=None):
+        super().__init__(inner)
+        self.var = [] if var is None else var
+        if not isinstance(self.var, list):
+            self.var = [self.var]
+
+
+    def eval(self):
+        return self
+
+    def __str__(self):
+        return "%s %s (%s)" % (self.symbol, ",".join([str(v) for v in self.var]), self.inner)
