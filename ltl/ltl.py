@@ -177,6 +177,14 @@ class Parameter(Exp):
     def toCODE(self):
         return "%s('%s')" % (self.__class__.__name__, self.name)
 
+    @staticmethod
+    def parse(string: str):
+        string = string.strip()
+        if string.startswith("'") and string[-1] == "'":
+            return Variable(string[1:-1])
+        else:
+            return Constant(string)
+
 
 class Variable(Parameter):
     """
@@ -225,7 +233,7 @@ class Predicate(Exp):
             name = string[0: string.find("(")]
             args = string[string.find("(")+1:-1].split(",")
             arguments = []
-            [arguments.append(Constant(ar)) for ar in args]
+            [arguments.append(Parameter.parse(ar)) for ar in args]
         else:
             print("Invalid predicate format !")
             return
@@ -392,6 +400,7 @@ class Imply(Or):
 
     def __init__(self, left=None, right=None):
         super().__init__(Neg(left), right)
+
 
 ##
 # Temporal operators
