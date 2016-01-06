@@ -24,22 +24,50 @@ class Fotlmon(Ltlmon):
     Fotl monitoring using progression technique
     """
     def prg(self, formula, event, valuation=None):
+        if isinstance(formula, Predicate):
+            # Overrides the Predicate test of Ltlmon
+            print("%s %s" % (formula, valuation))
+            # for a in formula.args:
+            #     if isinstance(a, Variable):
+            # TODO review
+            for v in valuation:
+                for a in formula.args:
+                    print("p test %s %s" % (a.name, v.var))
+                    if a.name == v.var:
+                        # TODO check type
+                        print("true")
+                        return true()
+            return true() if event.contains(formula) else false()
+
         if isinstance(formula, Forall):
             elems = []
-            # (f, valuation)
-            # for (action <- event if action._1 == p.name) {
-            #   var vNew: Valuation = v
-            #   for ((variable, i) <- p.args.zipWithIndex) {
-            #     vNew += ((variable.name, action._2(i)))
-            #   }
-            #   elems += ((psi, vNew))
-            # }
+            if valuation is None:
+                valuation = []
+
+            for p in event.predicates:
+                if p.name == formula.var.vtype:
+                    valuation2 = []
+                    valuation2.extend(valuation)
+                    for v in p.args:
+                        # Bind the value of the variable in the predicate
+                        # with the variable name in the VarDec
+                        valuation2.append(Valuation(v, formula.var.name))
+                    # Add the formula with the valuation for the variable
+                    elems.append(ForallConjNode(formula.inner, valuation2))
+                    [print(x) for x in valuation2]
+            print(elems)
             return self.prg(ForallConj(elems), event, valuation)
+
         elif isinstance(formula, ForallConj):
+            print(formula)
             e = []
             for x in formula.inner:
-                e.append((self.prg(x[0], event, valuation), valuation))
-            return ForallConj(e).eval()
+                # Eval all nodes with their eval2
+                e.append(ForallConjNode(self.prg(x.formula, event, x.valuation), valuation))
+            res = ForallConj(e).eval()
+            print("ret %s " % res)
+            return res
+
         else:
             return super().prg(formula, event, valuation)
 
@@ -54,13 +82,25 @@ class ForallConj(UExp):
         super().__init__(inner)
 
     def eval(self):
-        new_elems = list(filter(lambda x: x[0] is not true(), self.inner))
-        if len(list(filter(lambda x: x[0] is false(), self.inner))) > 0:
-            return Boolean3.Bottom
-        elif len(new_elems) == 0:
+        elems2 = list(filter(lambda x: not isinstance(x.formula, true), self.inner))
+        if len(elems2) == 0:
             return Boolean3.Top
+        elif len(list(filter(lambda x: isinstance(x.formula, false), self.inner))) > 0:
+            return Boolean3.Bottom
         else:
-            return ForallConj(new_elems)
+            return ForallConj(elems2)
 
     def __str__(self):
-        return "%s %s (%s)" % (self.symbol, ",".join([str(v) for v in self.var]), self.inner)
+        return "%s (%s)" % (self.symbol, ", ".join([str(x) for x in self.inner]))
+
+
+class ForallConjNode:
+    """
+    Forall conjunction node contains formula -> evaluation
+    """
+    def __init__(self, formula=None, valuation=None):
+        self.formula = formula
+        self.valuation = valuation
+
+    def __str__(self):
+        return "(%s : %s)" % (self.formula, ",".join([str(x) for x in self.valuation]))

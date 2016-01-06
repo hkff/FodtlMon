@@ -181,9 +181,9 @@ class Parameter(Exp):
     def parse(string: str):
         string = string.strip()
         if string.startswith("'") and string[-1] == "'":
-            return Variable(string[1:-1])
+            return Constant(string[1:-1])
         else:
-            return Constant(string)
+            return Variable(string)
 
 
 class Variable(Parameter):
@@ -192,6 +192,9 @@ class Variable(Parameter):
     """
     def equal(self, o):
         return (o is not None) and isinstance(o, Variable) and (o.name == self.name)
+
+    def toLTLFO(self):
+        return "'%s'" % self.name
 
 V = Variable
 
