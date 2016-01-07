@@ -169,7 +169,7 @@ class Parameter(Exp):
         self.name = name
 
     def __str__(self):
-        return self.name
+        return "%s" % self.name
 
     def equal(self, o):
         return (o is not None) and isinstance(o, Parameter) and (o.name == self.name)

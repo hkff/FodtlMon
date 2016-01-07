@@ -26,17 +26,15 @@ class Fotlmon(Ltlmon):
     def prg(self, formula, event, valuation=None):
         if isinstance(formula, Predicate):
             # Overrides the Predicate test of Ltlmon
-            print("%s %s" % (formula, valuation))
-            # for a in formula.args:
-            #     if isinstance(a, Variable):
-            # TODO review
-            for v in valuation:
-                for a in formula.args:
-                    print("p test %s %s" % (a.name, v.var))
-                    if a.name == v.var:
-                        # TODO check type
-                        print("true")
+            # 1. Check if args are vars of P
+            for a in formula.args:
+                # 2. Check in trace if event contains P with for all linked vars
+                for v in valuation:
+                    z = Predicate(formula.name, [Constant(str(v.value))])
+                    res = event.contains(z)
+                    if res:
                         return true()
+            # TODO optimize
             return true() if event.contains(formula) else false()
 
         if isinstance(formula, Forall):
@@ -54,18 +52,14 @@ class Fotlmon(Ltlmon):
                         valuation2.append(Valuation(v, formula.var.name))
                     # Add the formula with the valuation for the variable
                     elems.append(ForallConjNode(formula.inner, valuation2))
-                    [print(x) for x in valuation2]
-            print(elems)
             return self.prg(ForallConj(elems), event, valuation)
 
         elif isinstance(formula, ForallConj):
-            print(formula)
             e = []
             for x in formula.inner:
                 # Eval all nodes with their eval2
                 e.append(ForallConjNode(self.prg(x.formula, event, x.valuation), valuation))
             res = ForallConj(e).eval()
-            print("ret %s " % res)
             return res
 
         else:
