@@ -18,27 +18,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'walid'
 from ltl.ltlmon import *
 from fotl.fotl import *
-
+step = 0
 
 class Fotlmon(Ltlmon):
     """
     Fotl monitoring using progression technique
     """
     def prg(self, formula, event, valuation=None):
+        global step
+
         if isinstance(formula, Predicate):
             # Overrides the Predicate test of Ltlmon
             # 1. Check if args are vars of P
-            for a in formula.args:
-                # 2. Check in trace if event contains P with for all linked vars
-                for v in valuation:
-                    z = Predicate(formula.name, [Constant(str(v.value))])
-                    res = event.contains(z)
-                    if res:
-                        return true()
-            # TODO optimize
-            return true() if event.contains(formula) else false()
+            # for a in formula.args:
 
-        if isinstance(formula, Forall):
+            # 2. Check in trace if event contains P with for all linked vars
+            print(formula)
+            print([str(x) for x in valuation])
+            # for v in valuation:
+            v = valuation[0]
+            # FIXME formula.args[1] args number Constant/vars
+            z = Predicate(formula.name, [Constant(str(v.value))])
+            res = event.contains(z)
+            if res:
+                res = true()
+            # TODO optimize
+            else:
+                res = true() if event.contains(formula) else false()
+
+        elif isinstance(formula, Forall):
             elems = []
             if valuation is None:
                 valuation = []
@@ -53,7 +61,7 @@ class Fotlmon(Ltlmon):
                         valuation2.append(Valuation(v, formula.var.name))
                     # Add the formula with the valuation for the variable
                     elems.append(ForallConjNode(formula.inner, valuation2))
-            return self.prg(ForallConj(elems), event, valuation)
+            res = self.prg(ForallConj(elems), event, valuation)
 
         elif isinstance(formula, ForallConj):
             e = []
@@ -61,10 +69,14 @@ class Fotlmon(Ltlmon):
                 # Eval all nodes with their eval2
                 e.append(ForallConjNode(self.prg(x.formula, event, x.valuation), valuation))
             res = ForallConj(e).eval()
-            return res
+            # return res
 
         else:
-            return super().prg(formula, event, valuation)
+            res = super().prg(formula, event, valuation)
+
+        # print("-- step %s -- %s ...... res %s " % (step, formula, res))
+        step += 1
+        return res
 
 
 class ForallConj(UExp):
@@ -77,10 +89,11 @@ class ForallConj(UExp):
         super().__init__(inner)
 
     def eval(self):
-        elems2 = list(filter(lambda x: not isinstance(x.formula, true), self.inner))
+        elems2 = list(filter(lambda x: not (isinstance(x.formula, true) or
+                                            x.formula is Boolean3.Top), self.inner))
         if len(elems2) == 0:
             return Boolean3.Top
-        elif len(list(filter(lambda x: isinstance(x.formula, false), self.inner))) > 0:
+        elif len(list(filter(lambda x: isinstance(x.formula, false) or x.formula is Boolean3.Bottom, self.inner))) > 0:
             return Boolean3.Bottom
         else:
             return ForallConj(elems2)

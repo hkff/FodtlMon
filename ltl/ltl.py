@@ -269,6 +269,10 @@ class Predicate(Exp):
                 return True
         return False
 
+    def instantiate(self, vars):
+
+        pass
+
 P = Predicate
 
 
