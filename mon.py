@@ -16,13 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-
+__author__ = 'walid'
 import sys
 import getopt
 from ltl.test import *
 from dtl.test import *
 from fotl.test import *
 from fodtl.test import *
+
 
 ###################
 # Main

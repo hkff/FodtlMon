@@ -15,6 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+__author__ = 'walid'
+
 from ltl.ltl import *
 import os
 import copy
@@ -122,5 +124,4 @@ def ltlfo2mon(formula:Formula, trace:Trace):
     p = os.popen(cmd)
     res = p.readline()[:-1]
     p.close()
-    # print(res)
     return res
