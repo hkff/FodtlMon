@@ -94,7 +94,7 @@ def print2(*args, file=None):
 
 
 def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1,
-              alphabet=None, constants=None, interactive=False, output_file="tests/logs.log"):
+              alphabet=None, constants=None, interactive=False, output_file="tests/logs.log", debug=False):
 
     fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
     fuzzer.init_fuzzer()
@@ -107,7 +107,7 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
             trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
             print2("\n\n============ LTLMON : ", file=f)
             print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
-            res1 = Ltlmon(formula, trace).monitor()
+            res1 = Ltlmon(formula, trace).monitor(debug=debug)
             print2(res1, file=f)
 
             print2("\n============ LTLFO2MON : ", file=f)
@@ -125,9 +125,9 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
                 print2(res1, file=f)
                 print2(res2, file=f)
                 if interactive:
-                    debug = input("Debug y/n : ")
-                    if debug == "y":
-                         Ltlmon(formula, trace).monitor()
+                    debug2 = input("Debug y/n : ")
+                    if debug2 == "y":
+                         Ltlmon(formula, trace).monitor(debug=debug)
                          input()
 
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)

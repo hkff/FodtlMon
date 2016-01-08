@@ -20,6 +20,7 @@ from ltl.ltlmon import *
 from fotl.fotl import *
 step = 0
 
+
 class Fotlmon(Ltlmon):
     """
     Fotl monitoring using progression technique

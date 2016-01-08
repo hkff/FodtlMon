@@ -39,13 +39,15 @@ def main(argv):
     monitor = None
     formula = None
     trace = None
-    online = False
-    fuzzer = False
     iformula = None
     itrace = None
     isys = None
-    rounds = 1
+    online = False
+    fuzzer = False
     l2m = False
+    debug = False
+    rounds = 1
+
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
@@ -63,15 +65,16 @@ def main(argv):
                         "\n     \t--sys= [file]   " + "\t Run a system from json file" + \
                         "\n     \t--rounds= int   " + "\t Number of rounds to run in the system" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
+                        "\n  -d \t--debug         " + "\t enable debug mode" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234z",
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m"])
+                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m", "debug"])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -112,10 +115,13 @@ def main(argv):
             itrace = arg
         elif opt in "--l2m":
             l2m = True
+        elif opt in ("-d", "--debug"):
+            debug = True
 
     if fuzzer:
         if monitor is Ltlmon:
-            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10, formula_depth=5, formula_nbr=10000)
+            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=10000, formula_depth=5,
+                          formula_nbr=10000, debug=debug)
         elif monitor is Dtlmon:
             run_dtl_tests()
         return
@@ -141,7 +147,7 @@ def main(argv):
         tr = Trace().parse(trace)
         fl = eval(formula)
         mon = monitor(fl, tr)
-        res = mon.monitor()
+        res = mon.monitor(debug=debug)
         print("")
         print("Trace        : %s" % tr)
         print("Formula      : %s" % fl)

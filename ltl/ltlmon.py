@@ -20,6 +20,7 @@ __author__ = 'walid'
 from ltl.ltl import *
 import os
 import copy
+import time
 DEBUG = False
 
 
@@ -56,7 +57,10 @@ class Ltlmon(Mon):
     LTL monitor using progression technique
     """
 
-    def monitor(self, once=False):
+    def monitor(self, once=False, debug=False):
+        if debug:
+            start_time = time.time()
+
         for e in self.trace.events[self.counter:]:
             self.counter += 1
             self.rewrite = self.prg(self.rewrite, e)
@@ -65,6 +69,9 @@ class Ltlmon(Mon):
             if self.last == Boolean3.Top or self.last == Boolean3.Bottom or once: break
         ret = "Result Progression: %s after %s events." % (self.last, self.counter)
         # print(ret)
+        if debug:
+            exec_time = time.time() - start_time
+            print("Execution time : %5.4f ms" % (exec_time*1000))
         return ret
 
     def prg(self, formula, event, valuation=None):
