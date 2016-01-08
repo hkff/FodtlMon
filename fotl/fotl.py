@@ -30,54 +30,52 @@ class Forall(UExp):
 
     def __init__(self, var=None, inner=None):
         super().__init__(inner)
-        # self.var = [] if var is None else var
-        # if not isinstance(self.var, list):
-        #     self.var = [self.var]
         self.var = var
 
     def toTSPASS(self):
-        # return "![%s](%s)" % (",".join([v.toTSPASS() for v in self.var]), self.inner.toTSPASS())
         return "![%s](%s)" % (self.var.toTSPASS(), self.inner.toTSPASS())
 
     def toLTLFO(self):
-        # return "A %s. (%s)" % (",".join([v.toLTLFO() for v in self.var]), self.inner.toLTLFO())
         return "A %s. (%s)" % (self.var.toLTLFO(), self.inner.toLTLFO())
 
     def prefix_print(self):
         return str(self)
 
     def toCODE(self):
-        # return "%s([%s], %s)" % (self.__class__.__name__, ",".join([v.toCODE() for v in self.var]), self.inner.toCODE())
         return "%s(%s, %s)" % (self.__class__.__name__, self.var.toCODE(), self.inner.toCODE())
 
     def eval(self):
         return self
 
     def __str__(self):
-        # return "%s %s (%s)" % (self.symbol, ",".join([str(v) for v in self.var]), self.inner)
         return "%s %s (%s)" % (self.symbol, str(self.var), self.inner)
 
 
-class Exists(Neg, Forall):
+class Exists(Neg):
     """
     Exsits operator
     """
     symbol = "\u2203"
 
     def __init__(self, var=None, inner=None):
-        Neg.__init__(self, inner=Forall(var=var, inner=Neg(inner)))
-        Forall.__init__(self, var=var, inner=inner)
+        self.var = var
+        self.inner2 = inner
+        super().__init__(inner=Forall(var=var, inner=Neg(inner)))
 
     def __str__(self):
-        return Forall.__str__(self)
+        return "%s %s (%s)" % (self.symbol, str(self.var), self.inner2)
+
+    def prefix_print(self):
+        return "(%s %s %s)" % (self.symbol, self.var, self.inner2.prefix_print())
+
+    def toCODE(self):
+        return "%s(%s, %s)" % (self.__class__.__name__, self.var.toCODE(), self.inner2.toCODE())
 
     def toTSPASS(self):
-        # return "?[%s](%s)" % (",".join([v.toTSPASS() for v in self.var]), self.inner.toTSPASS())
-        return "?[%s](%s)" % (self.var.toTSPASS(), self.inner.toTSPASS())
+        return "?[%s](%s)" % (self.var.toTSPASS(), self.inner2.toTSPASS())
 
     def toLTLFO(self):
-        # return "E %s. (%s)" % (",".join([v.toLTLFO() for v in self.var]), self.inner.toLTLFO())
-        return "E %s. (%s)" % (self.var.toLTLFO(), self.inner.toLTLFO())
+        return "E %s. (%s)" % (self.var.toLTLFO(), self.inner2.toLTLFO())
 
 
 class VarDec(Exp):
