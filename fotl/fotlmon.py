@@ -29,22 +29,8 @@ class Fotlmon(Ltlmon):
 
         if isinstance(formula, Predicate):
             # Overrides the Predicate test of Ltlmon
-            # 1. Check if args are vars of P
-            # for a in formula.args:
-
-            # 2. Check in trace if event contains P with for all linked vars
-            print(formula)
-            print([str(x) for x in valuation])
-            # for v in valuation:
-            v = valuation[0]
-            # FIXME formula.args[1] args number Constant/vars
-            z = Predicate(formula.name, [Constant(str(v.value))])
-            res = event.contains(z)
-            if res:
-                res = true()
-            # TODO optimize
-            else:
-                res = true() if event.contains(formula) else false()
+            # Check in trace if event contains P with for all linked vars
+            res = true() if event.contains(formula.instantiate(valuation)) else false()
 
         elif isinstance(formula, Forall):
             elems = []
@@ -89,8 +75,7 @@ class ForallConj(UExp):
         super().__init__(inner)
 
     def eval(self):
-        elems2 = list(filter(lambda x: not (isinstance(x.formula, true) or
-                                            x.formula is Boolean3.Top), self.inner))
+        elems2 = list(filter(lambda x: not (isinstance(x.formula, true) or x.formula is Boolean3.Top), self.inner))
         if len(elems2) == 0:
             return Boolean3.Top
         elif len(list(filter(lambda x: isinstance(x.formula, false) or x.formula is Boolean3.Bottom, self.inner))) > 0:

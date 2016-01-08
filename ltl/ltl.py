@@ -269,9 +269,23 @@ class Predicate(Exp):
                 return True
         return False
 
-    def instantiate(self, vars):
+    def instantiate(self, valuation):
+        p = Predicate(name=self.name, args=[])
+        for x in self.args:
+            if isinstance(x, Variable):
+                # Lookup in valuation
+                found = False
+                for v in valuation:
+                    if str(v.var) == x.name:
+                        p.args.append(Constant(str(v.value)))
+                        found = True
+                        break
+                if not found:
+                    raise Exception("Predicate instantiation failed : missing vars")
 
-        pass
+            elif isinstance(x, Constant):
+                p.args.append(x)
+        return p
 
 P = Predicate
 
