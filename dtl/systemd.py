@@ -165,7 +165,7 @@ class System:
             remotes = a.formula.walk(filter_type=At)
             # Compute formula hash
             for f in remotes:
-                f.compute_hash()
+                f.compute_hash(sid=a.name)
 
             # Create the global monitor for the actor
             a.monitor = Dtlmon(a.formula, a.trace)
@@ -205,7 +205,7 @@ class System:
                 for e in es:
                     if e.e_type == Actor.Event.EventType.OUT:
                         # register
-                        # print("Sending %s %s" % (a.name, a.get_kv()))
+                        # print("Sending from %s to %s %s" % (a.name, e.target, a.get_kv()))
                         if e.target is "*":
                             print("Broadcasting")
                             for ac in self.actors:

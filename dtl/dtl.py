@@ -53,8 +53,8 @@ class At(UExp):
     def __str__(self):
         return "@_{%s}(%s)" % (self.agent, self.inner)
 
-    def compute_hash(self):
-        self.fid = "%s_%s" % (self.agent, md5(str(self.inner).encode()).hexdigest())
+    def compute_hash(self, sid=""):
+        self.fid = "%s@%s_%s" % (sid, self.agent, md5(str(self.inner).encode()).hexdigest())
 
 
 #############################
