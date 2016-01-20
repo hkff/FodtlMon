@@ -180,7 +180,7 @@ class Parameter(Exp):
     @staticmethod
     def parse(string: str):
         string = string.strip()
-        if string.startswith("'") and string[-1] == "'":
+        if (string.startswith("'") and string[-1] == "'") or (string.startswith('"') and string[-1] == '"'):
             return Constant(string[1:-1])
         else:
             return Variable(string)
