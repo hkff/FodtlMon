@@ -46,9 +46,9 @@ class Actor:
 
         def __str__(self):
             if self.e_type is Actor.Event.EventType.IN:
-                return "->%s" % self.target
-            elif self.e_type is Actor.Event.EventType.OUT:
                 return "%s->" % self.target
+            elif self.e_type is Actor.Event.EventType.OUT:
+                return "->%s" % self.target
             else:
                 return "->"
 
@@ -201,24 +201,31 @@ class System:
         # Handling OUT messages
         for a in self.actors:
             if self.turn < len(a.events):
-                e = a.events[self.turn]
-                if e.e_type == Actor.Event.EventType.OUT:
-                    # register
-                    # print("Sending %s %s" % (a.name, a.get_kv()))
-                    self.coms["%s->%s" % (a.name, e.target)].append(copy.deepcopy(a.get_kv()))
+                es = a.events[self.turn]
+                for e in es:
+                    if e.e_type == Actor.Event.EventType.OUT:
+                        # register
+                        # print("Sending %s %s" % (a.name, a.get_kv()))
+                        if e.target is "*":
+                            print("Broadcasting")
+                            for ac in self.actors:
+                                self.coms["%s->%s" % (a.name, ac.name)].append(copy.deepcopy(a.get_kv()))
+                        else:
+                            self.coms["%s->%s" % (a.name, e.target)].append(copy.deepcopy(a.get_kv()))
 
         # Handling IN messages
         for a in self.actors:
             if self.turn < len(a.events):
-                e = a.events[self.turn]
-                if e.e_type == Actor.Event.EventType.IN:
-                    # Update KV and check pop the send
-                    print("%s received a message from %s ..." % (a.name, e.target))
-                    if len(self.coms["%s->%s" % (e.target, a.name)]) > 0:
-                        a.update_kv(self.coms["%s->%s" % (e.target, a.name)].pop(0))
-                        print(" - IN %s %s" % (a.name, a.get_kv()))
-                    else:
-                        print(" - Error %s trying to receive a message from %s that was not sent by %s" % (a.name, e.target, e.target))
+                es = a.events[self.turn]
+                for e in es:
+                    if e.e_type == Actor.Event.EventType.IN:
+                        # Update KV and check pop the send
+                        print("%s received a message from %s ..." % (a.name, e.target))
+                        if len(self.coms["%s->%s" % (e.target, a.name)]) > 0:
+                            a.update_kv(self.coms["%s->%s" % (e.target, a.name)].pop(0))
+                            print(" - IN %s %s" % (a.name, a.get_kv()))
+                        else:
+                            print(" - Error %s trying to receive a message from %s that was not sent by %s" % (a.name, e.target, e.target))
 
         print(Color("{autoblue}\n== Running monitors on each actor...{/blue}"))
         for a in self.actors:
@@ -271,7 +278,11 @@ class System:
 
             # Parsing actor info
             for e in sa_events:
-                a_events.append(Actor.Event.parse(e))
+                tmp = e.split("|")
+                tmp2 = []
+                for x in tmp:
+                    tmp2.append(Actor.Event.parse(x))
+                a_events.append(tmp2)
             a_formula = eval(a_formula)
             a_trace = Trace.parse(a_trace)
 
