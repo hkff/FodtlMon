@@ -19,7 +19,7 @@ __author__ = 'walid'
 from dtl.dtlmon import *
 import json
 import copy
-
+from tools.color import *
 
 #############################
 # System Actor
@@ -196,8 +196,8 @@ class System:
         :param once
         :return:
         """
-        print("\n====== System round %s ======" % self.turn)
-        print("== Updating actors events...")
+        print(Color("{autored}\n====== System round %s ======{/red}" % self.turn))
+        print(Color("{autoblue}== Updating actors events...{/blue}"))
         # Handling OUT messages
         for a in self.actors:
             if self.turn < len(a.events):
@@ -220,7 +220,7 @@ class System:
                     else:
                         print(" - Error %s trying to receive a message from %s that was not sent by %s" % (a.name, e.target, e.target))
 
-        print("\n== Running monitors on each actor...")
+        print(Color("{autoblue}\n== Running monitors on each actor...{/blue}"))
         for a in self.actors:
             for i in range(a.speed):
                 a.run(once=once)
