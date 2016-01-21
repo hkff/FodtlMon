@@ -282,6 +282,7 @@ class Predicate(Exp):
                         break
                 if not found:
                     raise Exception("Predicate instantiation failed : missing vars")
+                    p.args.append(Variable(str(x.name)))
 
             elif isinstance(x, Constant):
                 p.args.append(x)

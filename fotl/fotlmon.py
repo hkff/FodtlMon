@@ -28,19 +28,16 @@ class Fotlmon(Ltlmon):
     def prg(self, formula, event, valuation=None):
         global step
 
+        if valuation is None:
+                valuation = []
+
         if isinstance(formula, Predicate):
             # Overrides the Predicate test of Ltlmon
             # Check in trace if event contains P with for all linked vars
-            if len(valuation) == 0:
-                res = false()
-            else:
-                res = true() if event.contains(formula.instantiate(valuation)) else false()
+            res = true() if event.contains(formula.instantiate(valuation)) else false()
 
         elif isinstance(formula, Forall):
             elems = []
-            if valuation is None:
-                valuation = []
-
             for p in event.predicates:
                 if p.name == formula.var.vtype:
                     valuation2 = []
