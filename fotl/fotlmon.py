@@ -31,7 +31,10 @@ class Fotlmon(Ltlmon):
         if isinstance(formula, Predicate):
             # Overrides the Predicate test of Ltlmon
             # Check in trace if event contains P with for all linked vars
-            res = true() if event.contains(formula.instantiate(valuation)) else false()
+            if len(valuation) == 0:
+                res = false()
+            else:
+                res = true() if event.contains(formula.instantiate(valuation)) else false()
 
         elif isinstance(formula, Forall):
             elems = []
