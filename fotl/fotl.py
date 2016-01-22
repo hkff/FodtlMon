@@ -117,3 +117,65 @@ class Valuation:
 
     def __str__(self):
         return "%s<-%s" % (self.value, self.var)
+
+
+#############################
+# Functions / Interpreted OP
+#############################
+class IPredicate(Exp):
+    """
+    Interpreted Predicate
+    """
+    def __init__(self, *args):
+        self.args = args[0]
+
+    def __str__(self):
+        return "%s(%s)" % (self.__class__.__name__, ",".join([str(x) for x in self.args]))
+
+    def toCODE(self):
+        return "%s(%s)" % (self.__class__.__name__, ",".join([str(x) for x in self.args]))
+
+    def eval(self, valuation=None):
+        """
+        This method should be always called by subclasses
+        :param valuation
+        :return: Arguments evaluation
+        """
+        args2 = []
+        for a in self.args:
+            if isinstance(a, Function) or isinstance(a, IPredicate):
+                args2.append(Constant(a.eval(valuation=valuation)))
+
+            elif isinstance(a, Variable):
+                found = False
+                for v in valuation:
+                    if str(v.var) == a.name:
+                        args2.append(Constant(str(v.value)))
+                        found = True
+                        break
+                if not found:
+                    raise Exception("IPredicate instantiation failed : missing vars")
+            else:
+                args2.append(Constant(a))
+
+        return args2
+
+IP = IPredicate
+
+
+class Function(IPredicate):
+    """
+    Function
+    """
+    def __init__(self, *args):
+        super().__init__(args[0])
+
+    def eval(self, valuation=None):
+        """
+        This method should be override to return some value
+        :param valuation
+        :return:
+        """
+        return super().eval(valuation=valuation)
+
+FX = Function

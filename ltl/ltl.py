@@ -204,7 +204,7 @@ class Constant(Parameter):
     Constant
     """
     def equal(self, o):
-        return (o is not None) and isinstance(o, Constant) and (o.name == self.name)
+        return (o is not None) and isinstance(o, Constant) and (str(o.name) == str(self.name))
 
     def toLTLFO(self):
         return "'%s'" % self.name
@@ -282,7 +282,7 @@ class Predicate(Exp):
                         break
                 if not found:
                     raise Exception("Predicate instantiation failed : missing vars")
-                    p.args.append(Variable(str(x.name)))
+                    # p.args.append(Variable(str(x.name)))
 
             elif isinstance(x, Constant):
                 p.args.append(x)
