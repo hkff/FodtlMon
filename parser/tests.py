@@ -27,10 +27,57 @@ def test(res, _type):
     else:
         print("=== KO : %s %s" % (res, _type))
 
+"""
+G a
+F a
+X a
+a U b
+a R b
+Forall VD('l', 'type')
+Exists
+@()
+"""
 
-# Next
+# true
+test(FodtlParser.parse("true"), true)
+
+# false
+test(FodtlParser.parse("false"), false)
+
+# Constant
 test(FodtlParser.parse("'s'"), Constant)
 
-# Next
-test(FodtlParser.parse("X(s)"), Next)
+# Variable
+test(FodtlParser.parse("v"), Variable)
 
+# Predicate
+test(FodtlParser.parse("P('s')"), Predicate)
+
+# And
+test(FodtlParser.parse("true & false"), And)
+
+# Or
+test(FodtlParser.parse("true | false"), Or)
+
+# Neg
+test(FodtlParser.parse("~ true"), Neg)
+
+# Imply
+test(FodtlParser.parse("true => false"), Imply)
+
+# Next
+test(FodtlParser.parse("X(true)"), Next)
+
+# Always
+test(FodtlParser.parse("G(true)"), Always)
+
+# Future
+test(FodtlParser.parse("F(true)"), Future)
+
+# Until
+test(FodtlParser.parse("true U false"), Until)
+
+# Release
+test(FodtlParser.parse("true R false"), Release)
+
+print((FodtlParser.parse("ARG(y, 'secret') => ~(RET(x, 'Public')) ")))

@@ -29,15 +29,12 @@ class FodtlParser(ParseTreeListener):
     def __init__(self):
         self.formula = None
 
-   # Enter a parse tree produced by FODTLParser#constants.
-    def enterConstant(self, ctx:FODTLParser.ConstantContext):
-        pass
+    def exitTrue(self, ctx:FODTLParser.TrueContext):
+        self.formula = true()
 
-    # Exit a parse tree produced by FODTLParser#constants.
     def exitConstant(self, ctx:FODTLParser.ConstantContext):
         self.formula = Constant()
 
-    # Exit a parse tree produced by FODTLParser#x.
     def exitSnext(self, ctx):
         self.formula = X(ctx)
 
@@ -58,7 +55,7 @@ class FodtlParser(ParseTreeListener):
         # parser._interp.predictionMode = PredictionMode.LL_EXACT_AMBIG_DETECTION  # ~2.5
         tr = parser.formula()
         bt = Trees.toStringTree(tr, recog=parser)
-        print(bt)
+        # print(bt)
         l = parser.getParseListeners().pop(0)
         return l.formula
 

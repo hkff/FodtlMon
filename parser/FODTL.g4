@@ -40,8 +40,8 @@ Forall VD('l', 'type')
 Exists
 @()
 */
-formula : variable NEWLINE* | constant NEWLINE* | atom NEWLINE* | true | false
-        atom NEWLINE*
+formula : true | false //| constant | variable |
+        | atom NEWLINE*
         | formula NEWLINE* (conjunction | disjunction | implication | equivalence) NEWLINE* formula NEWLINE*
         | negation formula NEWLINE*
         | uQuant formula NEWLINE* | eQuant formula NEWLINE*
