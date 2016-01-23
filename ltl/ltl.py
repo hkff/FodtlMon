@@ -178,10 +178,12 @@ class Parameter(Exp):
         return "%s('%s')" % (self.__class__.__name__, self.name)
 
     @staticmethod
-    def parse(string: str):
+    def parse(string: str, cts=True):
         string = string.strip()
         if (string.startswith("'") and string[-1] == "'") or (string.startswith('"') and string[-1] == '"'):
             return Constant(string[1:-1])
+        elif cts:
+            return Constant(string)
         else:
             return Variable(string)
 
@@ -230,13 +232,13 @@ class Predicate(Exp):
         return "%s(%s)" % (self.name, args)
 
     @staticmethod
-    def parse(string: str):
+    def parse(string: str, cts=False):
         string = string.strip()
         if string.endswith(")"):
             name = string[0: string.find("(")]
             args = string[string.find("(")+1:-1].split(",")
             arguments = []
-            [arguments.append(Parameter.parse(ar)) for ar in args]
+            [arguments.append(Parameter.parse(ar, cts=cts)) for ar in args]
         else:
             print("Invalid predicate format !")
             return
@@ -508,7 +510,7 @@ class Event:
             prs = string[1:-1].split("|")
             if len(prs) == 1 and prs[0] is "":
                 return Event()
-            [predicates.append(Predicate.parse(p)) for p in prs]
+            [predicates.append(Predicate.parse(p, cts=True)) for p in prs]
         else:
             print("Invalid event format ! A trace should be between {}")
             return
