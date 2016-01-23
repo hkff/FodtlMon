@@ -127,7 +127,8 @@ class IPredicate(Exp):
     Interpreted Predicate
     """
     def __init__(self, *args):
-        self.args = args[0]
+        # IMPORTANT : Test the size of args, because of subclass super call
+        self.args = list(args[0] if len(args) == 1 else args)
 
     def __str__(self):
         return "%s(%s)" % (self.__class__.__name__, ",".join([str(x) for x in self.args]))
@@ -163,13 +164,24 @@ class IPredicate(Exp):
 IP = IPredicate
 
 
+class BIOperator(IPredicate):
+    """
+    Binary Interpreted operator
+    """
+    operator = None
+    cast = str
+
+    def eval(self, valuation=None):
+        args2 = super().eval(valuation=valuation)
+        return eval("%s %s %s" %(self.cast(args2[0].name), self.operator, self.cast(args2[1].name)))
+
+BIO = BIOperator
+
+
 class Function(IPredicate):
     """
     Function
     """
-    def __init__(self, *args):
-        super().__init__(args[0])
-
     def eval(self, valuation=None):
         """
         This method should be override to return some value
@@ -179,3 +191,18 @@ class Function(IPredicate):
         return super().eval(valuation=valuation)
 
 FX = Function
+
+
+class BFunction(Function):
+    """
+    Binary Function
+    """
+    operator = None
+    cast = str
+    return_cast = str
+
+    def eval(self, valuation=None):
+        args2 = super().eval(valuation=valuation)
+        return self.return_cast(eval("%s %s %s" %(self.cast(args2[0].name), self.operator, self.cast(args2[1].name))))
+
+BFX = BFunction

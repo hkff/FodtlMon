@@ -21,63 +21,68 @@ from fotl.fotl import *
 import re
 
 
-class Eq(IP):
-    """
-    Equality operator
-    """
-    def __init__(self, *args):
-        super().__init__(args)
-
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
-        return str(args2[0]) == str(args2[1])
+class Eq(BIO):
+    """ Equality operator """
+    operator = "=="
+    cast = str
 
 
-class Gt(IP):
-    """
-    Greater than
-    """
-    def __init__(self, *args):
-        super().__init__(args)
-
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
-        return int(args2[0].name) > int(args2[1].name)
+class Gt(BIO):
+    """ Greater than """
+    operator = "<"
+    cast = int
 
 
-class Lt(IP):
-    """
-    Greater than
-    """
-    def __init__(self, *args):
-        super().__init__(args)
+class Lt(BIO):
+    """ Less than """
+    operator = ">"
+    cast = int
 
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
-        return int(args2[0].name) < int(args2[1].name)
+
+class NEq(BIO):
+    """ Not equal """
+    operator = "!="
+    cast = str
 
 
 class Regex(IP):
-    """
-    Regular expression
-    """
-    def __init__(self, *args):
-        super().__init__(args)
-
+    """ Regular expression """
     def eval(self, valuation=None):
         args2 = super().eval(valuation=valuation)
         p = re.compile(args2[1].name)
         return False if p.match(args2[0].name) is None else True
 
 
+class In(BIO):
+    """ In """
+    operator = "in"
+    cast = str
+
+
 ####################
 # Math functions
 ####################
-class Add(FX):
-    def __init__(self, *args):
-        super().__init__(args)
+class MathFx(BFX):
+    """ Default math function : Do not use directly """
+    cast = float
+    return_cast = float
 
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
-        return int(args2[0].name) + int(args2[1].name)
 
+class Add(MathFx):
+    """ Addition """
+    operator = "+"
+
+
+class Sub(BFX):
+    """ Subtraction """
+    operator = "-"
+
+
+class Mul(BFX):
+    """ Multiplication """
+    operator = "*"
+
+
+class Div(BFX):
+    """ Division """
+    operator = "/"
