@@ -1,9 +1,39 @@
+/*
+FODTL grammar
+Copyright (C) 2016 Walid Benghabrit
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 grammar FODTL;
 
 //-------------------------------------------------------//
 //----------------- Lexer rules ------------------------//
 //------------------------------------------------------//
+O_not    : '~' | 'not';
+O_and    : '&';
+O_or     : '|';
+O_imply  : '->'  | '=>';
+true     : 'true';
+false    : 'false';
+
+O_always   : 'G';
+O_next     : 'X';
+O_future   : 'F';
+O_until    : 'U';
+O_release  : 'R';
+
 ID        : (('a'..'z')|('A'..'Z')) (('a'..'z')|('A'..'Z')| INT | '_')*;
 INT       : '0'..'9'+;
 NEWLINE   : '\r'?'\n' -> channel(HIDDEN);
@@ -20,56 +50,36 @@ h_dot     : '.';
 h_colon   : ':';
 h_equal   : '=';
 
-/*
-true
-false
 
-Valriable  v
-Constant   's'
-Predicate p(Var / cts)
-a And b
-a Or b
-Neg a
-a Imply b
-G a
-F a
-X a
-a U b
-a R b
-Forall VD('l', 'type')
-Exists
-@()
-*/
+//-------------------------------------------------------//
+//----------------- Parser rules -----------------------//
+//------------------------------------------------------//
+main    : formula;
 formula : true | false //| constant | variable |
-        | atom NEWLINE*
-        | formula NEWLINE* (conjunction | disjunction | implication | equivalence) NEWLINE* formula NEWLINE*
-        | negation formula NEWLINE*
+        | predicate NEWLINE* | negation NEWLINE*
+        | formula NEWLINE* (O_and | O_or | O_imply) NEWLINE* formula NEWLINE*
         | uQuant formula NEWLINE* | eQuant formula NEWLINE*
         | formula btOperators formula NEWLINE* | utOperators formula NEWLINE*
         | h_lpar formula h_rpar NEWLINE*
-        | formula NEWLINE* formula;
+        | remote;
 
-atom        : predicate (h_lpar (variable | constant) (',' (variable | constant))* h_rpar)?;
-predicate   : ID;
+// Classical logic
+predicate   : ID h_lpar ((variable | constant | INT) (',' (variable | constant | INT))*) h_rpar;
 variable    : ID;
-constant    : '\'' ID '\'';
-true        : 'true';
-false       : 'false';
-negation    : '~' | 'not';
-conjunction : '&';
-disjunction : '|';
-implication : '->' |'=>';
-equivalence :'<->' | '<=>';
+constant    : '\'' ID | INT '\'';
+negation    : O_not formula;
 
-variabledec : ID h_colon ID;
-uQuant : '!' '[' variabledec ']';
-eQuant : '?' '[' variabledec ']';
+// Temporal operators
+utOperators : O_always | O_next | O_future;
+btOperators : O_until | O_release;
 
-utOperators : always | snext | sometime;
-btOperators : until | release;
+// First order
+vartype : ID;
+vardec  : ID h_colon vartype;
+uQuant  : '!' h_lbar vardec+ h_rbar ;
+eQuant  : '?' h_lbar vardec+ h_rbar;
 
-always   : 'G';
-snext    : 'X';
-sometime : 'F';
-until    : 'U';
-release  : 'R';
+// Distributed operators
+at       : '@';
+remote   : at ID h_lpar formula h_rpar;
+

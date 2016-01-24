@@ -45,13 +45,13 @@ test(FodtlParser.parse("true"), true)
 test(FodtlParser.parse("false"), false)
 
 # Constant
-test(FodtlParser.parse("'s'"), Constant)
+#test(FodtlParser.parse("'s'"), Constant)
 
 # Variable
-test(FodtlParser.parse("v"), Variable)
+#test(FodtlParser.parse("v"), Variable)
 
 # Predicate
-test(FodtlParser.parse("P('s')"), Predicate)
+#test(FodtlParser.parse("P('s')"), Predicate)
 
 # And
 test(FodtlParser.parse("true & false"), And)
@@ -59,11 +59,12 @@ test(FodtlParser.parse("true & false"), And)
 # Or
 test(FodtlParser.parse("true | false"), Or)
 
-# Neg
-test(FodtlParser.parse("~ true"), Neg)
-
 # Imply
 test(FodtlParser.parse("true => false"), Imply)
+
+
+# Neg
+test(FodtlParser.parse("~ true"), Neg)
 
 # Next
 test(FodtlParser.parse("X(true)"), Next)
@@ -80,4 +81,6 @@ test(FodtlParser.parse("true U false"), Until)
 # Release
 test(FodtlParser.parse("true R false"), Release)
 
-print((FodtlParser.parse("ARG(y, 'secret') => ~(RET(x, 'Public')) ")))
+print((FodtlParser.parse("ARG('y', 'secret') ")))
+exit()
+print((FodtlParser.parse("In(2, [1,2])")))

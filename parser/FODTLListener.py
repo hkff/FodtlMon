@@ -8,6 +8,24 @@ else:
 # This class defines a complete listener for a parse tree produced by FODTLParser.
 class FODTLListener(ParseTreeListener):
 
+    # Enter a parse tree produced by FODTLParser#true.
+    def enterTrue(self, ctx:FODTLParser.TrueContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#true.
+    def exitTrue(self, ctx:FODTLParser.TrueContext):
+        pass
+
+
+    # Enter a parse tree produced by FODTLParser#false.
+    def enterFalse(self, ctx:FODTLParser.FalseContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#false.
+    def exitFalse(self, ctx:FODTLParser.FalseContext):
+        pass
+
+
     # Enter a parse tree produced by FODTLParser#h_lpar.
     def enterH_lpar(self, ctx:FODTLParser.H_lparContext):
         pass
@@ -71,21 +89,21 @@ class FODTLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FODTLParser#main.
+    def enterMain(self, ctx:FODTLParser.MainContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#main.
+    def exitMain(self, ctx:FODTLParser.MainContext):
+        pass
+
+
     # Enter a parse tree produced by FODTLParser#formula.
     def enterFormula(self, ctx:FODTLParser.FormulaContext):
         pass
 
     # Exit a parse tree produced by FODTLParser#formula.
     def exitFormula(self, ctx:FODTLParser.FormulaContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#atom.
-    def enterAtom(self, ctx:FODTLParser.AtomContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#atom.
-    def exitAtom(self, ctx:FODTLParser.AtomContext):
         pass
 
 
@@ -116,93 +134,12 @@ class FODTLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FODTLParser#true.
-    def enterTrue(self, ctx:FODTLParser.TrueContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#true.
-    def exitTrue(self, ctx:FODTLParser.TrueContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#false.
-    def enterFalse(self, ctx:FODTLParser.FalseContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#false.
-    def exitFalse(self, ctx:FODTLParser.FalseContext):
-        pass
-
-
     # Enter a parse tree produced by FODTLParser#negation.
     def enterNegation(self, ctx:FODTLParser.NegationContext):
         pass
 
     # Exit a parse tree produced by FODTLParser#negation.
     def exitNegation(self, ctx:FODTLParser.NegationContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#conjunction.
-    def enterConjunction(self, ctx:FODTLParser.ConjunctionContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#conjunction.
-    def exitConjunction(self, ctx:FODTLParser.ConjunctionContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#disjunction.
-    def enterDisjunction(self, ctx:FODTLParser.DisjunctionContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#disjunction.
-    def exitDisjunction(self, ctx:FODTLParser.DisjunctionContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#implication.
-    def enterImplication(self, ctx:FODTLParser.ImplicationContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#implication.
-    def exitImplication(self, ctx:FODTLParser.ImplicationContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#equivalence.
-    def enterEquivalence(self, ctx:FODTLParser.EquivalenceContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#equivalence.
-    def exitEquivalence(self, ctx:FODTLParser.EquivalenceContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#variabledec.
-    def enterVariabledec(self, ctx:FODTLParser.VariabledecContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#variabledec.
-    def exitVariabledec(self, ctx:FODTLParser.VariabledecContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#uQuant.
-    def enterUQuant(self, ctx:FODTLParser.UQuantContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#uQuant.
-    def exitUQuant(self, ctx:FODTLParser.UQuantContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#eQuant.
-    def enterEQuant(self, ctx:FODTLParser.EQuantContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#eQuant.
-    def exitEQuant(self, ctx:FODTLParser.EQuantContext):
         pass
 
 
@@ -224,48 +161,57 @@ class FODTLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FODTLParser#always.
-    def enterAlways(self, ctx:FODTLParser.AlwaysContext):
+    # Enter a parse tree produced by FODTLParser#vartype.
+    def enterVartype(self, ctx:FODTLParser.VartypeContext):
         pass
 
-    # Exit a parse tree produced by FODTLParser#always.
-    def exitAlways(self, ctx:FODTLParser.AlwaysContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#snext.
-    def enterSnext(self, ctx:FODTLParser.SnextContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#snext.
-    def exitSnext(self, ctx:FODTLParser.SnextContext):
+    # Exit a parse tree produced by FODTLParser#vartype.
+    def exitVartype(self, ctx:FODTLParser.VartypeContext):
         pass
 
 
-    # Enter a parse tree produced by FODTLParser#sometime.
-    def enterSometime(self, ctx:FODTLParser.SometimeContext):
+    # Enter a parse tree produced by FODTLParser#vardec.
+    def enterVardec(self, ctx:FODTLParser.VardecContext):
         pass
 
-    # Exit a parse tree produced by FODTLParser#sometime.
-    def exitSometime(self, ctx:FODTLParser.SometimeContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#until.
-    def enterUntil(self, ctx:FODTLParser.UntilContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#until.
-    def exitUntil(self, ctx:FODTLParser.UntilContext):
+    # Exit a parse tree produced by FODTLParser#vardec.
+    def exitVardec(self, ctx:FODTLParser.VardecContext):
         pass
 
 
-    # Enter a parse tree produced by FODTLParser#release.
-    def enterRelease(self, ctx:FODTLParser.ReleaseContext):
+    # Enter a parse tree produced by FODTLParser#uQuant.
+    def enterUQuant(self, ctx:FODTLParser.UQuantContext):
         pass
 
-    # Exit a parse tree produced by FODTLParser#release.
-    def exitRelease(self, ctx:FODTLParser.ReleaseContext):
+    # Exit a parse tree produced by FODTLParser#uQuant.
+    def exitUQuant(self, ctx:FODTLParser.UQuantContext):
+        pass
+
+
+    # Enter a parse tree produced by FODTLParser#eQuant.
+    def enterEQuant(self, ctx:FODTLParser.EQuantContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#eQuant.
+    def exitEQuant(self, ctx:FODTLParser.EQuantContext):
+        pass
+
+
+    # Enter a parse tree produced by FODTLParser#at.
+    def enterAt(self, ctx:FODTLParser.AtContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#at.
+    def exitAt(self, ctx:FODTLParser.AtContext):
+        pass
+
+
+    # Enter a parse tree produced by FODTLParser#remote.
+    def enterRemote(self, ctx:FODTLParser.RemoteContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#remote.
+    def exitRemote(self, ctx:FODTLParser.RemoteContext):
         pass
 
 
