@@ -154,8 +154,7 @@ class FodtlParser(ParseTreeListener):
         # parser._interp.predictionMode = PredictionMode.LL_EXACT_AMBIG_DETECTION  # ~2.5
         tr = parser.main()
         bt = Trees.toStringTree(tr, recog=parser)
-        print(bt)
+        # print(bt)
         l = parser.getParseListeners().pop(0)
-        print(l.formula.toCODE())
         return l.formula
 

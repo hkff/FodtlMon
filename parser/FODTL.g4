@@ -35,11 +35,13 @@ O_until    : 'U';
 O_release  : 'R';
 
 ID        : (('a'..'z')|('A'..'Z')) (('a'..'z')|('A'..'Z')| INT | '_')*;
+//REGEXP    : '*' | '+' | '?' | '{' | '}' | '['  | ']' | '|' | '<' | '>' | '=' 
+  //        | '\\' | '^' | '$' | '.' | ('a'..'z') | ('A'..'Z') | INT | '_' | '-';
 INT       : '0'..'9'+;
 NEWLINE   : '\r'?'\n' -> channel(HIDDEN);
 WS        : (' '|'\t'|'\n'|'\r')+ -> skip;
 BLANK     : (' ')+;
-STRING    : '"' (.)*? '"';
+STRING    : ('"' (.)*? '"');
 COMMENT   : '%' (.)*? '\n' -> channel(HIDDEN);
 
 H_lpar    : '(';
@@ -69,9 +71,10 @@ formula : true | false //| constant | variable |
 
 // Classical logic
 predicate   : ID H_lpar (arg (H_comma arg)*) H_rpar;
-arg         : variable | constant;
+arg         : variable | constant | regexp;
 variable    : ID;
 constant    : H_quote (ID | INT) H_quote;
+regexp      : 'r' STRING;
 negation    : O_not formula;
 
 // Temporal operators

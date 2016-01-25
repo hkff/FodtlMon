@@ -80,6 +80,15 @@ class FODTLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FODTLParser#regexp.
+    def enterRegexp(self, ctx:FODTLParser.RegexpContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#regexp.
+    def exitRegexp(self, ctx:FODTLParser.RegexpContext):
+        pass
+
+
     # Enter a parse tree produced by FODTLParser#negation.
     def enterNegation(self, ctx:FODTLParser.NegationContext):
         pass

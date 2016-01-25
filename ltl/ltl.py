@@ -166,7 +166,7 @@ class Parameter(Exp):
     Parameter
     """
     def __init__(self, name=""):
-        self.name = name
+        self.name = str(name)
 
     def __str__(self):
         return "%s" % self.name
@@ -178,9 +178,9 @@ class Parameter(Exp):
         return "%s('%s')" % (self.__class__.__name__, self.name)
 
     @staticmethod
-    def parse(string: str, cts=True):
+    def parse(string: str, cts=False):
         string = string.strip()
-        if (string.startswith("'") and string[-1] == "'") or (string.startswith('"') and string[-1] == '"'):
+        if (string.startswith("'") and string.endswith("'")) or (string.startswith('"') and string.endswith('"')):
             return Constant(string[1:-1])
         elif cts:
             return Constant(string)
@@ -196,7 +196,7 @@ class Variable(Parameter):
         return (o is not None) and isinstance(o, Variable) and (o.name == self.name)
 
     def toLTLFO(self):
-        return "'%s'" % self.name
+        return "%s" % self.name
 
 V = Variable
 
@@ -209,6 +209,9 @@ class Constant(Parameter):
         return (o is not None) and isinstance(o, Constant) and (str(o.name) == str(self.name))
 
     def toLTLFO(self):
+        return "'%s'" % self.name
+
+    def __str__(self):
         return "'%s'" % self.name
 
 C = Constant
@@ -247,7 +250,7 @@ class Predicate(Exp):
     def equal(self, p):
         res = False
         if isinstance(p, Predicate):
-            res = p.name == self.name and len(p.args) == len(self.args)
+            res = (p.name == self.name) and (len(p.args) == len(self.args))
             if res:
                 for a1, a2 in zip(self.args, p.args):
                     if not a1.equal(a2):
@@ -279,7 +282,7 @@ class Predicate(Exp):
                 found = False
                 for v in valuation:
                     if str(v.var) == x.name:
-                        p.args.append(Constant(str(v.value)))
+                        p.args.append(Constant(str(v.value.name)))
                         found = True
                         break
                 if not found:
@@ -516,7 +519,8 @@ class Event:
             prs = string[1:-1].split("|")
             if len(prs) == 1 and prs[0] is "":
                 return Event()
-            [predicates.append(Predicate.parse(p, cts=True)) for p in prs]
+            for p in prs:
+                predicates.append(Predicate.parse(p, cts=True))
         else:
             print("Invalid event format ! A trace should be between {}")
             return

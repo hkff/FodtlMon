@@ -151,7 +151,7 @@ class IPredicate(Exp):
                 found = False
                 for v in valuation:
                     if str(v.var) == a.name:
-                        args2.append(Constant(str(v.value)))
+                        args2.append(Constant(str(v.value.name)))
                         found = True
                         break
                 if not found:
