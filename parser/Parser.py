@@ -156,5 +156,6 @@ class FodtlParser(ParseTreeListener):
         bt = Trees.toStringTree(tr, recog=parser)
         print(bt)
         l = parser.getParseListeners().pop(0)
+        print(l.formula.toCODE())
         return l.formula
 

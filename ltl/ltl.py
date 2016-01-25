@@ -425,6 +425,12 @@ class Imply(Or):
     def __init__(self, left=None, right=None):
         super().__init__(Neg(left), right)
 
+    def __str__(self):
+        return "(%s %s %s)" % (self.left.inner, self.symbol, self.right)
+
+    def toCODE(self):
+        return "%s(%s,%s)" % (self.__class__.__name__, self.left.inner.toCODE(), self.right.toCODE())
+
 
 ##
 # Temporal operators
