@@ -81,6 +81,16 @@ test(FodtlParser.parse("true U false"), Until)
 # Release
 test(FodtlParser.parse("true R false"), Release)
 
-print((FodtlParser.parse("ARG('y', 'secret') ")))
+print((FodtlParser.parse("ARG('koko') ")))
 exit()
 print((FodtlParser.parse("In(2, [1,2])")))
+
+# Forall
+test(FodtlParser.parse("![d:data] false"), Forall)
+
+# Exists
+test(FodtlParser.parse("?[d:data] false"), Exists)
+
+# At
+test(FodtlParser.parse("@bob(true)"), At)
+
