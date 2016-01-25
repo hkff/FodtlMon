@@ -23,6 +23,7 @@ from ltl.test import *
 from dtl.test import *
 from fotl.test import *
 from fodtl.test import *
+from parser.Parser import *
 
 
 ###################
@@ -145,7 +146,7 @@ def main(argv):
     # print(argv)
     if None not in (monitor, trace, formula):
         tr = Trace().parse(trace)
-        fl = eval(formula)
+        fl = eval(formula[1:]) if formula.startswith(":") else FodtlParser.parse(formula)
         mon = monitor(fl, tr)
         res = mon.monitor(debug=debug)
         print("")

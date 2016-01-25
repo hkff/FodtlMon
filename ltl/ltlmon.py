@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'walid'
 
 from ltl.ltl import *
+from parser.Parser import *
 import os
 import copy
 import time
@@ -36,7 +37,7 @@ class Mon:
     AP = []
 
     def __init__(self, formula, trace):
-        self.formula = formula
+        self.formula = FodtlParser.parse(formula) if isinstance(formula, str) else formula
         self.trace = trace
         self.counter = 0
         self.last = Boolean3.Unknown

@@ -55,6 +55,7 @@ class FodtlParser(ParseTreeListener):
         self.formulas.append(Variable(name))
 
     def exitPredicate(self, ctx:FODTLParser.PredicateContext):
+        # TODO handle interpreted predicates and functions
          if len(self.formulas) >= len(ctx.arg()):
             name = str(ctx.ID()) if ctx.ID() is not None else ctx.ID()
             args = []
