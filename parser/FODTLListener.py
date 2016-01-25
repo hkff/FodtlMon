@@ -1,4 +1,4 @@
-# Generated from ../../../fodtlmon/parser/FODTL.g4 by ANTLR 4.5.1
+# Generated from FODTL.g4 by ANTLR 4.5.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .FODTLParser import FODTLParser
@@ -26,69 +26,6 @@ class FODTLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FODTLParser#h_lpar.
-    def enterH_lpar(self, ctx:FODTLParser.H_lparContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_lpar.
-    def exitH_lpar(self, ctx:FODTLParser.H_lparContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#h_rpar.
-    def enterH_rpar(self, ctx:FODTLParser.H_rparContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_rpar.
-    def exitH_rpar(self, ctx:FODTLParser.H_rparContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#h_lbar.
-    def enterH_lbar(self, ctx:FODTLParser.H_lbarContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_lbar.
-    def exitH_lbar(self, ctx:FODTLParser.H_lbarContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#h_rbar.
-    def enterH_rbar(self, ctx:FODTLParser.H_rbarContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_rbar.
-    def exitH_rbar(self, ctx:FODTLParser.H_rbarContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#h_dot.
-    def enterH_dot(self, ctx:FODTLParser.H_dotContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_dot.
-    def exitH_dot(self, ctx:FODTLParser.H_dotContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#h_colon.
-    def enterH_colon(self, ctx:FODTLParser.H_colonContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_colon.
-    def exitH_colon(self, ctx:FODTLParser.H_colonContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#h_equal.
-    def enterH_equal(self, ctx:FODTLParser.H_equalContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#h_equal.
-    def exitH_equal(self, ctx:FODTLParser.H_equalContext):
-        pass
-
-
     # Enter a parse tree produced by FODTLParser#main.
     def enterMain(self, ctx:FODTLParser.MainContext):
         pass
@@ -113,6 +50,15 @@ class FODTLListener(ParseTreeListener):
 
     # Exit a parse tree produced by FODTLParser#predicate.
     def exitPredicate(self, ctx:FODTLParser.PredicateContext):
+        pass
+
+
+    # Enter a parse tree produced by FODTLParser#arg.
+    def enterArg(self, ctx:FODTLParser.ArgContext):
+        pass
+
+    # Exit a parse tree produced by FODTLParser#arg.
+    def exitArg(self, ctx:FODTLParser.ArgContext):
         pass
 
 
@@ -194,15 +140,6 @@ class FODTLListener(ParseTreeListener):
 
     # Exit a parse tree produced by FODTLParser#eQuant.
     def exitEQuant(self, ctx:FODTLParser.EQuantContext):
-        pass
-
-
-    # Enter a parse tree produced by FODTLParser#at.
-    def enterAt(self, ctx:FODTLParser.AtContext):
-        pass
-
-    # Exit a parse tree produced by FODTLParser#at.
-    def exitAt(self, ctx:FODTLParser.AtContext):
         pass
 
 

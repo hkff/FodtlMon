@@ -27,16 +27,6 @@ def test(res, _type):
     else:
         print("=== KO : %s %s" % (res, _type))
 
-"""
-G a
-F a
-X a
-a U b
-a R b
-Forall VD('l', 'type')
-Exists
-@()
-"""
 
 # true
 test(FodtlParser.parse("true"), true)
@@ -44,14 +34,11 @@ test(FodtlParser.parse("true"), true)
 # false
 test(FodtlParser.parse("false"), false)
 
-# Constant
-#test(FodtlParser.parse("'s'"), Constant)
+# Predicate / Constant
+test(FodtlParser.parse("P('s')"), Predicate)
 
-# Variable
-#test(FodtlParser.parse("v"), Variable)
-
-# Predicate
-#test(FodtlParser.parse("P('s')"), Predicate)
+# Predicate / Variable
+test(FodtlParser.parse("P(s)"), Predicate)
 
 # And
 test(FodtlParser.parse("true & false"), And)
@@ -61,7 +48,6 @@ test(FodtlParser.parse("true | false"), Or)
 
 # Imply
 test(FodtlParser.parse("true => false"), Imply)
-
 
 # Neg
 test(FodtlParser.parse("~ true"), Neg)
@@ -81,16 +67,17 @@ test(FodtlParser.parse("true U false"), Until)
 # Release
 test(FodtlParser.parse("true R false"), Release)
 
-print((FodtlParser.parse("ARG('koko') ")))
-exit()
-print((FodtlParser.parse("In(2, [1,2])")))
-
 # Forall
 test(FodtlParser.parse("![d:data] false"), Forall)
 
 # Exists
 test(FodtlParser.parse("?[d:data] false"), Exists)
 
+# Forall 2
+test(FodtlParser.parse("![d:data y:pass] true"), Forall)
+
+# Exists 2
+test(FodtlParser.parse("?[d:data k:data] false"), Exists)
+
 # At
 test(FodtlParser.parse("@bob(true)"), At)
-

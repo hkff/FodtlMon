@@ -7,6 +7,16 @@ What is it?
 
 FODTLMON is a monitoring framework based on distributed first order linear temporal logic.
 
+Installation
+------------
+
+You need PythonX.X.X >= Python3.4.0 installed on your system
+To run the main program : python mon.py
+
+    You need to install the following dependencies :  
+    
+            $ sudo apt-get install antlr4-python3-runtime
+
 Usage
 -----
 
@@ -45,7 +55,7 @@ Contacts
 >   Dr. Hervé Grall       <Herve.Grall@mines-nantes.fr>        (Theory)  
 
 -------------------------------------------------------------------------------
-Copyright (C) 2014-2015 Walid Benghabrit  
+Copyright (C) 2014-2016 Walid Benghabrit  
 Ecole des Mines de Nantes - ARMINES  
 ASCOLA Research Group  
 A4CLOUD Project http://www.a4cloud.eu/

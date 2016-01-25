@@ -42,14 +42,18 @@ BLANK     : (' ')+;
 STRING    : '"' (.)*? '"';
 COMMENT   : '%' (.)*? '\n' -> channel(HIDDEN);
 
-h_lpar    : '(';
-h_rpar    : ')';
-h_lbar    : '[';
-h_rbar    : ']';
-h_dot     : '.';
-h_colon   : ':';
-h_equal   : '=';
-
+H_lpar    : '(';
+H_rpar    : ')';
+H_lbar    : '[';
+H_rbar    : ']';
+H_dot     : '.';
+H_colon   : ':';
+H_equal   : '=';
+H_comma   : ',';
+H_quote   : '\'';
+H_qmark   : '?';
+H_emark   : '!';
+H_at      : '@';
 
 //-------------------------------------------------------//
 //----------------- Parser rules -----------------------//
@@ -60,13 +64,14 @@ formula : true | false //| constant | variable |
         | formula NEWLINE* (O_and | O_or | O_imply) NEWLINE* formula NEWLINE*
         | uQuant formula NEWLINE* | eQuant formula NEWLINE*
         | formula btOperators formula NEWLINE* | utOperators formula NEWLINE*
-        | h_lpar formula h_rpar NEWLINE*
+        | H_lpar formula H_rpar NEWLINE*
         | remote;
 
 // Classical logic
-predicate   : ID h_lpar ((variable | constant | INT) (',' (variable | constant | INT))*) h_rpar;
+predicate   : ID H_lpar (arg (H_comma arg)*) H_rpar;
+arg         : variable | constant;
 variable    : ID;
-constant    : '\'' ID | INT '\'';
+constant    : H_quote (ID | INT) H_quote;
 negation    : O_not formula;
 
 // Temporal operators
@@ -75,11 +80,10 @@ btOperators : O_until | O_release;
 
 // First order
 vartype : ID;
-vardec  : ID h_colon vartype;
-uQuant  : '!' h_lbar vardec+ h_rbar ;
-eQuant  : '?' h_lbar vardec+ h_rbar;
+vardec  : ID H_colon vartype;
+uQuant  : H_emark H_lbar vardec+ H_rbar ;
+eQuant  : H_qmark H_lbar vardec+ H_rbar;
 
 // Distributed operators
-at       : '@';
-remote   : at ID h_lpar formula h_rpar;
+remote   : H_at ID H_lpar formula H_rpar;
 

@@ -1,6 +1,6 @@
 """
 fodtl parser
-Copyright (C) 2015 Walid Benghabrit
+Copyright (C) 2016 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,15 +43,29 @@ class FodtlParser(ParseTreeListener):
         self.formulas.append(false())
 
     def exitConstant(self, ctx:FODTLParser.ConstantContext):
-        self.formulas.append(Constant(""))
+        name = ""
+        if ctx.ID() is not None:
+            name = str(ctx.ID())
+        elif ctx.INT() is not None:
+            name = str(ctx.INT())
+        self.formulas.append(Constant(name))
 
     def exitVariable(self, ctx:FODTLParser.VariableContext):
-        self.formulas.append(Variable(""))
+        name = str(ctx.ID()) if ctx.ID() is not None else ""
+        self.formulas.append(Variable(name))
+
+    def exitPredicate(self, ctx:FODTLParser.PredicateContext):
+         if len(self.formulas) >= len(ctx.arg()):
+            name = str(ctx.ID()) if ctx.ID() is not None else ctx.ID()
+            args = []
+            for x in range(len(ctx.arg())):
+                args.append(self.formulas.pop())
+            args.reverse()
+            self.formulas.append(Predicate(name, args))
 
     def exitFormula(self, ctx:FODTLParser.FormulaContext):
         # Testing boolean operators
-        con = ctx.O_and() or ctx.O_or() or ctx.O_imply()
-        if con is not None:
+        if (ctx.O_and() or ctx.O_or() or ctx.O_imply()) is not None:
             if len(self.formulas) > 1:
                 f2 = self.formulas.pop()
                 f1 = self.formulas.pop()
@@ -84,6 +98,21 @@ class FodtlParser(ParseTreeListener):
                 self.formulas.append(klass(f1, f2))
             else:
                 raise Exception("Missing arguments")
+        # Testing First order operators
+        elif (ctx.uQuant() or ctx.eQuant()) is not None:
+            ctx2 = ctx.uQuant() if ctx.uQuant() is not None else ctx.eQuant()
+            klass = Forall if ctx.uQuant() is not None else Exists
+            if len(self.formulas) > len(ctx2.vardec()):
+                inner = self.formulas.pop()
+                for x in range(len(ctx2.vardec())):
+                    inner = klass(self.formulas.pop(), inner)
+                self.formulas.append(inner)
+            else:
+                raise Exception("Missing arguments")
+
+    def exitVardec(self, ctx:FODTLParser.VardecContext):
+        vd = VarDec(str(ctx.ID()), str(ctx.vartype().ID()))
+        self.formulas.append(vd)
 
     def exitNegation(self, ctx:FODTLParser.NegationContext):
         if len(self.formulas) > 0:
@@ -92,11 +121,12 @@ class FodtlParser(ParseTreeListener):
         else:
             raise Exception("Missing arguments")
 
-    def exitPredicate(self, ctx:FODTLParser.PredicateContext):
-         if len(self.formulas) > 0:
-            # inner = self.formulas.pop()
-            # TODO handle args number
-            self.formulas.append(Predicate("", []))
+    def exitRemote(self, ctx:FODTLParser.RemoteContext):
+        if len(self.formulas) > 0:
+            inner = self.formulas.pop()
+            self.formulas.append(At(str(ctx.ID()), inner))
+        else:
+            raise Exception("Missing arguments")
 
     def exitMain(self, ctx:FODTLParser.MainContext):
         if len(self.formulas) == 1:
