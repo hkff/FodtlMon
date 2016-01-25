@@ -50,6 +50,12 @@ class FodtlParser(ParseTreeListener):
             name = str(ctx.INT())
         self.formulas.append(Constant(name))
 
+    def exitRegexp(self, ctx:FODTLParser.RegexpContext):
+        name = ""
+        if ctx.STRING() is not None:
+            name = str(ctx.STRING())
+        self.formulas.append(Constant(name))
+
     def exitVariable(self, ctx:FODTLParser.VariableContext):
         name = str(ctx.ID()) if ctx.ID() is not None else ""
         self.formulas.append(Variable(name))
@@ -62,7 +68,23 @@ class FodtlParser(ParseTreeListener):
             for x in range(len(ctx.arg())):
                 args.append(self.formulas.pop())
             args.reverse()
-            self.formulas.append(Predicate(name, args))
+
+            obj = Predicate
+            # Check if it's an interpreted predicate
+            klass = IPredicate.get_class_from_name(name)
+            if klass is not None:
+                obj = klass(tuple(args))
+            else:
+                # Check if it's a function
+                klass = Function.get_class_from_name(name)
+                if klass is not None:
+                    obj = klass(tuple(args))
+                else:
+                    # It's an uninterpreted predicate
+                    obj = Predicate(name, args)
+
+            # Add to the stack
+            self.formulas.append(obj)
 
     def exitFormula(self, ctx:FODTLParser.FormulaContext):
         # Testing boolean operators

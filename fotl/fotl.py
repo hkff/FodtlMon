@@ -122,7 +122,18 @@ class Valuation:
 #############################
 # Functions / Interpreted OP
 #############################
-class IPredicate(Exp):
+class MetaBase(type):
+    """
+    Metaclass to register all IPredicates and functions
+    """
+    classes = []
+
+    def __init__(cls, name, bases, attrs, **kwargs):
+        super().__init__(cls, name, bases)
+        MetaBase.classes.append(cls)
+
+
+class IPredicate(Exp, metaclass=MetaBase):
     """
     Interpreted Predicate
     """
@@ -135,6 +146,10 @@ class IPredicate(Exp):
 
     def toCODE(self):
         return "%s(%s)" % (self.__class__.__name__, ",".join([str(x) for x in self.args]))
+
+    @staticmethod
+    def get_class_from_name(klass):
+        return next(filter(lambda x: not issubclass(x, Function) and x.__name__ == klass, MetaBase.classes), None)
 
     def eval(self, valuation=None):
         """
@@ -173,7 +188,8 @@ class BIOperator(IPredicate):
 
     def eval(self, valuation=None):
         args2 = super().eval(valuation=valuation)
-        return eval("%s %s %s" %(self.cast(args2[0].name), self.operator, self.cast(args2[1].name)))
+        print(args2[1])
+        return eval("%s %s %s" % (self.cast(args2[0].name), self.operator, self.cast(args2[1].name)))
 
 BIO = BIOperator
 
@@ -189,6 +205,10 @@ class Function(IPredicate):
         :return:
         """
         return super().eval(valuation=valuation)
+
+    @staticmethod
+    def get_class_from_name(klass):
+        return next(filter(lambda x: issubclass(x, Function) and x.__name__ == klass, MetaBase.classes), None)
 
 FX = Function
 

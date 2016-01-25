@@ -205,6 +205,11 @@ class Constant(Parameter):
     """
     Constant
     """
+    def __init__(self, name=""):
+        super().__init__(name=name)
+        if self.name.startswith("'") and self.name.endswith("'"):
+            self.name = self.name[1:-1]
+
     def equal(self, o):
         return (o is not None) and isinstance(o, Constant) and (str(o.name) == str(self.name))
 
