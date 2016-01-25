@@ -6,7 +6,7 @@ from io import StringIO
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3!")
-        buf.write("\u00c2\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\u00c3\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16")
         buf.write("\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\3\2\3\2")
         buf.write("\3\3\3\3\3\4\3\4\3\5\3\5\3\5\3\5\3\5\7\5\60\n\5\f\5\16")
@@ -18,18 +18,18 @@ def serializedATN():
         buf.write("\3\5\3\5\7\5p\n\5\f\5\16\5s\13\5\3\5\3\5\3\5\3\5\7\5y")
         buf.write("\n\5\f\5\16\5|\13\5\7\5~\n\5\f\5\16\5\u0081\13\5\3\6\3")
         buf.write("\6\3\6\3\6\3\6\7\6\u0088\n\6\f\6\16\6\u008b\13\6\3\6\3")
-        buf.write("\6\3\7\3\7\3\7\5\7\u0092\n\7\3\b\3\b\3\t\3\t\3\t\3\t\3")
-        buf.write("\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\r\3\r\3\16\3\16\3")
-        buf.write("\17\3\17\3\17\3\17\3\20\3\20\3\20\6\20\u00ad\n\20\r\20")
-        buf.write("\16\20\u00ae\3\20\3\20\3\21\3\21\3\21\6\21\u00b6\n\21")
-        buf.write("\r\21\16\21\u00b7\3\21\3\21\3\22\3\22\3\22\3\22\3\22\3")
-        buf.write("\22\3\22\2\3\b\23\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
-        buf.write("\36 \"\2\6\3\2\7\t\3\2\17\20\3\2\n\f\3\2\r\16\u00c9\2")
+        buf.write("\6\3\7\3\7\3\7\3\7\5\7\u0093\n\7\3\b\3\b\3\t\3\t\3\t\3")
+        buf.write("\t\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\r\3\r\3\16\3\16")
+        buf.write("\3\17\3\17\3\17\3\17\3\20\3\20\3\20\6\20\u00ae\n\20\r")
+        buf.write("\20\16\20\u00af\3\20\3\20\3\21\3\21\3\21\6\21\u00b7\n")
+        buf.write("\21\r\21\16\21\u00b8\3\21\3\21\3\22\3\22\3\22\3\22\3\22")
+        buf.write("\3\22\3\22\2\3\b\23\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
+        buf.write("\36 \"\2\6\3\2\7\t\3\2\17\20\3\2\n\f\3\2\r\16\u00cb\2")
         buf.write("$\3\2\2\2\4&\3\2\2\2\6(\3\2\2\2\b]\3\2\2\2\n\u0082\3\2")
-        buf.write("\2\2\f\u0091\3\2\2\2\16\u0093\3\2\2\2\20\u0095\3\2\2\2")
-        buf.write("\22\u0099\3\2\2\2\24\u009c\3\2\2\2\26\u009f\3\2\2\2\30")
-        buf.write("\u00a1\3\2\2\2\32\u00a3\3\2\2\2\34\u00a5\3\2\2\2\36\u00a9")
-        buf.write("\3\2\2\2 \u00b2\3\2\2\2\"\u00bb\3\2\2\2$%\7\3\2\2%\3\3")
+        buf.write("\2\2\f\u0092\3\2\2\2\16\u0094\3\2\2\2\20\u0096\3\2\2\2")
+        buf.write("\22\u009a\3\2\2\2\24\u009d\3\2\2\2\26\u00a0\3\2\2\2\30")
+        buf.write("\u00a2\3\2\2\2\32\u00a4\3\2\2\2\34\u00a6\3\2\2\2\36\u00aa")
+        buf.write("\3\2\2\2 \u00b3\3\2\2\2\"\u00bc\3\2\2\2$%\7\3\2\2%\3\3")
         buf.write("\2\2\2&\'\7\4\2\2\'\5\3\2\2\2()\5\b\5\2)\7\3\2\2\2*+\b")
         buf.write("\5\1\2+^\5\2\2\2,^\5\4\3\2-\61\5\n\6\2.\60\7\21\2\2/.")
         buf.write("\3\2\2\2\60\63\3\2\2\2\61/\3\2\2\2\61\62\3\2\2\2\62^\3")
@@ -57,28 +57,28 @@ def serializedATN():
         buf.write("\u0086\7\35\2\2\u0086\u0088\5\f\7\2\u0087\u0085\3\2\2")
         buf.write("\2\u0088\u008b\3\2\2\2\u0089\u0087\3\2\2\2\u0089\u008a")
         buf.write("\3\2\2\2\u008a\u008c\3\2\2\2\u008b\u0089\3\2\2\2\u008c")
-        buf.write("\u008d\7\27\2\2\u008d\13\3\2\2\2\u008e\u0092\5\16\b\2")
-        buf.write("\u008f\u0092\5\20\t\2\u0090\u0092\5\22\n\2\u0091\u008e")
-        buf.write("\3\2\2\2\u0091\u008f\3\2\2\2\u0091\u0090\3\2\2\2\u0092")
-        buf.write("\r\3\2\2\2\u0093\u0094\7\17\2\2\u0094\17\3\2\2\2\u0095")
-        buf.write("\u0096\7\36\2\2\u0096\u0097\t\3\2\2\u0097\u0098\7\36\2")
-        buf.write("\2\u0098\21\3\2\2\2\u0099\u009a\7\5\2\2\u009a\u009b\7")
-        buf.write("\24\2\2\u009b\23\3\2\2\2\u009c\u009d\7\6\2\2\u009d\u009e")
-        buf.write("\5\b\5\2\u009e\25\3\2\2\2\u009f\u00a0\t\4\2\2\u00a0\27")
-        buf.write("\3\2\2\2\u00a1\u00a2\t\5\2\2\u00a2\31\3\2\2\2\u00a3\u00a4")
-        buf.write("\7\17\2\2\u00a4\33\3\2\2\2\u00a5\u00a6\7\17\2\2\u00a6")
-        buf.write("\u00a7\7\33\2\2\u00a7\u00a8\5\32\16\2\u00a8\35\3\2\2\2")
-        buf.write("\u00a9\u00aa\7 \2\2\u00aa\u00ac\7\30\2\2\u00ab\u00ad\5")
-        buf.write("\34\17\2\u00ac\u00ab\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae")
-        buf.write("\u00ac\3\2\2\2\u00ae\u00af\3\2\2\2\u00af\u00b0\3\2\2\2")
-        buf.write("\u00b0\u00b1\7\31\2\2\u00b1\37\3\2\2\2\u00b2\u00b3\7\37")
-        buf.write("\2\2\u00b3\u00b5\7\30\2\2\u00b4\u00b6\5\34\17\2\u00b5")
-        buf.write("\u00b4\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\u00b5\3\2\2\2")
-        buf.write("\u00b7\u00b8\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\u00ba\7")
-        buf.write("\31\2\2\u00ba!\3\2\2\2\u00bb\u00bc\7!\2\2\u00bc\u00bd")
-        buf.write("\7\17\2\2\u00bd\u00be\7\26\2\2\u00be\u00bf\5\b\5\2\u00bf")
-        buf.write("\u00c0\7\27\2\2\u00c0#\3\2\2\2\23\618@HPY]cjqz}\177\u0089")
-        buf.write("\u0091\u00ae\u00b7")
+        buf.write("\u008d\7\27\2\2\u008d\13\3\2\2\2\u008e\u0093\5\16\b\2")
+        buf.write("\u008f\u0093\5\20\t\2\u0090\u0093\5\22\n\2\u0091\u0093")
+        buf.write("\5\n\6\2\u0092\u008e\3\2\2\2\u0092\u008f\3\2\2\2\u0092")
+        buf.write("\u0090\3\2\2\2\u0092\u0091\3\2\2\2\u0093\r\3\2\2\2\u0094")
+        buf.write("\u0095\7\17\2\2\u0095\17\3\2\2\2\u0096\u0097\7\36\2\2")
+        buf.write("\u0097\u0098\t\3\2\2\u0098\u0099\7\36\2\2\u0099\21\3\2")
+        buf.write("\2\2\u009a\u009b\7\5\2\2\u009b\u009c\7\24\2\2\u009c\23")
+        buf.write("\3\2\2\2\u009d\u009e\7\6\2\2\u009e\u009f\5\b\5\2\u009f")
+        buf.write("\25\3\2\2\2\u00a0\u00a1\t\4\2\2\u00a1\27\3\2\2\2\u00a2")
+        buf.write("\u00a3\t\5\2\2\u00a3\31\3\2\2\2\u00a4\u00a5\7\17\2\2\u00a5")
+        buf.write("\33\3\2\2\2\u00a6\u00a7\7\17\2\2\u00a7\u00a8\7\33\2\2")
+        buf.write("\u00a8\u00a9\5\32\16\2\u00a9\35\3\2\2\2\u00aa\u00ab\7")
+        buf.write(" \2\2\u00ab\u00ad\7\30\2\2\u00ac\u00ae\5\34\17\2\u00ad")
+        buf.write("\u00ac\3\2\2\2\u00ae\u00af\3\2\2\2\u00af\u00ad\3\2\2\2")
+        buf.write("\u00af\u00b0\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1\u00b2\7")
+        buf.write("\31\2\2\u00b2\37\3\2\2\2\u00b3\u00b4\7\37\2\2\u00b4\u00b6")
+        buf.write("\7\30\2\2\u00b5\u00b7\5\34\17\2\u00b6\u00b5\3\2\2\2\u00b7")
+        buf.write("\u00b8\3\2\2\2\u00b8\u00b6\3\2\2\2\u00b8\u00b9\3\2\2\2")
+        buf.write("\u00b9\u00ba\3\2\2\2\u00ba\u00bb\7\31\2\2\u00bb!\3\2\2")
+        buf.write("\2\u00bc\u00bd\7!\2\2\u00bd\u00be\7\17\2\2\u00be\u00bf")
+        buf.write("\7\26\2\2\u00bf\u00c0\5\b\5\2\u00c0\u00c1\7\27\2\2\u00c1")
+        buf.write("#\3\2\2\2\23\618@HPY]cjqz}\177\u0089\u0092\u00af\u00b8")
         return buf.getvalue()
 
 
@@ -686,6 +686,10 @@ class FODTLParser ( Parser ):
             return self.getTypedRuleContext(FODTLParser.RegexpContext,0)
 
 
+        def predicate(self):
+            return self.getTypedRuleContext(FODTLParser.PredicateContext,0)
+
+
         def getRuleIndex(self):
             return FODTLParser.RULE_arg
 
@@ -705,25 +709,32 @@ class FODTLParser ( Parser ):
         localctx = FODTLParser.ArgContext(self, self._ctx, self.state)
         self.enterRule(localctx, 10, self.RULE_arg)
         try:
-            self.state = 143
-            token = self._input.LA(1)
-            if token in [FODTLParser.ID]:
+            self.state = 144
+            la_ = self._interp.adaptivePredict(self._input,14,self._ctx)
+            if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 140
                 self.variable()
+                pass
 
-            elif token in [FODTLParser.H_quote]:
+            elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 141
                 self.constant()
+                pass
 
-            elif token in [FODTLParser.T__2]:
+            elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
                 self.state = 142
                 self.regexp()
+                pass
 
-            else:
-                raise NoViableAltException(self)
+            elif la_ == 4:
+                self.enterOuterAlt(localctx, 4)
+                self.state = 143
+                self.predicate()
+                pass
+
 
         except RecognitionException as re:
             localctx.exception = re
@@ -762,7 +773,7 @@ class FODTLParser ( Parser ):
         self.enterRule(localctx, 12, self.RULE_variable)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 145
+            self.state = 146
             self.match(FODTLParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -811,15 +822,15 @@ class FODTLParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 147
-            self.match(FODTLParser.H_quote)
             self.state = 148
+            self.match(FODTLParser.H_quote)
+            self.state = 149
             _la = self._input.LA(1)
             if not(_la==FODTLParser.ID or _la==FODTLParser.INT):
                 self._errHandler.recoverInline(self)
             else:
                 self.consume()
-            self.state = 149
+            self.state = 150
             self.match(FODTLParser.H_quote)
         except RecognitionException as re:
             localctx.exception = re
@@ -858,9 +869,9 @@ class FODTLParser ( Parser ):
         self.enterRule(localctx, 16, self.RULE_regexp)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 151
-            self.match(FODTLParser.T__2)
             self.state = 152
+            self.match(FODTLParser.T__2)
+            self.state = 153
             self.match(FODTLParser.STRING)
         except RecognitionException as re:
             localctx.exception = re
@@ -903,9 +914,9 @@ class FODTLParser ( Parser ):
         self.enterRule(localctx, 18, self.RULE_negation)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 154
-            self.match(FODTLParser.O_not)
             self.state = 155
+            self.match(FODTLParser.O_not)
+            self.state = 156
             self.formula(0)
         except RecognitionException as re:
             localctx.exception = re
@@ -951,7 +962,7 @@ class FODTLParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 157
+            self.state = 158
             _la = self._input.LA(1)
             if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << FODTLParser.O_always) | (1 << FODTLParser.O_next) | (1 << FODTLParser.O_future))) != 0)):
                 self._errHandler.recoverInline(self)
@@ -998,7 +1009,7 @@ class FODTLParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 159
+            self.state = 160
             _la = self._input.LA(1)
             if not(_la==FODTLParser.O_until or _la==FODTLParser.O_release):
                 self._errHandler.recoverInline(self)
@@ -1041,7 +1052,7 @@ class FODTLParser ( Parser ):
         self.enterRule(localctx, 24, self.RULE_vartype)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 161
+            self.state = 162
             self.match(FODTLParser.ID)
         except RecognitionException as re:
             localctx.exception = re
@@ -1087,11 +1098,11 @@ class FODTLParser ( Parser ):
         self.enterRule(localctx, 26, self.RULE_vardec)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 163
-            self.match(FODTLParser.ID)
             self.state = 164
-            self.match(FODTLParser.H_colon)
+            self.match(FODTLParser.ID)
             self.state = 165
+            self.match(FODTLParser.H_colon)
+            self.state = 166
             self.vartype()
         except RecognitionException as re:
             localctx.exception = re
@@ -1144,23 +1155,23 @@ class FODTLParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 167
-            self.match(FODTLParser.H_emark)
             self.state = 168
+            self.match(FODTLParser.H_emark)
+            self.state = 169
             self.match(FODTLParser.H_lbar)
-            self.state = 170 
+            self.state = 171 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 169
+                self.state = 170
                 self.vardec()
-                self.state = 172 
+                self.state = 173 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not (_la==FODTLParser.ID):
                     break
 
-            self.state = 174
+            self.state = 175
             self.match(FODTLParser.H_rbar)
         except RecognitionException as re:
             localctx.exception = re
@@ -1213,23 +1224,23 @@ class FODTLParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 176
-            self.match(FODTLParser.H_qmark)
             self.state = 177
+            self.match(FODTLParser.H_qmark)
+            self.state = 178
             self.match(FODTLParser.H_lbar)
-            self.state = 179 
+            self.state = 180 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 178
+                self.state = 179
                 self.vardec()
-                self.state = 181 
+                self.state = 182 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not (_la==FODTLParser.ID):
                     break
 
-            self.state = 183
+            self.state = 184
             self.match(FODTLParser.H_rbar)
         except RecognitionException as re:
             localctx.exception = re
@@ -1281,15 +1292,15 @@ class FODTLParser ( Parser ):
         self.enterRule(localctx, 32, self.RULE_remote)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 185
-            self.match(FODTLParser.H_at)
             self.state = 186
-            self.match(FODTLParser.ID)
+            self.match(FODTLParser.H_at)
             self.state = 187
-            self.match(FODTLParser.H_lpar)
+            self.match(FODTLParser.ID)
             self.state = 188
-            self.formula(0)
+            self.match(FODTLParser.H_lpar)
             self.state = 189
+            self.formula(0)
+            self.state = 190
             self.match(FODTLParser.H_rpar)
         except RecognitionException as re:
             localctx.exception = re
