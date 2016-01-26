@@ -33,17 +33,6 @@ class Dtlmon(Ltlmon):
         self.fid = fid
         self.rewrite = copy.deepcopy(self.formula)
 
-    # def monitor(self, once=False):
-    #     for e in self.get_trace().events[self.counter:]:
-    #         self.counter += 1
-    #         self.rewrite = self.prg(self.rewrite, e)
-    #         Debug(self.rewrite)
-    #         self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
-    #         if self.last == Boolean3.Top or self.last == Boolean3.Bottom or once: break
-    #     ret = "Result Progression: %s after %s events." % (self.last, self.counter)
-    #     # print(ret)
-    #     return ret
-
     def prg(self, formula, event, valuation=None):
         if isinstance(formula, At):
             # Check in KV

@@ -22,7 +22,7 @@ from parser.Parser import *
 import os
 import copy
 import time
-DEBUG = False
+DEBUG = True
 
 
 def Debug(*args):
@@ -41,6 +41,7 @@ class Mon:
         self.trace = trace
         self.counter = 0
         self.last = Boolean3.Unknown
+        self.counter2 = 0
         self.rewrite = copy.deepcopy(self.formula)
 
     def monitor(self, *args, **kargs):
@@ -52,23 +53,34 @@ class Mon:
     def push_event(self, event):
         self.trace.push_event(event)
 
+    def reset(self):
+        self.rewrite = copy.deepcopy(self.formula)
+
 
 class Ltlmon(Mon):
     """
-    LTL monitor using progression technique
+    LTL monitor using progression technique.
     """
 
-    def monitor(self, once=False, debug=False):
+    def monitor(self, once=False, debug=False, struct_res=False):
         if debug:
             start_time = time.time()
 
         for e in self.trace.events[self.counter:]:
-            self.counter += 1
-            self.rewrite = self.prg(self.rewrite, e)
-            Debug(self.rewrite)
-            self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
-            if self.last == Boolean3.Top or self.last == Boolean3.Bottom or once: break
-        ret = "Result Progression: %s after %s events." % (self.last, self.counter)
+            if self.last == Boolean3.Top or self.last == Boolean3.Bottom:
+                break
+            else:
+                self.counter += 1
+                self.counter2 += 1
+                self.rewrite = self.prg(self.rewrite, e)
+                Debug(self.rewrite)
+                self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
+                if once:break
+
+        if struct_res:
+            ret = {"result": self.last, "at": self.counter2, "step": self.counter}
+        else:
+            ret = "Result Progression: %s after %s events." % (self.last, self.counter)
         # print(ret)
         if debug:
             exec_time = time.time() - start_time
