@@ -22,7 +22,7 @@ from parser.Parser import *
 import os
 import copy
 import time
-DEBUG = True
+DEBUG = False
 
 
 def Debug(*args):
@@ -75,7 +75,7 @@ class Ltlmon(Mon):
                 self.rewrite = self.prg(self.rewrite, e)
                 Debug(self.rewrite)
                 self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
-                if once:break
+                if once: break
 
         if struct_res:
             ret = {"result": self.last, "at": self.counter2, "step": self.counter}
