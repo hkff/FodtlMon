@@ -73,7 +73,7 @@ class Ltlmon(Mon):
                 self.counter += 1
                 self.counter2 += 1
                 self.rewrite = self.prg(self.rewrite, e)
-                Debug(self.rewrite)
+                # Debug(self.rewrite)
                 self.last = B3(self.rewrite.eval()) if isinstance(self.rewrite, Formula) else self.rewrite
                 if once: break
 

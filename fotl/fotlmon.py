@@ -19,7 +19,7 @@ __author__ = 'walid'
 from ltl.ltlmon import *
 from fotl.fotl import *
 from fotl.lib import *
-step = 0
+# step = 0
 
 
 class Fotlmon(Ltlmon):
@@ -27,7 +27,7 @@ class Fotlmon(Ltlmon):
     Fotl monitoring using progression technique
     """
     def prg(self, formula, event, valuation=None):
-        global step
+        # global step
 
         if valuation is None:
                 valuation = []
@@ -69,7 +69,7 @@ class Fotlmon(Ltlmon):
             res = super().prg(formula, event, valuation)
 
         # print("-- step %s -- %s ...... res %s " % (step, formula, res))
-        step += 1
+        # step += 1
         return res
 
 
