@@ -22,6 +22,8 @@ import inspect
 import imp
 from random import random
 
+ltl = imp.load_source("ltl", "fodtlmon/ltl/ltl.py")
+
 
 class Fuzzer:
     """
@@ -34,11 +36,12 @@ class Fuzzer:
         self.alphabet = [] if alphabet is None else alphabet
 
     def init_fuzzer(self):
-        ltl = imp.load_source("ltl", "ltl/ltl.py")
-        for name, obj in inspect.getmembers(ltl.ltl):
+        ltl = imp.load_source("", "fodtlmon/ltl/ltl.py")
+        for name, obj in inspect.getmembers(ltl):
+            # TODO : fixe me spacename conflict
             if inspect.isclass(obj):
                 # Get only classes that are defined in ltl
-                if obj.__module__ == "ltl.ltl":
+                if obj.__module__ == "ltl":
                     # Get only classes inherit from Exp
                     if obj.__base__ is UExp or obj.__base__ is BExp or obj in (true, false, Predicate):
                         if obj is not Release and obj is not R:
@@ -53,9 +56,9 @@ class Fuzzer:
         res = None
         n = int(random()*10)
         node = self.nodes[n % len(self.nodes)]
-        if node.__base__ is UExp:
+        if issubclass(node, UExp):
             res = node(self.gen(depth-1))
-        elif node.__base__ is BExp:
+        elif issubclass(node, BExp):
             res = node(self.gen(depth-1), self.gen(depth-1))
         elif node in (true, false):
             res = node()
@@ -94,12 +97,15 @@ def print2(*args, file=None):
 
 
 def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1,
-              alphabet=None, constants=None, interactive=False, output_file="tests/logs.log", debug=False):
+              alphabet=None, constants=None, interactive=False, output_file="fodtlmon/tests/logs.log", debug=False):
 
     fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
     fuzzer.init_fuzzer()
     errors = 0
     nbr = formula_nbr
+    nbr = 1
+    formula_depth = 1
+    formula_nbr = 1
     with open(output_file, "w+") as f:
         for x in range(nbr):
             print("## %s / %s  Errors %s" % (x+1, nbr, errors))

@@ -126,8 +126,7 @@ class Ltlmon(Mon):
             res = formula.inner
 
         else:
-            print("Error " + str(formula))
-            return None
+            raise Exception("Error %s of type %s" % (formula, type(formula)))
         return res
 
 
@@ -140,7 +139,7 @@ def ltlfo2mon(formula:Formula, trace:Trace):
     """
     fl = formula.toLTLFO() if isinstance(formula, Formula) else formula
     tr = trace.toLTLFO() if isinstance(trace, Trace) else trace
-    cmd = "echo \"%s\" | java -jar tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
+    cmd = "echo \"%s\" | java -jar fodtlmon/tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
     p = os.popen(cmd)
     res = p.readline()[:-1]
     p.close()
