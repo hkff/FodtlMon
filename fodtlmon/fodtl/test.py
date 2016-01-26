@@ -1,5 +1,5 @@
 """
-fotlmon FOTL monitor
+test file
 Copyright (C) 2015 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
@@ -16,20 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
-from dtl.dtlmon import *
-from fotl.fotlmon import *
+from fodtlmon.fodtl.fodtlmon import *
 
 
-class Fodtlmon(Dtlmon, Fotlmon):
-    """
-    Fodtl monitoring using progression technique
-    """
-
-    def __init__(self, formula, event, actor=None, parent=None, fid=""):
-        Dtlmon.__init__(self, formula, event, actor=actor, parent=parent, fid=fid)
-
-    def prg(self, formula, event, valuation=None):
-        if isinstance(formula, Forall) or isinstance(formula, Predicate) or isinstance(formula, ForallConj):
-            return Fotlmon.prg(self, formula, event, valuation)
-        else:
-            return Dtlmon.prg(self, formula, event, valuation)
+def run_fodtl_tests():
+    pass

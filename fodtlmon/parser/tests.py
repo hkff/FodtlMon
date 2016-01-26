@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
 
-from fodtl.fodtl import *
+from fodtlmon.fodtl.fodtl import *
 from parser.Parser import *
 
 

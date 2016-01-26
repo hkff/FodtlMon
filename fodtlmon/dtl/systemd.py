@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
-from dtl.dtlmon import *
+from fodtlmon.dtl.dtlmon import *
 import json
 import copy
 from tools.color import *

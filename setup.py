@@ -20,7 +20,7 @@ from distutils.core import setup
 setup(
     name='fodtlmon',
     version='1.0',
-    packages=['parser', 'dtl', 'fodtl', 'fotl', 'ltl', 'tools'],
+    packages=['fodtlmon'],
     url='https://github.com/hkff/fodtlmon',
     license='GPL3',
     author='Walid Benghabrit',

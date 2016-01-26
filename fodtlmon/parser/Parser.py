@@ -17,9 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
 
-from fodtl.fodtl import *
-from parser.FODTLListener import *
-from parser.FODTLLexer import *
+from fodtlmon.fodtl.fodtl import *
+from fodtlmon.parser.FODTLListener import *
+from fodtlmon.parser.FODTLLexer import *
 from antlr4.InputStream import *
 from antlr4.tree.Trees import Trees
 

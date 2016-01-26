@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
 
-from ltl.ltlmon import *
+from fodtlmon.ltl.ltlmon import *
 import inspect
 import imp
 from random import random

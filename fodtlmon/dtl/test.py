@@ -16,8 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
-from dtl.systemd import *
-from dtl.dtlmon import *
+from fodtlmon.dtl.systemd import *
+from fodtlmon.dtl.dtlmon import *
 
 
 def run_dtl_tests():

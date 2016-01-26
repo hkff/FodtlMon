@@ -17,8 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
 
-from ltl.ltl import *
-from parser.Parser import *
+from fodtlmon.ltl.ltl import *
+from fodtlmon.parser.Parser import *
 import os
 import copy
 import time

@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
-from dtl.dtl import *
-from fotl.fotl import *
+from fodtlmon.dtl.dtl import *
+from fodtlmon.fotl.fotl import *
 
 
