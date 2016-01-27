@@ -68,7 +68,7 @@ formula : true | false //| constant | variable |
         | remote;
 
 // Classical logic
-predicate   : ID H_lpar (arg (H_comma arg)*) H_rpar;
+predicate   : ID H_lpar (arg (H_comma arg)*)? H_rpar;
 arg         : variable | constant | regexp | predicate;
 variable    : ID;
 constant    : H_quote (ID | INT) H_quote;
