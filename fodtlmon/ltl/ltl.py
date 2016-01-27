@@ -510,8 +510,9 @@ class Event:
     """
     Event that contains a set of predicates
     """
-    def __init__(self, predicates=None):
+    def __init__(self, predicates=None, step="0"):
         self.predicates = [] if predicates is None else predicates
+        self.step = step
 
     def __str__(self):
         return "{" + " | ".join([str(p) for p in self.predicates]) + "}"
