@@ -246,7 +246,9 @@ class Predicate(Exp):
             name = string[0: string.find("(")]
             args = string[string.find("(")+1:-1].split(",")
             arguments = []
-            [arguments.append(Parameter.parse(ar, cts=cts)) for ar in args]
+            for ar in args:
+                if ar != '':
+                    arguments.append(Parameter.parse(ar, cts=cts))
         else:
             print("Invalid predicate format !")
             return
