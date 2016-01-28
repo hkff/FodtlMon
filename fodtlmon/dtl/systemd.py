@@ -19,7 +19,7 @@ __author__ = 'walid'
 from fodtlmon.dtl.dtlmon import *
 import json
 import copy
-from tools.color import *
+from fodtlmon.tools.color import *
 
 #############################
 # System Actor
