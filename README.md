@@ -15,7 +15,12 @@ To run the main program : python mon.py
 
     You need to install the following dependencies :  
     
-            $ sudo apt-get install antlr4-python3-runtime
+            $ sudo pip3 install antlr4-python3-runtime
+            
+To install the framework run setup.py:
+
+        $ sudo python3 setup.py install
+
 
 Usage
 -----
