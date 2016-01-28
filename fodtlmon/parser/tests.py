@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'walid'
 
 from fodtlmon.fodtl.fodtl import *
-from parser.Parser import *
+from fodtlmon.parser.Parser import *
 
 
 def test(res, _type):
