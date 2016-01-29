@@ -54,6 +54,7 @@ class At(UExp):
         return "@_{%s}(%s)" % (self.agent, self.inner)
 
     def compute_hash(self, sid=""):
+        # TODO : if called after init pb with mon rewrite
         self.fid = "%s@%s_%s" % (sid, self.agent, md5(str(self.inner).encode()).hexdigest())
 
 

@@ -39,6 +39,7 @@ class Dtlmon(Ltlmon):
             res = self.KV.get_entry(formula.fid)
             # return Boolean3.Unknown if res == -1 else self.get_kv().entries[res].value
             # x = self.get_kv().entries[res].value
+            # TODO add check
             x = res.value
             if x is Boolean3.Unknown:
                 return formula
