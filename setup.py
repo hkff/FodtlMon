@@ -25,5 +25,8 @@ setup(
     license='GPL3',
     author='Walid Benghabrit',
     author_email='Walid.Benghabrit@mines-nantes.fr',
-    description='FODTLMON is a monitoring framework based on distributed first order linear temporal logic.'
+    description='FODTLMON is a monitoring framework based on distributed first order linear temporal logic.',
+    install_requires=[
+        'antlr4-python3-runtime>=4.5',
+    ]
 )
