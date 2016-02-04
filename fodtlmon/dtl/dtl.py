@@ -91,6 +91,15 @@ class IKVector:
             self.value = e.value
             self.timestamp = e.timestamp
 
+        @classmethod
+        def parse(cls, string: str):
+            res = None
+            if string.startswith("{") and string.endswith("}"):
+                elems = string[1:-1].split(";")
+                if len(elems) > 3:
+                    res = IKVector.Entry(elems[0], agent=elems[1], value=B3(elems[2]), timestamp=int(elems[3]))
+            return res
+
     def __init__(self, entries=None):
         self.entries = [] if entries is None else entries
 
@@ -104,6 +113,10 @@ class IKVector:
         raise Exception("Unimplemented method !")
 
     def update(self, entry):
+        raise Exception("Unimplemented method !")
+
+    @classmethod
+    def parse(cls, vector):
         raise Exception("Unimplemented method !")
 
 
@@ -127,6 +140,8 @@ class KVector(IKVector):
         if i is not None:
             if entry.time_compare(i) == 1:
                 i.update(entry)
+        else:  # Add it
+            self.add_entry(entry)
 
     def add_entry(self, entry):
         self.entries.append(entry)
@@ -136,6 +151,16 @@ class KVector(IKVector):
             return next((x for x in self.entries if x.fid == entry.fid), None)
         else:
             return next((x for x in self.entries if x.fid == entry), None)
+
+    @classmethod
+    def parse(cls, vector):
+        res = KVector()
+        entries = vector.split(",")
+        for e in entries:
+            tmp = IKVector.Entry.parse(e)
+            if tmp is not None:
+                res.entries.append(tmp)
+        return res
 
 
 class KVector_H(KVector):
