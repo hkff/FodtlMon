@@ -81,7 +81,7 @@ class Webservice:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            res = self.handle_req(args, "GET")
+            res = self.handle_req(self.path, args, "GET")
             self.wfile.write(res.encode("utf-8"))
 
         def do_POST(self):
@@ -97,13 +97,17 @@ class Webservice:
             else:
                 args = parse_qs(post_vars, encoding="utf8")
 
-            res = self.handle_req(args, "POST")
+            res = self.handle_req(self.path, args, "POST")
             self.wfile.write(res.encode("utf-8"))
 
-        def handle_req(self, args, method):
+        def handle_req(self, path, args, method):
             # print(args)
+            print(path)
             res = "Error"
             val = self.get_arg(args, "action", method)
+            method_name = path.replace("/", "_")[1:]
+            if hasattr(Webservice.API, method_name):
+                res = getattr(Webservice.API, method_name)(val)
             return res
 
     class API:
@@ -113,12 +117,12 @@ class Webservice:
         @staticmethod
         def api_monitor_register(name=""):
             """ /api/monitors/register """
-            pass
+            return "Registred!"
 
         @staticmethod
         def api_monitor_events_push(monitor_name=None, event=""):
             """ /api/monitor/events/push """
-            pass
+            return "Pushed"
 
 
 
