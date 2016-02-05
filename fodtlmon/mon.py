@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+from fodtlmon.webservice import webservice
+
 __author__ = 'walid'
 import sys
 import getopt
@@ -24,6 +26,7 @@ from fodtlmon.dtl.test import *
 from fodtlmon.fotl.test import *
 from fodtlmon.fodtl.test import *
 from fodtlmon.parser.Parser import *
+from fodtlmon.webservice.webservice import *
 
 
 ###################
@@ -48,6 +51,8 @@ def main(argv):
     l2m = False
     debug = False
     rounds = 1
+    server_port = 8080
+    webservice = False
 
     help_str_extended = "fodtlmon V 0.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
@@ -67,6 +72,8 @@ def main(argv):
                         "\n     \t--rounds= int   " + "\t Number of rounds to run in the system" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
                         "\n  -d \t--debug         " + "\t enable debug mode" + \
+                        "\n     \t--server        " + "\t start web service" + \
+                        "\n     \t--port= int     " + "\t server port number" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
@@ -75,7 +82,8 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m", "debug"])
+                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m", "debug",
+                                    "server", "port="])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -118,6 +126,14 @@ def main(argv):
             l2m = True
         elif opt in ("-d", "--debug"):
             debug = True
+        elif opt in "--server":
+            webservice = True
+        elif opt in "--port":
+            server_port = int(arg)
+
+    if webservice:
+        Webservice.start(server_port)
+        return
 
     if fuzzer:
         if monitor is Ltlmon:
