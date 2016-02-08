@@ -124,6 +124,10 @@ class Webservice:
             """ /api/monitor/events/push """
             return "Pushed"
 
+        @staticmethod
+        def api_monitor_run(monitor_name=None, step=-1):
+            """ /api/monitor/run/"""
+            return "Result"
 
 
 
