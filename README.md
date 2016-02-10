@@ -1,3 +1,7 @@
+[![License](https://img.shields.io/badge/version-1.0-orange.svg)]()
+[![License](https://img.shields.io/badge/license-GPL3-blue.svg)]()
+[![License](https://img.shields.io/badge/python->%3D3.4-green.svg)]()
+
 # FODTLMON
 
 FODTLMON Last release : Version BETA 1.0 08/01/2016
