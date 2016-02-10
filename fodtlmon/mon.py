@@ -1,6 +1,6 @@
 #!/usr/bin/python3.4
 """
-fodtlmon version 0.1
+fodtlmon version 1.0
 Copyright (C) 2015 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify

@@ -1,6 +1,6 @@
 """
 webservice
-Copyright (C) 2015 Walid Benghabrit
+Copyright (C) 2016 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ from http.server import HTTPServer
 from urllib.parse import urlparse, parse_qs
 from socketserver import ThreadingMixIn, ForkingMixIn
 import threading
+from fodtlmon.fotl.fotlmon import *
 
 
 # Threading server
@@ -35,7 +36,7 @@ class ForkingSimpleServer(ForkingMixIn, HTTPServer):
 
 class Webservice:
     """
-
+    Web service class
     """
     monitors = {}
     server_port = 8000
@@ -44,7 +45,7 @@ class Webservice:
         pass
 
     @staticmethod
-    def run(server_class=ForkingSimpleServer):
+    def run(server_class=ThreadingSimpleServer):
         server_address = ('', Webservice.server_port)
         httpd = server_class(server_address, Webservice.HTTPRequestHandler)
         print("Server start on port " + str(Webservice.server_port))
@@ -62,7 +63,8 @@ class Webservice:
         # HTTPRequestHandler
     class HTTPRequestHandler(SimpleHTTPRequestHandler):
 
-        def get_arg(self, args, name, method):
+        @staticmethod
+        def get_arg(args, name, method):
             try:
                 if method == "GET":
                     return args[name]
@@ -71,7 +73,7 @@ class Webservice:
                 else:
                     return "Method error"
             except:
-                return "Argument not found"
+                return None
 
         def do_GET(self):
             # print("[GET] " + self.path)
@@ -81,7 +83,10 @@ class Webservice:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            res = self.handle_req(self.path, args, "GET")
+            path = p.replace(k, "")
+            if path[-1] == "?":
+                path = path[:-1]
+            res = self.handle_req(path, args, "GET")
             self.wfile.write(res.encode("utf-8"))
 
         def do_POST(self):
@@ -104,30 +109,91 @@ class Webservice:
             # print(args)
             print(path)
             res = "Error"
-            val = self.get_arg(args, "action", method)
             method_name = path.replace("/", "_")[1:]
             if hasattr(Webservice.API, method_name):
-                res = getattr(Webservice.API, method_name)(val)
+                res = getattr(Webservice.API, method_name)(args, method)
             return res
 
     class API:
         """
-
+        Webservice API
         """
         @staticmethod
-        def api_monitor_register(name=""):
-            """ /api/monitors/register """
-            return "Registred!"
+        def require_args(names, args, method):
+            res = {}
+            for arg in names:
+                tmp = Webservice.HTTPRequestHandler.get_arg(args, arg, method)
+                if tmp is None:
+                    return "Missing %s" % arg
+                else:
+                    res[arg] = tmp[0]
+            return res
 
         @staticmethod
-        def api_monitor_events_push(monitor_name=None, event=""):
-            """ /api/monitor/events/push """
-            return "Pushed"
+        def api_monitor_all(args, method):
+            """
+                URL : /api/monitor/all
+            """
+            return str([str(x) for x in Webservice.monitors.keys()])
 
         @staticmethod
-        def api_monitor_run(monitor_name=None, step=-1):
-            """ /api/monitor/run/"""
-            return "Result"
+        def api_monitor_register(args, method):
+            """
+                URL : /api/monitor/register
+            """
+            args_names = ["mon_name", "formula", "trace"]
+            _args = Webservice.API.require_args(args_names, args, method)
+            if isinstance(_args, str): return _args
+            tr = Trace().parse(_args.get("trace"))
+            fl = FodtlParser.parse(_args.get("formula"))
+            Webservice.monitors[_args.get("mon_name")] = Fotlmon(fl, tr)
+            return "Registered"
 
+        @staticmethod
+        def api_monitor_events_push(args, method):
+            """
+                URL : /api/monitor/events/push
+            """
+            args_names = ["mon_name", "event"]
+            _args = Webservice.API.require_args(args_names, args, method)
+            if isinstance(_args, str): return _args
+            mon = Webservice.monitors.get(_args.get("mon_name"))
+            res = "Monitor not found !"
+            if mon is not None:
+                e = Event.parse(_args.get("event"))
+                if e is not None:
+                    mon.push_event(e)
+                    res = "Pushed"
+                else:
+                    return "Bad event format !"
+            return res
 
+        @staticmethod
+        def api_monitor_run(args, method):
+            """
+                URL : /api/monitor/run
+            """
+            args_names = ["mon_name"]
+            _args = Webservice.API.require_args(args_names, args, method)
+            if isinstance(_args, str): return _args
+            mon = Webservice.monitors.get(_args.get("mon_name"))
+            res = "Monitor not found !"
+            if mon is not None:
+                res = mon.monitor(struct_res=True)
+                res["result"] = str(res.get("result"))
+            return str(res)
 
+        @staticmethod
+        def api_monitor_remove(args, method):
+            """
+                URL : /api/monitor/remove
+            """
+            args_names = ["mon_name"]
+            _args = Webservice.API.require_args(args_names, args, method)
+            if isinstance(_args, str): return _args
+            mon = Webservice.monitors.get(_args.get("mon_name"))
+            res = "Monitor not found !"
+            if mon is not None:
+                del Webservice.monitors[_args.get("mon_name")]
+                res = "Deleted"
+            return res
