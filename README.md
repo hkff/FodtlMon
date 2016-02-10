@@ -4,7 +4,7 @@
 
 # FODTLMON
 
-FODTLMON Last release : Version BETA 1.0 08/01/2016
+FODTLMON Last release : Version 1.0
 
 What is it?
 -----------
@@ -19,7 +19,7 @@ To run the main program : python mon.py
 
     You need to install the following dependencies :  
     
-            $ sudo pip3 install antlr4-python3-runtime
+        $ sudo pip3 install antlr4-python3-runtime
             
 To install the framework run setup.py:
 
@@ -46,7 +46,12 @@ Usage
          	--sys= [file]   	 Run a system from json file
          	--rounds= int   	 Number of rounds to run in the system
       -z 	--fuzzer        	 run fuzzing tester
+            --server        	 start web service
+     	    --port= int     	 server port number
 
+* formula format : true | false | ~formula | P(variable) | P('constant') | formula (=> | & | '|' | U | R ) formula | @name(formula) | G formula | F formula | X formula  | ![x1:type1 x2:type2 ...] formula | ?[x1:type1 x2:type2 ...] formula 
+* event format : {Predicate(args) | ....}
+* trace format : {event1; event2; .... } 
 
 Licensing
 ---------
