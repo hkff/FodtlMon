@@ -2,14 +2,14 @@
 [![License](https://img.shields.io/badge/license-GPL3-blue.svg)]()
 [![License](https://img.shields.io/badge/python->%3D3.4-green.svg)]()
 
-# FODTLMON
+# FodtlMon
 
-FODTLMON Last release : Version 1.0
+FodtlMon Last release : Version 1.0
 
 What is it?
 -----------
 
-FODTLMON is a monitoring framework based on distributed first order linear temporal logic.
+FodtlMon is a monitoring framework based on distributed first order linear temporal logic.
 
 Installation
 ------------
