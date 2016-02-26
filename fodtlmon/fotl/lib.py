@@ -29,13 +29,13 @@ class Eq(BIO):
 
 class Gt(BIO):
     """ Greater than """
-    operator = "<"
+    operator = ">"
     cast = int
 
 
 class Lt(BIO):
     """ Less than """
-    operator = ">"
+    operator = "<"
     cast = int
 
 

@@ -188,7 +188,7 @@ class BIOperator(IPredicate):
 
     def eval(self, valuation=None):
         args2 = super().eval(valuation=valuation)
-        return eval("%s %s %s" % (self.cast(args2[0].name), self.operator, self.cast(args2[1].name)))
+        return eval("\"%s\" %s \"%s\"" % (self.cast(args2[0].name), self.operator, self.cast(args2[1].name)))
 
 BIO = BIOperator
 
