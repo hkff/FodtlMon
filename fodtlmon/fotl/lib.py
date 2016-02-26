@@ -49,7 +49,7 @@ class Regex(IP):
     """ Regular expression """
     def eval(self, valuation=None):
         args2 = super().eval(valuation=valuation)
-        p = re.compile(str(args2[1].name)[1:-1])
+        p = re.compile(str(args2[1].name))
         return False if p.match(args2[0].name) is None else True
 
 
