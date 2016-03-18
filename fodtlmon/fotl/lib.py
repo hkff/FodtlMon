@@ -65,6 +65,7 @@ class InTrace(IP):
         args2 = super().eval(valuation=valuation, trace=trace)
         return trace.contains(Predicate.parse(str(args2[0].name)))
 
+
 ####################
 # Math functions
 ####################
