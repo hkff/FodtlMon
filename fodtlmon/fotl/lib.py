@@ -47,8 +47,8 @@ class NEq(BIO):
 
 class Regex(IP):
     """ Regular expression """
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
+    def eval(self, valuation=None, trace=None):
+        args2 = super().eval(valuation=valuation, trace=trace)
         p = re.compile(str(args2[1].name))
         return False if p.match(args2[0].name) is None else True
 
@@ -58,6 +58,12 @@ class In(BIO):
     operator = "in"
     cast = str
 
+
+class InTrace(IP):
+    """ Check if a predicate is in the trace """
+    def eval(self, valuation=None, trace=None):
+        args2 = super().eval(valuation=valuation, trace=trace)
+        return trace.contains(Predicate.parse(str(args2[0].name)))
 
 ####################
 # Math functions

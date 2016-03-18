@@ -60,10 +60,10 @@ class Fotlmon(Ltlmon):
             # return res
 
         elif isinstance(formula, IPredicate):
-            res = B3(formula.eval(valuation=valuation))
+            res = B3(formula.eval(valuation=valuation, trace=self.trace))
 
         elif isinstance(formula, Function):
-            res = formula.eval(valuation=valuation)
+            res = formula.eval(valuation=valuation, trace=self.trace)
 
         else:
             res = super().prg(formula, event, valuation)

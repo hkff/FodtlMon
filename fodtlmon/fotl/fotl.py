@@ -151,16 +151,17 @@ class IPredicate(Exp, metaclass=MetaBase):
     def get_class_from_name(klass):
         return next(filter(lambda x: not issubclass(x, Function) and x.__name__ == klass, MetaBase.classes), None)
 
-    def eval(self, valuation=None):
+    def eval(self, valuation=None, trace=None):
         """
         This method should be always called by subclasses
         :param valuation
+        :param trace
         :return: Arguments evaluation
         """
         args2 = []
         for a in self.args:
             if isinstance(a, Function) or isinstance(a, IPredicate):
-                args2.append(Constant(a.eval(valuation=valuation)))
+                args2.append(Constant(a.eval(valuation=valuation, trace=trace)))
 
             elif isinstance(a, Variable):
                 found = False
@@ -186,8 +187,8 @@ class BIOperator(IPredicate):
     operator = None
     cast = str
 
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
+    def eval(self, valuation=None, trace=None):
+        args2 = super().eval(valuation=valuation, trace=trace)
         return eval("\"%s\" %s \"%s\"" % (self.cast(args2[0].name), self.operator, self.cast(args2[1].name)))
 
 BIO = BIOperator
@@ -197,13 +198,14 @@ class Function(IPredicate):
     """
     Function
     """
-    def eval(self, valuation=None):
+    def eval(self, valuation=None, trace=None):
         """
         This method should be override to return some value
         :param valuation
+        :param trace
         :return:
         """
-        return super().eval(valuation=valuation)
+        return super().eval(valuation=valuation, trace=trace)
 
     @staticmethod
     def get_class_from_name(klass):
@@ -220,8 +222,8 @@ class BFunction(Function):
     cast = str
     return_cast = str
 
-    def eval(self, valuation=None):
-        args2 = super().eval(valuation=valuation)
-        return self.return_cast(eval("%s %s %s" %(self.cast(args2[0].name), self.operator, self.cast(args2[1].name))))
+    def eval(self, valuation=None, trace=None):
+        args2 = super().eval(valuation=valuation, trace=trace)
+        return self.return_cast(eval("%s %s %s" % (self.cast(args2[0].name), self.operator, self.cast(args2[1].name))))
 
 BFX = BFunction
