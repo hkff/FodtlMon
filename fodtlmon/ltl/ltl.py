@@ -15,6 +15,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+import re
+
 __author__ = 'walid'
 from enum import Enum
 
@@ -193,7 +195,7 @@ class Variable(Parameter):
     Data variable
     """
     def equal(self, o):
-        return (o is not None) and (isinstance(o, Variable) and (o.name == self.name)) or (o.name == '*' or self.name == '*')
+        return (o is not None) and (isinstance(o, Variable) and (o.name == self.name))
 
     def toLTLFO(self):
         return "%s" % self.name
@@ -211,7 +213,9 @@ class Constant(Parameter):
             self.name = self.name[1:-1]
 
     def equal(self, o):
-        return (o is not None) and (isinstance(o, Constant) and (str(o.name) == str(self.name))) or (o.name == '*' or self.name == '*')
+        if isinstance(o, Regexp):
+            return o.equal(self)
+        return (o is not None) and (isinstance(o, Constant) and (str(o.name) == str(self.name)))
 
     def toLTLFO(self):
         return "'%s'" % self.name
@@ -220,6 +224,19 @@ class Constant(Parameter):
         return "'%s'" % self.name
 
 C = Constant
+
+
+class Regexp(Constant):
+    """
+    regexp
+    """
+    def equal(self, o):
+        try:
+            if o is not None:
+                p = re.compile(str(self.name))
+                return False if p.match(o.name) is None else True
+        except:
+            return False
 
 
 class Predicate(Exp):

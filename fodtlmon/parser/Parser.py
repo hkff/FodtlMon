@@ -54,7 +54,7 @@ class FodtlParser(ParseTreeListener):
         name = ""
         if ctx.STRING() is not None:
             name = str(ctx.STRING())
-        self.formulas.append(Constant(name[1:-1]))
+        self.formulas.append(Regexp(name[1:-1]))
 
     def exitVariable(self, ctx:FODTLParser.VariableContext):
         name = str(ctx.ID()) if ctx.ID() is not None else ""
