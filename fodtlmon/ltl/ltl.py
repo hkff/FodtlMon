@@ -193,7 +193,7 @@ class Variable(Parameter):
     Data variable
     """
     def equal(self, o):
-        return (o is not None) and isinstance(o, Variable) and (o.name == self.name)
+        return (o is not None) and (isinstance(o, Variable) and (o.name == self.name)) or (o.name == '*' or self.name == '*')
 
     def toLTLFO(self):
         return "%s" % self.name
@@ -211,7 +211,7 @@ class Constant(Parameter):
             self.name = self.name[1:-1]
 
     def equal(self, o):
-        return (o is not None) and isinstance(o, Constant) and (str(o.name) == str(self.name))
+        return (o is not None) and (isinstance(o, Constant) and (str(o.name) == str(self.name))) or (o.name == '*' or self.name == '*')
 
     def toLTLFO(self):
         return "'%s'" % self.name
