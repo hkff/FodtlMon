@@ -4,7 +4,7 @@
 
 # FodtlMon
 
-FodtlMon Last release : Version 1.0
+FodtlMon Last release : Version 1.1
 
 What is it?
 -----------

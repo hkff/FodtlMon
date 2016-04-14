@@ -19,12 +19,12 @@ from distutils.core import setup
 
 setup(
     name='fodtlmon',
-    version='1.0',
+    version='1.1',
     packages=['fodtlmon', 'fodtlmon.parser', 'fodtlmon.dtl', 'fodtlmon.fodtl', 'fodtlmon.fotl', 'fodtlmon.ltl', 'fodtlmon.tools', 'fodtlmon.webservice'],
     url='https://github.com/hkff/fodtlmon',
     license='GPL3',
     author='Walid Benghabrit',
-    author_email='Walid.Benghabrit@mines-nantes.fr',
+    author_email='benghabrit.walid@gmail.com',
     description='FODTLMON is a monitoring framework based on distributed first order linear temporal logic.',
     install_requires=[
         'antlr4-python3-runtime>=4.5',
