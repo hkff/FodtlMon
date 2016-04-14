@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/version-1.0-orange.svg)]()
+[![License](https://img.shields.io/badge/version-1.1-orange.svg)]()
 [![License](https://img.shields.io/badge/license-GPL3-blue.svg)]()
 [![License](https://img.shields.io/badge/python->%3D3.4-green.svg)]()
 
@@ -14,8 +14,13 @@ FodtlMon is a monitoring framework based on distributed first order linear tempo
 Installation
 ------------
 
+You can install fodtlmon directly using pip3 :
+
+    https://pypi.python.org/pypi/fodtlmon
+    $ sudo pip3 install fodtlmon
+
+Or manually :    
 You need PythonX.X.X >= Python3.4.0 installed on your system
-To run the main program : python mon.py
 
     You need to install the following dependencies :  
     
