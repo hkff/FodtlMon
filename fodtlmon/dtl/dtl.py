@@ -97,7 +97,7 @@ class IKVector:
             if string.startswith("{") and string.endswith("}"):
                 elems = string[1:-1].split(";")
                 if len(elems) > 3:
-                    res = IKVector.Entry(elems[0], agent=elems[1].strip(), value=B3(elems[2]), timestamp=int(elems[3]))
+                    res = IKVector.Entry(elems[0], agent=elems[1].strip(), value=B3(elems[2].strip()), timestamp=int(elems[3]))
             return res
 
     def __init__(self, entries=None):

@@ -629,9 +629,9 @@ def B3(formula):
     :param formula:
     :return: Boolean3
     """
-    if isinstance(formula, true) or formula is True or formula == Boolean3.Top.name:
+    if isinstance(formula, true) or formula is True or formula == Boolean3.Top.name or formula == Boolean3.Top.value:
         return Boolean3.Top
-    if isinstance(formula, false) or formula is False or formula == Boolean3.Bottom.name:
+    if isinstance(formula, false) or formula is False or formula == Boolean3.Bottom.name or formula == Boolean3.Bottom.value:
         return Boolean3.Bottom
     else:
         return Boolean3.Unknown
