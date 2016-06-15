@@ -106,7 +106,12 @@ class Ltlmon(Mon):
             res = Or(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, And):
-            res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
+            # Optimizing G F case
+            if isinstance(formula.left, Future) and isinstance(formula.right, And) and \
+                        str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
+                res = And(self.prg(formula.left, event, valuation), formula.right).eval()
+            else:
+                res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, Always):
             res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
