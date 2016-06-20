@@ -111,7 +111,7 @@ class Ltlmon(Mon):
 
         elif isinstance(formula, And):
             # Optimizing G F case
-            if isinstance(formula.left, Future) and isinstance(formula.right, And) and \
+            if self.optimization and isinstance(formula.left, Future) and isinstance(formula.right, And) and \
                         str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
                 res = And(self.prg(formula.left, event, valuation), formula.right).eval()
             else:
@@ -167,7 +167,11 @@ class Ltlmon(Mon):
             res = Always(self.optimize(formula.inner))
 
         elif isinstance(formula, Future):
-            res = Future(self.optimize(formula.inner))
+            tmp = self.optimize(formula.inner)
+            if isinstance(tmp, false):
+                res = tmp
+            else:
+                res = Future(tmp)
 
         elif isinstance(formula, Until):
             res = Until(self.optimize(formula.left), self.optimize(formula.right))
