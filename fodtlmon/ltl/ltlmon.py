@@ -181,16 +181,17 @@ class Ltlmon(Mon):
         return res
 
 
-def ltlfo2mon(formula:Formula, trace:Trace):
+def ltlfo2mon(formula: Formula, trace: Trace, mon: str="-p"):
     """
     Run ltlfo2mon
     :param formula: Formula | ltlfo string formula
     :param trace: Trace | ltlfo string trace
+    :param mon: str | monitoring technique p / sa / "" for sa-opt
     :return:
     """
     fl = formula.toLTLFO() if isinstance(formula, Formula) else formula
     tr = trace.toLTLFO() if isinstance(trace, Trace) else trace
-    cmd = "echo \"%s\" | java -jar fodtlmon/tools/ltlfo2mon.jar -p \"%s\"" % (tr, fl)
+    cmd = "echo \"%s\" | java -jar fodtlmon/tools/ltlfo2mon.jar %s \"%s\"" % (tr, mon, fl)
     p = os.popen(cmd)
     res = p.readline()[:-1]
     p.close()

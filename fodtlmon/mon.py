@@ -180,5 +180,5 @@ def main(argv):
         print("Rewrite      : %s" % mon.rewrite)
         if l2m:
             print(fl.toLTLFO())
-            res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO())
+            res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO(), mon="-p")
             print("ltl2mon : %s" % res)
