@@ -148,9 +148,9 @@ class Ltlmon(Mon):
             pass
 
         elif isinstance(formula, Or):
-            # p | ~p  ::=  false
+            # p | ~p  ::=  true
             if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
-                res = false()
+                res = true()
             # (p U q) & q  ::=  p U q
             elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
                 res = formula.left
