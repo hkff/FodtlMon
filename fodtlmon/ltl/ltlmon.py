@@ -43,6 +43,7 @@ class Mon:
         self.last = Boolean3.Unknown
         self.counter2 = 0
         self.rewrite = copy.deepcopy(self.formula)
+        self.optimization = False
 
     def monitor(self, *args, **kargs):
         pass
@@ -62,7 +63,8 @@ class Ltlmon(Mon):
     LTL monitor using progression technique.
     """
 
-    def monitor(self, once=False, debug=False, struct_res=False):
+    def monitor(self, once=False, debug=False, struct_res=False, optimization=False):
+        self.optimization = optimization
         if debug:
             start_time = time.time()
 
@@ -89,6 +91,8 @@ class Ltlmon(Mon):
 
     def prg(self, formula, event, valuation=None):
         # print(formula)
+        formula = self.optimize(formula)
+
         if isinstance(formula, Predicate):
             # Todo : Check if Predicate is in AP
             res = true() if event.contains(formula) else false()
@@ -132,6 +136,48 @@ class Ltlmon(Mon):
 
         else:
             raise Exception("Error %s of type %s" % (formula, type(formula)))
+        return res
+
+    def optimize(self, formula):
+        if not self.optimization:
+            return formula
+
+        res = formula
+        if isinstance(formula, Neg):
+            # res = Neg(self.prg(formula.inner, event, valuation)).eval()
+            pass
+
+        elif isinstance(formula, Or):
+            # p | ~p  ::=  false
+            if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
+                res = false()
+            # (p U q) & q  ::=  p U q
+            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.left
+
+        elif isinstance(formula, And):
+            # p & ~p  ::=  false
+            if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
+                res = false()
+            # (p U q) & q  ::=  q
+            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.right
+
+        elif isinstance(formula, Always):
+            res = Always(self.optimize(formula.inner))
+
+        elif isinstance(formula, Future):
+            res = Future(self.optimize(formula.inner))
+
+        elif isinstance(formula, Until):
+            res = Until(self.optimize(formula.left), self.optimize(formula.right))
+
+        elif isinstance(formula, Release):
+            pass
+
+        elif isinstance(formula, Next):
+            res = self.optimize(formula.inner)
+
         return res
 
 

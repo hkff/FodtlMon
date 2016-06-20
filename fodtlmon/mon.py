@@ -53,8 +53,9 @@ def main(argv):
     rounds = 1
     server_port = 8080
     webservice = False
+    optimize = False
 
-    help_str_extended = "fodtlmon V 0.1 .\n" + \
+    help_str_extended = "fodtlmon V 1.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
                         "\n  -i \t--input= [file] " + "\t the input file" + \
@@ -74,6 +75,7 @@ def main(argv):
                         "\n  -d \t--debug         " + "\t enable debug mode" + \
                         "\n     \t--server        " + "\t start web service" + \
                         "\n     \t--port= int     " + "\t server port number" + \
+                        "\n     \t--opt           " + "\t enable optimisations" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
@@ -83,7 +85,7 @@ def main(argv):
         opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
                                     "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m", "debug",
-                                    "server", "port="])
+                                    "server", "port=", "opt"])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -130,6 +132,8 @@ def main(argv):
             webservice = True
         elif opt in "--port":
             server_port = int(arg)
+        elif opt in "--opt":
+            optimize = True
 
     if webservice:
         Webservice.start(server_port)
@@ -164,7 +168,7 @@ def main(argv):
         tr = Trace().parse(trace)
         fl = eval(formula[1:]) if formula.startswith(":") else FodtlParser.parse(formula)
         mon = monitor(fl, tr)
-        res = mon.monitor(debug=debug)
+        res = mon.monitor(debug=debug, optimization=optimize)
         print("")
         print("Trace        : %s" % tr)
         print("Formula      : %s" % fl)
@@ -173,6 +177,7 @@ def main(argv):
         print("TSPASS       : %s" % fl.toTSPASS())
         print("LTLFO        : %s" % fl.toLTLFO())
         print("Result       : %s" % res)
+        print("Rewrite      : %s" % mon.rewrite)
         if l2m:
             print(fl.toLTLFO())
             res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO())
