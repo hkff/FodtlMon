@@ -65,7 +65,7 @@ def main(argv):
                         "\n  -t \t--trace         " + "\t the trace" + \
                         "\n     \t--itrace        " + "\t path to file that contains the trace" + \
                         "\n  -1 \t--ltl           " + "\t use LTL monitor" + \
-                        "\n     \t--l2m           " + "\t call ltl2mon also" + \
+                        "\n     \t--l2m=p|sa|sao  " + "\t call ltl2mon also" + \
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
@@ -84,7 +84,7 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
-                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m", "debug",
+                                    "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m=", "debug",
                                     "server", "port=", "opt"])
     except getopt.GetoptError:
         print(help_str_extended)
@@ -125,7 +125,7 @@ def main(argv):
         elif opt in "--itrace":
             itrace = arg
         elif opt in "--l2m":
-            l2m = True
+            l2m = arg
         elif opt in ("-d", "--debug"):
             debug = True
         elif opt in "--server":
@@ -180,5 +180,9 @@ def main(argv):
         print("Rewrite      : %s" % mon.rewrite)
         if l2m:
             print(fl.toLTLFO())
-            res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO(), mon="-p")
+            l2m_mode = "-p"
+            if l2m == "sa": l2m_mode = "-sa"
+            elif l2m == "sao": l2m_mode = ""
+
+            res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO(), mon=l2m_mode)
             print("ltl2mon : %s" % res)
