@@ -177,6 +177,9 @@ class Ltlmon(Mon):
             elif isinstance(formula.right, And)and isinstance(formula.right.right, Until) and \
                     str(formula.left) == str(formula.right.left) == str(formula.right.right.left):
                 res = formula.right
+            # (p U q) & q  ::= q
+            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.right
 
         elif isinstance(formula, Always):
             res = Always(self.optimize(formula.inner))
