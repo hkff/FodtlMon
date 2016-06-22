@@ -182,11 +182,20 @@ class Ltlmon(Mon):
                 res = formula.right
 
         elif isinstance(formula, Always):
-            res = Always(self.optimize(formula.inner))
+            tmp = self.optimize(formula.inner)
+            # G G p  ::= G p
+            if isinstance(tmp, Always):
+                res = tmp
+            else:
+                res = Always(tmp)
 
         elif isinstance(formula, Future):
             tmp = self.optimize(formula.inner)
+            # F false ::= false
             if isinstance(tmp, false):
+                res = tmp
+            # F F p ::= F p
+            elif isinstance(tmp, Future):
                 res = tmp
             else:
                 res = Future(tmp)
