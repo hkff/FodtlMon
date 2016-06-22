@@ -171,7 +171,11 @@ class Ltlmon(Mon):
                 res = formula.right
             # F(p) & (F(p) & GF(p))  ::=  F(p) & GF(p)
             elif isinstance(formula.left, Future) and isinstance(formula.right, And) and \
-                        str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
+                    str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
+                res = formula.right
+            # p & (p & (p U q))  ::= p & (p U q)
+            elif isinstance(formula.right, And)and isinstance(formula.right.right, Until) and \
+                    str(formula.left) == str(formula.right.left) == str(formula.right.right.left):
                 res = formula.right
 
         elif isinstance(formula, Always):
