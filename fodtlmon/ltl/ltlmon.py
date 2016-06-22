@@ -90,6 +90,13 @@ class Ltlmon(Mon):
         return ret
 
     def prg(self, formula, event, valuation=None):
+        """
+        Progression function
+        :param formula:
+        :param event:
+        :param valuation:
+        :return:
+        """
         # print(formula)
         formula = self.optimize(formula)
 
@@ -110,12 +117,7 @@ class Ltlmon(Mon):
             res = Or(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, And):
-            # Optimizing G F case
-            if self.optimization and isinstance(formula.left, Future) and isinstance(formula.right, And) and \
-                        str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
-                res = And(self.prg(formula.left, event, valuation), formula.right).eval()
-            else:
-                res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
+            res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, Always):
             res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
@@ -139,6 +141,11 @@ class Ltlmon(Mon):
         return res
 
     def optimize(self, formula):
+        """
+        Applying simplifications rules
+        :param formula:
+        :return:
+        """
         if not self.optimization:
             return formula
 
@@ -161,6 +168,10 @@ class Ltlmon(Mon):
                 res = false()
             # (p U q) & q  ::=  q
             elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.right
+            # F(p) & (F(p) & GF(p))  ::=  F(p) & GF(p)
+            elif isinstance(formula.left, Future) and isinstance(formula.right, And) and \
+                        str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
                 res = formula.right
 
         elif isinstance(formula, Always):
