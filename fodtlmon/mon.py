@@ -179,7 +179,6 @@ def main(argv):
         print("Result       : %s" % res)
         print("Rewrite      : %s" % mon.rewrite)
         if l2m:
-            print(fl.toLTLFO())
             l2m_mode = "-p"
             if l2m == "sa": l2m_mode = "-sa"
             elif l2m == "sao": l2m_mode = ""
