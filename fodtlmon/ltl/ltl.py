@@ -466,7 +466,7 @@ class Imply(Or):
 
 # Always
 class Always(UExp):
-    symbol = "always"
+    symbol = "G"
     tspass = "always"
     ltlfo = "G"
 
@@ -477,7 +477,7 @@ class G(Always):
 
 # Future
 class Future(UExp):
-    symbol = "future"
+    symbol = "F"
     tspass = "sometime"
     ltlfo = "F"
 
@@ -488,7 +488,7 @@ class F(Future):
 
 # Next
 class Next(UExp):
-    symbol = "next"
+    symbol = "X"
     tspass = "next"
     ltlfo = "X"
 
@@ -499,7 +499,7 @@ class X(Next):
 
 # Until
 class Until(BExp):
-    symbol = "until"
+    symbol = "U"
     tspass = "until"
     ltlfo = "U"
 
@@ -510,7 +510,7 @@ class U(Until):
 
 # Release
 class Release(BExp):
-    symbol = "release"
+    symbol = "R"
     tspass = "unless"
     ltlfo = ""
 
