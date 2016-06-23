@@ -124,3 +124,30 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
                          input()
 
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
+
+
+def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1,
+              alphabet=None, constants=None, interactive=False, output_file="fodtlmon/tests/logs.log", debug=False):
+
+    fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
+    fuzzer.init_fuzzer()
+    found = 0
+    nbr = formula_nbr
+    with open(output_file, "w+") as f:
+        for x in range(nbr):
+            print("## %s / %s  Errors %s" % (x+1, nbr, found))
+            formula = fuzzer.gen(formula_depth)
+            trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
+
+            tspass1 = tspassc(formula.toTSPASS())
+            if tspass1["res"] == "Satisfiable":
+                mon = Ltlmon(formula, trace)
+                res1 = mon.monitor(debug=debug, struct_res=True)
+                if str(res1["result"]) != "⊥":
+                    tspass2 = tspassc(mon.rewrite.toTSPASS())
+                    if tspass2["res"] == "Unsatisfiable":
+                        found += 1
+                        print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
+                        print2(str(res1["result"]), file=f)
+                        print2("%s => %s" % (tspass1["res"], tspass2["res"]), file=f)
+                        print2("\n======================================\n", file=f)
