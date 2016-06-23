@@ -29,23 +29,17 @@ class Fuzzer:
     """
     Monitors tester
     """
+    allowed_classes = [And, Or, Imply, Neg, G, F, R, U, X, Always, Future,
+                       Release, Until, Next, false, true, Predicate]
+
     def __init__(self, language, alphabet=None, constants=None):
-        self.nodes = []
+        self.nodes = self.allowed_classes
         self.language = language
         self.constants = [] if constants is None else constants
         self.alphabet = [] if alphabet is None else alphabet
 
     def init_fuzzer(self):
-        ltl = imp.load_source("", "fodtlmon/ltl/ltl.py")
-        for name, obj in inspect.getmembers(ltl):
-            # TODO : fixe me spacename conflict
-            if inspect.isclass(obj):
-                # Get only classes that are defined in ltl
-                if obj.__module__ == "ltl":
-                    # Get only classes inherit from Exp
-                    if obj.__base__ is UExp or obj.__base__ is BExp or obj in (true, false, Predicate):
-                        if obj is not Release and obj is not R:
-                            self.nodes.append(obj)
+        return
 
     def gen(self, depth):
         if depth == 0:
@@ -103,7 +97,6 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
     fuzzer.init_fuzzer()
     errors = 0
     nbr = formula_nbr
-    nbr = 1
     formula_depth = 1
     formula_nbr = 1
     with open(output_file, "w+") as f:
