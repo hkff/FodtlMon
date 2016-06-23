@@ -110,8 +110,6 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
             res2 = str(ltlfo2mon(fl, tr))
             print2(res2, file=f)
 
-            # res11 = res1.replace("Result Progression: ", "")[0]
-            # res22 = res2.replace("Result Progression: ", "")[0]
             if res1 != res2:
                 errors += 1
                 print2("\n## Result are different ! ", file=f)
@@ -120,8 +118,8 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
                 if interactive:
                     debug2 = input("Debug y/n : ")
                     if debug2 == "y":
-                         Ltlmon(formula, trace).monitor(debug=debug)
-                         input()
+                        Ltlmon(formula, trace).monitor(debug=debug)
+                        input()
 
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
@@ -138,7 +136,6 @@ def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_len
             print("## %s / %s  Errors %s" % (x+1, nbr, found))
             formula = fuzzer.gen(formula_depth)
             trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
-
             tspass1 = tspassc(formula.toTSPASS())
             if tspass1["res"] == "Satisfiable":
                 mon = Ltlmon(formula, trace)
