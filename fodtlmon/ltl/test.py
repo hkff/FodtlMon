@@ -18,11 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 __author__ = 'walid'
 
 from fodtlmon.ltl.ltlmon import *
-import inspect
-import imp
 from random import random
-
-ltl = imp.load_source("ltl", "fodtlmon/ltl/ltl.py")
 
 
 class Fuzzer:
@@ -97,8 +93,6 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
     fuzzer.init_fuzzer()
     errors = 0
     nbr = formula_nbr
-    formula_depth = 1
-    formula_nbr = 1
     with open(output_file, "w+") as f:
         for x in range(nbr):
             print("## %s / %s  Errors %s" % (x+1, nbr, errors))
