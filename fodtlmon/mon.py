@@ -53,7 +53,7 @@ def main(argv):
     rounds = 1
     server_port = 8080
     webservice = False
-    optimize = False
+    optimize = -1
 
     help_str_extended = "fodtlmon V 1.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \

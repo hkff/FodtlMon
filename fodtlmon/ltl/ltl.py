@@ -410,7 +410,7 @@ class And(BExp):
 
 class Or(BExp):
     symbol = "or"
-    tspass = "||"
+    tspass = "|"
     ltlfo = "\/"
 
     def eval(self):
