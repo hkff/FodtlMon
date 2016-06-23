@@ -75,7 +75,7 @@ def main(argv):
                         "\n  -d \t--debug         " + "\t enable debug mode" + \
                         "\n     \t--server        " + "\t start web service" + \
                         "\n     \t--port= int     " + "\t server port number" + \
-                        "\n     \t--opt           " + "\t enable optimisations" + \
+                        "\n     \t--opt= int      " + "\t optimization level (O: simplification, 1: TSPASS, 2: Both)" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
@@ -85,7 +85,7 @@ def main(argv):
         opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
                                     "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m=", "debug",
-                                    "server", "port=", "opt"])
+                                    "server", "port=", "opt="])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -133,7 +133,7 @@ def main(argv):
         elif opt in "--port":
             server_port = int(arg)
         elif opt in "--opt":
-            optimize = True
+            optimize = int(arg)
 
     if webservice:
         Webservice.start(server_port)

@@ -22,6 +22,9 @@ from fodtlmon.parser.Parser import *
 import os
 import copy
 import time
+import sys
+from fodtlmon.tools.color import Color
+from subprocess import Popen, PIPE
 DEBUG = False
 
 
@@ -101,7 +104,6 @@ class Ltlmon(Mon):
         formula = self.optimize(formula)
 
         if isinstance(formula, Predicate):
-            # Todo : Check if Predicate is in AP
             res = true() if event.contains(formula) else false()
 
         elif isinstance(formula, true):
@@ -142,72 +144,92 @@ class Ltlmon(Mon):
 
     def optimize(self, formula):
         """
-        Applying simplifications rules
+        Optimize the formula
         :param formula:
         :return:
         """
-        if not self.optimization:
+        if self.optimization == -1:
             return formula
 
+        # Detect optimisation level
+        tspass = True if self.optimization == 1 or self.optimization == 2 else False
+        simplify = True if self.optimization == 0 or self.optimization == 2 else False
+
         res = formula
-        if isinstance(formula, Neg):
-            # res = Neg(self.prg(formula.inner, event, valuation)).eval()
-            pass
 
-        elif isinstance(formula, Or):
-            # p | ~p  ::=  true
-            if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
-                res = true()
-            # (p U q) & q  ::=  p U q
-            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
-                res = formula.left
+        # Check with TSPASS
+        if tspass:
+            a = tspassc(formula.toTSPASS())
+            if a["res"] == "Unsatisfiable":  # Formula is not satisfiable
+                return false()
 
-        elif isinstance(formula, And):
-            # p & ~p  ::=  false
-            if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
-                res = false()
-            # (p U q) & q  ::=  q
-            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
-                res = formula.right
-            # F(p) & (F(p) & GF(p))  ::=  F(p) & GF(p)
-            elif isinstance(formula.left, Future) and isinstance(formula.right, And) and \
-                    str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
-                res = formula.right
-            # p & (p & (p U q))  ::= p & (p U q)
-            elif isinstance(formula.right, And)and isinstance(formula.right.right, Until) and \
-                    str(formula.left) == str(formula.right.left) == str(formula.right.right.left):
-                res = formula.right
-            # (p U q) & q  ::= q
-            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
-                res = formula.right
+            b = tspassc(Neg(formula).toTSPASS())
+            if a["res"] == "Satisfiable" and b["res"] == "Unsatisfiable":  # Formula is valid
+                return true()
 
-        elif isinstance(formula, Always):
-            tmp = self.optimize(formula.inner)
-            # G G p  ::= G p
-            if isinstance(tmp, Always):
-                res = tmp
-            else:
-                res = Always(tmp)
+        # Use simplification rules
+        if simplify:
+            if isinstance(formula, Neg):
+                # res = Neg(self.prg(formula.inner, event, valuation)).eval()
+                pass
 
-        elif isinstance(formula, Future):
-            tmp = self.optimize(formula.inner)
-            # F false ::= false
-            if isinstance(tmp, false):
-                res = tmp
-            # F F p ::= F p
-            elif isinstance(tmp, Future):
-                res = tmp
-            else:
-                res = Future(tmp)
+            elif isinstance(formula, Or):
+                # p | ~p  ::=  true
+                if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
+                    res = true()
+                # (p U q) & q  ::=  p U q
+                elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                    res = formula.left
 
-        elif isinstance(formula, Until):
-            res = Until(self.optimize(formula.left), self.optimize(formula.right))
+            elif isinstance(formula, And):
+                # p & ~p  ::=  false
+                if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
+                    res = false()
+                # (p U q) & q  ::=  q
+                elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                    res = formula.right
+                # F(p) & (F(p) & GF(p))  ::=  F(p) & GF(p)
+                elif isinstance(formula.left, Future) and isinstance(formula.right, And) and \
+                        str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
+                    res = formula.right
+                # p & (p & (p U q))  ::= p & (p U q)
+                elif isinstance(formula.right, And)and isinstance(formula.right.right, Until) and \
+                        str(formula.left) == str(formula.right.left) == str(formula.right.right.left):
+                    res = formula.right
+                # (p U q) & q  ::= q
+                elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                    res = formula.right
 
-        elif isinstance(formula, Release):
-            pass
+            elif isinstance(formula, Always):
+                # G true  ::= true
+                tmp = self.optimize(formula.inner)
+                if isinstance(tmp, true):
+                    res = tmp
+                # G G p  ::= G p
+                elif isinstance(tmp, Always):
+                    res = tmp
+                else:
+                    res = Always(tmp)
 
-        elif isinstance(formula, Next):
-            res = self.optimize(formula.inner)
+            elif isinstance(formula, Future):
+                tmp = self.optimize(formula.inner)
+                # F false ::= false
+                if isinstance(tmp, false):
+                    res = tmp
+                # F F p ::= F p
+                elif isinstance(tmp, Future):
+                    res = tmp
+                else:
+                    res = Future(tmp)
+
+            elif isinstance(formula, Until):
+                res = Until(self.optimize(formula.left), self.optimize(formula.right))
+
+            elif isinstance(formula, Release):
+                pass
+
+            elif isinstance(formula, Next):
+                res = self.optimize(formula.inner)
 
         return res
 
@@ -227,3 +249,78 @@ def ltlfo2mon(formula: Formula, trace: Trace, mon: str="-p"):
     res = p.readline()[:-1]
     p.close()
     return res
+
+
+def tspassc(code="", output="tmp.tspass", debug: bool=False):
+    """
+    Parse tspass
+    :param code: The tspass code
+    :param output: The output parsing file
+    :param debug: boolean enable/disable debug messages
+    :return:
+    """
+    p = sys.platform
+    if p.startswith("linux"):
+        os_name = "linux"
+    elif p.startswith("darwin"):
+        os_name = "mac"
+    elif p.startswith("win"):
+        # os_name = "win"
+        print(Color("{autored}Windows is not supported yet {/red}"))
+        sys.exit(-1)
+    else:
+        print(Color("{autored}Unknown platform " + p + "{/red}"))
+        sys.exit(-1)
+
+    res = ""
+
+    generated_tspass = output.replace(".tspass", "_gen.tspass")
+    bt = code + "\n"
+
+    fotl_file = generated_tspass.replace(".tspass", ".fotl")
+    result_file = generated_tspass.replace(".tspass", ".result")
+
+    # TSPASS parsing
+    with open(generated_tspass, mode='w') as f:
+        f.write(bt)
+    if debug:
+        print(bt)
+
+    # FOTL Translate
+    p = Popen(['fodtlmon/tools/' + os_name + '/fotl-translate', generated_tspass],
+              stdout=PIPE, stderr=PIPE, stdin=PIPE)
+    fotl = p.stdout.read().decode("utf-8")
+    if fotl == "":
+        fotl = p.stderr.read().decode("utf-8")
+        res += fotl + "\n"
+    if debug:
+        print(fotl)
+        print(p.stderr.read().decode("utf-8"))
+
+    with open(fotl_file, mode='w') as f:
+        f.write(fotl)
+
+    # TSPASS
+    p = Popen(['fodtlmon/tools/' + os_name + '/tspass', fotl_file],
+              stdout=PIPE, stderr=PIPE, stdin=PIPE)
+
+    tspass = p.stdout.read().decode("utf-8")
+    if tspass == "":
+        tspass = p.stderr.read().decode("utf-8")
+        res += tspass + "\n"
+    if debug:
+        print(tspass)
+        print(p.stderr.read().decode("utf-8"))
+
+    with open(result_file, mode='w') as f:  # Writing the result
+        f.write(tspass)
+
+    lookup = "SPASS beiseite:"
+    sat = ""
+    for line in tspass.split("\n"):
+        if lookup in line:
+            res += "[TSPASS] " + line.replace("SPASS beiseite:", "")
+            sat = line.replace("SPASS beiseite:", "").replace(".", "").replace(" ", "")
+            break
+
+    return {"res": sat, "print": res}
