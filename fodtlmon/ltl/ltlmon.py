@@ -157,16 +157,6 @@ class Ltlmon(Mon):
 
         res = formula
 
-        # Check with TSPASS
-        if tspass:
-            a = tspassc(formula.toTSPASS())
-            if a["res"] == "Unsatisfiable":  # Formula is not satisfiable
-                return false()
-
-            b = tspassc(Neg(formula).toTSPASS())
-            if a["res"] == "Satisfiable" and b["res"] == "Unsatisfiable":  # Formula is valid
-                return true()
-
         # Use simplification rules
         if simplify:
             if isinstance(formula, Neg):
@@ -201,9 +191,9 @@ class Ltlmon(Mon):
                     res = formula.right
 
             elif isinstance(formula, Always):
-                # G true  ::= true
+                # G true/false  ::= true/false
                 tmp = self.optimize(formula.inner)
-                if isinstance(tmp, true):
+                if isinstance(tmp, true) or isinstance(tmp, false):
                     res = tmp
                 # G G p  ::= G p
                 elif isinstance(tmp, Always):
@@ -213,8 +203,8 @@ class Ltlmon(Mon):
 
             elif isinstance(formula, Future):
                 tmp = self.optimize(formula.inner)
-                # F false ::= false
-                if isinstance(tmp, false):
+                # F true/false ::= true/false
+                if isinstance(tmp, true) or isinstance(tmp, false):
                     res = tmp
                 # F F p ::= F p
                 elif isinstance(tmp, Future):
@@ -230,6 +220,19 @@ class Ltlmon(Mon):
 
             elif isinstance(formula, Next):
                 res = self.optimize(formula.inner)
+
+        # Avoid useless checks
+        if isinstance(res, true) or isinstance(res, false): return res
+
+        # Check with TSPASS
+        if tspass:
+            a = tspassc(res.toTSPASS())
+            if a["res"] == "Unsatisfiable":  # Formula is not satisfiable
+                return false()
+
+            b = tspassc(Neg(res).toTSPASS())
+            if a["res"] == "Satisfiable" and b["res"] == "Unsatisfiable":  # Formula is valid
+                return true()
 
         return res
 
