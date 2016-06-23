@@ -387,7 +387,7 @@ class BExp(Exp):
 ##
 class And(BExp):
     symbol = "and"
-    tspass = "&&"
+    tspass = "&"
     ltlfo = "/\\"
 
     def eval(self):
