@@ -88,7 +88,20 @@ def print2(*args, file=None):
 
 def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1, alphabet=None,
                   constants=None, interactive=False, output_file="fodtlmon/tests/logs.log", debug=False):
-
+    """
+    LTL formula fuzzer
+    :param monitor:
+    :param formula_nbr:
+    :param formula_depth:
+    :param trace_lenght:
+    :param trace_depth:
+    :param alphabet:
+    :param constants:
+    :param interactive:
+    :param output_file:
+    :param debug:
+    :return:
+    """
     fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
     fuzzer.init_fuzzer()
     errors = 0
@@ -124,27 +137,78 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 
-def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1, alphabet=None,
-                        constants=None, output_file="fodtlmon/tests/logs.log", debug=False):
+def chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug, write_dir=False):
+    """
+    Generate a formula and a trace, then checks if it have an Sat => Unsat form
+    :param x:
+    :param fuzzer:
+    :param formula_nbr:
+    :param formula_depth:
+    :param trace_lenght:
+    :param trace_depth:
+    :param debug:
+    :return:
+    """
+    res = ""
+    pid = os.getpid()
+    formula = fuzzer.gen(formula_depth)
+    trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
+    print("## %s / %s" % (x, formula_nbr))
+    tspass1 = tspassc(formula.toTSPASS(), output="tmp%s.tspass" % pid)
+    if tspass1["res"] == "Satisfiable":
+        mon = Ltlmon(formula, trace)
+        res1 = mon.monitor(debug=debug, struct_res=True)
+        if str(res1["result"]) != "⊥":
+            tspass2 = tspassc(mon.rewrite.toTSPASS(), output="tmp%s.tspass" % pid)
+            if tspass2["res"] == "Unsatisfiable":
+                res += "Formula   : %s\nFormula C : %s\nTrace     : %s\n" % (formula, formula.toCODE(), trace)
+                res += str(res1["result"]) + "\n"
+                res += "%s => %s" % (tspass1["res"], tspass2["res"]) + "\n"
+                res += "\n======================================\n"
+                if write_dir:
+                    with open("%s/formula%s_%s.log" % (write_dir, x, pid), "w+") as f:
+                        f.write(res)
+    return res
 
+
+def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1, alphabet=None,
+                        constants=None, output_file="fodtlmon/tests/tricky.log", debug=False, jobs=1):
+    """
+    Run the tricky formula finder
+    :param monitor:
+    :param formula_nbr:
+    :param formula_depth:
+    :param trace_lenght:
+    :param trace_depth:
+    :param alphabet:
+    :param constants:
+    :param output_file:
+    :param debug:
+    :param jobs:
+    :return:
+    """
+    import datetime
     fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
     fuzzer.init_fuzzer()
     found = 0
-    nbr = formula_nbr
-    with open(output_file, "w+") as f:
-        for x in range(nbr):
-            print("## %s / %s  Errors %s" % (x+1, nbr, found))
-            formula = fuzzer.gen(formula_depth)
-            trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
-            tspass1 = tspassc(formula.toTSPASS())
-            if tspass1["res"] == "Satisfiable":
-                mon = Ltlmon(formula, trace)
-                res1 = mon.monitor(debug=debug, struct_res=True)
-                if str(res1["result"]) != "⊥":
-                    tspass2 = tspassc(mon.rewrite.toTSPASS())
-                    if tspass2["res"] == "Unsatisfiable":
-                        found += 1
-                        print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
-                        print2(str(res1["result"]), file=f)
-                        print2("%s => %s" % (tspass1["res"], tspass2["res"]), file=f)
-                        print2("\n======================================\n", file=f)
+    found_dir = "fodtlmon/tests/trick_found_%s_%s" % (datetime.datetime.today().date(), datetime.datetime.today().time())
+    os.mkdir(found_dir)
+
+    # Check for joblib
+    import importlib
+    parallel = importlib.find_loader("joblib") is not None
+
+    if parallel and jobs > 1:
+        # Parallel version
+        from joblib import Parallel, delayed
+        Parallel(n_jobs=jobs)(delayed(chk)(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug, write_dir=found_dir)
+                              for x in range(formula_nbr))
+    else:
+        # Sequential version
+        with open(output_file, "w+") as f:
+            for x in range(formula_nbr):
+                res = chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug)
+                if res != "":
+                    print2(res, file=f)
+                    found += 1
+                    print("  Found %s" % found)
