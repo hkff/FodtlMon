@@ -1,5 +1,5 @@
 """
-fodtlmon version 1.0
+fodtlmon version 1.1
 Copyright (C) 2015 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
@@ -28,5 +28,6 @@ setup(
     description='FODTLMON is a monitoring framework based on distributed first order linear temporal logic.',
     install_requires=[
         'antlr4-python3-runtime>=4.5',
+        'joblib>=0.9'
     ]
 )
