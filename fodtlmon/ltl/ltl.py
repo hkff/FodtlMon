@@ -448,7 +448,7 @@ Not = Neg
 class Imply(Or):
     symbol = "=>"
     tspass = "=>"
-    ltlfo = "=>"
+    ltlfo = "->"
 
     def __init__(self, left=None, right=None):
         super().__init__(Neg(left), right)
