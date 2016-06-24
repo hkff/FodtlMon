@@ -19,13 +19,13 @@ You can install fodtlmon directly using pip3 :
     https://pypi.python.org/pypi/fodtlmon
     $ sudo pip3 install fodtlmon
 
-Or manually :    
+Or manually :
 You need PythonX.X.X >= Python3.4.0 installed on your system
 
-    You need to install the following dependencies :  
-    
+    You need to install the following dependencies :
+
         $ sudo pip3 install antlr4-python3-runtime
-            
+
 To install the framework run setup.py:
 
         $ sudo python3 setup.py install
@@ -44,19 +44,34 @@ Usage
       -t 	--trace         	 the trace
          	--itrace        	 path to file that contains the trace
       -1 	--ltl           	 use LTL monitor
-         	--l2m           	 call ltl2mon also
+         	--l2m=p|sa|sao       call ltl2mon
       -2 	--fotl          	 use FOTL monitor
       -3 	--dtl           	 use DTL monitor
       -4 	--fodtl         	 use FODTL monitor
-         	--sys= [file]   	 Run a system from json file
-         	--rounds= int   	 Number of rounds to run in the system
+         	--sys= [file]   	 run a system from json file
+         	--rounds= int   	 number of rounds to run in the system
       -z 	--fuzzer        	 run fuzzing tester
-            --server        	 start web service
-     	    --port= int     	 server port number
+			 --server        	 start web service
+			 --port= int     	 server port number
+             --opt= int           optimization level (O: Simplification, 1: Solver, 2: Both)
 
-* formula format : true | false | ~formula | P(variable) | P('constant') | formula (=> | & | '|' | U | R ) formula | @name(formula) | G formula | F formula | X formula  | ![x1:type1 x2:type2 ...] formula | ?[x1:type1 x2:type2 ...] formula 
+* formula format :
+
+        formula ::= true | false | ~formula | P(t*) | formula (=> | & | '|') formula
+        | @name(formula)
+        | G formula | F formula | X formula | formula ( U | R ) formula
+        | ![x1:type1 x2:type2 ...] formula | ?[x1:type1 x2:type2 ...] formula
+	where: t can be a variable (x, y, ...), a constant ('foo', 'bar', ...), an interpreted predicate or a function and P an id.
+
 * event format : {Predicate(args) | ....}
-* trace format : {event1; event2; .... } 
+* trace format : {event1; event2; .... }
+
+Examples
+---------
+	python3 mon.py -f "F(w('x'))" -t "{w(a)};{w(a)};{w(x)}; {w(a)}" -2
+    Result       : Result Progression: ⊤ after 3 events.
+
+
 
 Licensing
 ---------

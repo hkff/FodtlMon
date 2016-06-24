@@ -1,6 +1,6 @@
 #!/usr/bin/python3.4
 """
-fodtlmon version 1.0
+fodtlmon version 1.1
 Copyright (C) 2015 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
@@ -65,17 +65,17 @@ def main(argv):
                         "\n  -t \t--trace         " + "\t the trace" + \
                         "\n     \t--itrace        " + "\t path to file that contains the trace" + \
                         "\n  -1 \t--ltl           " + "\t use LTL monitor" + \
-                        "\n     \t--l2m=p|sa|sao  " + "\t call ltl2mon also" + \
+                        "\n     \t--l2m=p|sa|sao  " + "\t call ltl2mon" + \
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
-                        "\n     \t--sys= [file]   " + "\t Run a system from json file" + \
-                        "\n     \t--rounds= int   " + "\t Number of rounds to run in the system" + \
+                        "\n     \t--sys= [file]   " + "\t run a system from json file" + \
+                        "\n     \t--rounds= int   " + "\t number of rounds to run in the system" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
                         "\n  -d \t--debug         " + "\t enable debug mode" + \
                         "\n     \t--server        " + "\t start web service" + \
                         "\n     \t--port= int     " + "\t server port number" + \
-                        "\n     \t--opt= int      " + "\t optimization level (O: simplification, 1: TSPASS, 2: Both)" + \
+                        "\n     \t--opt= int      " + "\t optimization level (O: Simplification, 1: Solver, 2: Both)" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
