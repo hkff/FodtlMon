@@ -276,12 +276,9 @@ def tspassc(code="", output="tmp.tspass", debug: bool=False):
         sys.exit(-1)
 
     res = ""
-
+    sat = ""
     generated_tspass = output.replace(".tspass", "_gen.tspass")
     bt = code + "\n"
-
-    fotl_file = generated_tspass.replace(".tspass", ".fotl")
-    result_file = generated_tspass.replace(".tspass", ".result")
 
     # TSPASS parsing
     with open(generated_tspass, mode='w') as f:
@@ -292,38 +289,19 @@ def tspassc(code="", output="tmp.tspass", debug: bool=False):
     # FOTL Translate
     p = Popen(['fodtlmon/tools/' + os_name + '/fotl-translate', generated_tspass],
               stdout=PIPE, stderr=PIPE, stdin=PIPE)
-    fotl = p.stdout.read().decode("utf-8")
-    if fotl == "":
-        fotl = p.stderr.read().decode("utf-8")
-        res += fotl + "\n"
-    if debug:
-        print(fotl)
-        print(p.stderr.read().decode("utf-8"))
-
-    with open(fotl_file, mode='w') as f:
-        f.write(fotl)
-
-    # TSPASS
-    p = Popen(['fodtlmon/tools/' + os_name + '/tspass', fotl_file],
-              stdout=PIPE, stderr=PIPE, stdin=PIPE)
+    p = Popen(['fodtlmon/tools/' + os_name + '/tspass', "--Stdin"],
+              stdout=PIPE, stderr=PIPE, stdin=p.stdout)
 
     tspass = p.stdout.read().decode("utf-8")
     if tspass == "":
         tspass = p.stderr.read().decode("utf-8")
         res += tspass + "\n"
-    if debug:
-        print(tspass)
-        print(p.stderr.read().decode("utf-8"))
-
-    with open(result_file, mode='w') as f:  # Writing the result
-        f.write(tspass)
-
-    lookup = "SPASS beiseite:"
-    sat = ""
-    for line in tspass.split("\n"):
-        if lookup in line:
-            res += "[TSPASS] " + line.replace("SPASS beiseite:", "")
-            sat = line.replace("SPASS beiseite:", "").replace(".", "").replace(" ", "")
-            break
+    else:
+        lookup = "SPASS beiseite:"
+        for line in tspass.split("\n"):
+            if lookup in line:
+                res += "[TSPASS] " + line.replace("SPASS beiseite:", "")
+                sat = line.replace("SPASS beiseite:", "").replace(".", "").replace(" ", "")
+                break
 
     return {"res": sat, "print": res}
