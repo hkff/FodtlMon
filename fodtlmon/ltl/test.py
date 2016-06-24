@@ -166,8 +166,9 @@ def chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug,
                 res += "%s => %s" % (tspass1["res"], tspass2["res"]) + "\n"
                 res += "\n======================================\n"
                 if write_dir:
-                    with open("%s/formula%s_%s.log" % (write_dir, x, pid), "w+") as f:
-                        f.write(res)
+                    with open("%s/formula%s_%s.log" % (write_dir, x, pid), "w+") as f: f.write(res)
+                    with open("%s/%s_%s.formula" % (write_dir, x, pid), "w+") as f: f.write(str(formula))
+                    with open("%s/%s_%s.trace" % (write_dir, x, pid), "w+") as f: f.write(str(trace))
     return res
 
 
@@ -191,7 +192,7 @@ def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_len
     fuzzer = Fuzzer(monitor, alphabet=alphabet, constants=constants)
     fuzzer.init_fuzzer()
     found = 0
-    found_dir = "fodtlmon/tests/trick_found_%s_%s" % (datetime.datetime.today().date(), datetime.datetime.today().time())
+    found_dir = "fodtlmon/tests/trick_found_%s" % (datetime.datetime.today().strftime("%Y-%m-%d_%H:%M:%S"))
     os.mkdir(found_dir)
 
     # Check for joblib
