@@ -386,7 +386,7 @@ class BExp(Exp):
 # Propositional operators
 ##
 class And(BExp):
-    symbol = "and"
+    symbol = "&"
     tspass = "&"
     ltlfo = "/\\"
 
@@ -409,7 +409,7 @@ class And(BExp):
 
 
 class Or(BExp):
-    symbol = "or"
+    symbol = "|"
     tspass = "|"
     ltlfo = "\/"
 
@@ -432,7 +432,7 @@ class Or(BExp):
 
 
 class Neg(UExp):
-    symbol = "not"
+    symbol = "~"
     tspass = "~"
     ltlfo = "~"
 
