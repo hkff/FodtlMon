@@ -62,7 +62,7 @@ class FodtlParser(ParseTreeListener):
 
     def exitPredicate(self, ctx:FODTLParser.PredicateContext):
         # TODO handle interpreted predicates and functions
-         if len(self.formulas) >= len(ctx.arg()):
+        if len(self.formulas) >= len(ctx.arg()):
             name = str(ctx.ID()) if ctx.ID() is not None else ctx.ID()
             args = []
             for x in range(len(ctx.arg())):
@@ -106,6 +106,11 @@ class FodtlParser(ParseTreeListener):
                 if ctx.utOperators().O_always() is not None: klass = Always
                 elif ctx.utOperators().O_future() is not None: klass = Future
                 elif ctx.utOperators().O_next() is not None: klass = Next
+                elif ctx.utOperators().O_next_n() is not None:
+                    klass = Next
+                    n = int(str(ctx.utOperators().O_next_n()).replace("X", ""))
+                    for x in range(n-1):
+                        inner = Next(inner)
                 else: raise Exception("Type error")
                 self.formulas.append(klass(inner))
             else:

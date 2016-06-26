@@ -33,6 +33,7 @@ O_next     : 'X';
 O_future   : 'F';
 O_until    : 'U';
 O_release  : 'R';
+O_next_n   : 'X' INT;
 
 ID        : (('a'..'z')|('A'..'Z')) (('a'..'z')|('A'..'Z')| INT | '_')*;
 INT       : '0'..'9'+;
@@ -76,7 +77,7 @@ regexp      : 'r' STRING;
 negation    : O_not formula;
 
 // Temporal operators
-utOperators : O_always | O_next | O_future;
+utOperators : O_always | O_next | O_future | O_next_n;
 btOperators : O_until | O_release;
 
 // First order
