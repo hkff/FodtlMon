@@ -29,7 +29,7 @@ class Fodtlmon(Dtlmon, Fotlmon):
         Dtlmon.__init__(self, formula, event, actor=actor, parent=parent, fid=fid)
 
     def prg(self, formula, event, valuation=None):
-        if isinstance(formula, Forall) or isinstance(formula, Predicate) or isinstance(formula, ForallConj):
-            return Fotlmon.prg(self, formula, event, valuation)
-        else:
+        if isinstance(formula, At) or isinstance(formula, Boolean3):
             return Dtlmon.prg(self, formula, event, valuation)
+        else:
+            return Fotlmon.prg(self, formula, event, valuation)
