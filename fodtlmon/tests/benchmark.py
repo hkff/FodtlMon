@@ -19,6 +19,7 @@ __author__ = 'walid'
 
 from fodtlmon.fodtl.fodtlmon import *
 from datetime import datetime
+from fodtlmon.ltl.test import Fuzzer
 
 
 class InstrumentedMon(Fotlmon):
@@ -64,3 +65,26 @@ class InstrumentedMon(Fotlmon):
             f.write("# Execution time: %5.4f ms\n" % ((time.time() - total_start_time)*1000))
 
         return ret
+
+
+def run_benchmarks():
+    alphabet = ["P"]
+    constants = ["a", "b", "c"]
+    fuzzer = Fuzzer("fotl", alphabet=alphabet, constants=constants)
+    fuzzer.init_fuzzer()
+    # GEN
+    # 1. Create benckmarks folder
+    # 2. Create a folder for each formula
+    # 3. Generate a trace for the formula
+
+    # RUN
+    # For each formula folder
+    #    trace = read from trace file
+    #    formual = read from formula file
+    #    tr = Trace().parse(trace)
+    #    fl = FodtlParser.parse(formula)
+    #
+    #    # Run in parallel (optimize = -1, 0, 1, 2, 3)
+    #    mon = InstrumentedMon(fl, tr)
+    #    res = mon.monitor(optimization=optimize, output=output_file)
+    #
