@@ -39,7 +39,7 @@ class Optimzation(Enum):
     """
     NONE = -1
     SIMPLIFICATION = 0
-    SATISFIABILITY = 1
+    SOLVER = 1
     FIXPOINT = 2
     BOTH = 3
 
@@ -133,10 +133,20 @@ class Ltlmon(Mon):
             res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, Always):
-            res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
+            if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
+                # Fixpoint optimization
+                tmp = self.optimize(self.prg(formula.inner, event, valuation), Optimzation.SOLVER)
+                res = tmp if isinstance(tmp, true) or isinstance(tmp, false) else And(tmp, G(formula.inner)).eval()
+            else:
+                res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
 
         elif isinstance(formula, Future):
-            res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
+            if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
+                # Fixpoint optimization
+                tmp = self.optimize(self.prg(formula.inner, event, valuation), Optimzation.SOLVER)
+                res = tmp if isinstance(tmp, true) or isinstance(tmp, false) else Or(tmp, F(formula.inner)).eval()
+            else:
+                res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
 
         elif isinstance(formula, Until):
             res = Or(self.prg(formula.right, event, valuation),
@@ -164,7 +174,7 @@ class Ltlmon(Mon):
             return formula
 
         # Detect optimisation level
-        tspass = optimization is Optimzation.SATISFIABILITY
+        tspass = optimization is Optimzation.SOLVER or optimization is Optimzation.FIXPOINT
         simplify = optimization is Optimzation.SIMPLIFICATION or optimization is Optimzation.BOTH
 
         res = formula
