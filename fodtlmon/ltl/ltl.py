@@ -253,8 +253,11 @@ class Predicate(Exp):
             self.args = args
 
     def __str__(self):
-        args = ",".join([str(p) for p in self.args])
-        return "%s(%s)" % (self.name, args)
+        if len(self.args) > 0:
+            args = ",".join([str(p) for p in self.args])
+            return "%s(%s)" % (self.name, args)
+        else:
+            return str(self.name)
 
     @staticmethod
     def parse(string: str, cts=False):
