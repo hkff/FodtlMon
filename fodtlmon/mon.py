@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from fodtlmon.webservice import webservice
-
 __author__ = 'walid'
 import sys
 import getopt
@@ -27,7 +25,7 @@ from fodtlmon.fotl.test import *
 from fodtlmon.fodtl.test import *
 from fodtlmon.parser.Parser import *
 from fodtlmon.webservice.webservice import *
-
+from fodtlmon.tests.benchmark import *
 
 ###################
 # Main
@@ -38,8 +36,8 @@ def main(argv):
     :param argv: console arguments
     :return:
     """
-    input_file = ""
-    output_file = ""
+    input_file = None
+    output_file = None
     monitor = None
     formula = None
     trace = None
@@ -69,6 +67,7 @@ def main(argv):
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
+                        "\n  -5 \t--fodtl         " + "\t use FODTL monitor" + \
                         "\n     \t--sys= [file]   " + "\t run a system from json file" + \
                         "\n     \t--rounds= int   " + "\t number of rounds to run in the system" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
@@ -83,10 +82,10 @@ def main(argv):
 
     # Checking options
     try:
-        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:1234zd",
+        opts, args = getopt.getopt(argv[1:], "hi:o:f:t:12345zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
                                     "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m=", "debug",
-                                    "server", "port=", "opt="])
+                                    "server", "port=", "opt=", "bench"])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -111,6 +110,8 @@ def main(argv):
             monitor = Dtlmon
         elif opt in ("-4", "--fodtl"):
             monitor = Fodtlmon
+        elif opt in ("-5", "--bench"):
+            monitor = InstrumentedMon
         elif opt in ("-f", "--formula"):
             formula = arg
         elif opt in ("-t", "--trace"):
@@ -176,7 +177,7 @@ def main(argv):
         tr = Trace().parse(trace)
         fl = eval(formula[1:]) if formula.startswith(":") else FodtlParser.parse(formula)
         mon = monitor(fl, tr)
-        res = mon.monitor(debug=debug, optimization=optimize)
+        res = mon.monitor(debug=debug, optimization=optimize, output=output_file)
         print("")
         print("Trace        : %s" % tr)
         print("Formula      : %s" % fl)

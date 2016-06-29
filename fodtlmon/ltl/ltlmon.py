@@ -77,7 +77,7 @@ class Ltlmon(Mon):
     LTL monitor using progression technique.
     """
 
-    def monitor(self, once=False, debug=False, struct_res=False, optimization=Optimzation.NONE):
+    def monitor(self, once=False, debug=False, struct_res=False, optimization=Optimzation.NONE, output=None):
         self.optimization = optimization
         if debug:
             start_time = time.time()
