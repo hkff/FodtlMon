@@ -244,7 +244,7 @@ class Ltlmon(Mon):
                 res = self.optimize(formula.inner, optimization)
 
         # Avoid useless checks
-        if isinstance(res, true) or isinstance(res, false): return res
+        if isinstance(res, true) or isinstance(res, false) or res is Boolean3.Top or res is Boolean3.Bottom: return res
 
         # Check with TSPASS
         if tspass:
