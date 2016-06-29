@@ -259,16 +259,15 @@ class Predicate(Exp):
     @staticmethod
     def parse(string: str, cts=False):
         string = string.strip()
+        arguments = []
         if string.endswith(")"):
             name = string[0: string.find("(")]
             args = string[string.find("(")+1:-1].split(",")
-            arguments = []
             for ar in args:
                 if ar != '':
                     arguments.append(Parameter.parse(ar, cts=cts))
         else:
-            print("Invalid predicate format !")
-            return
+            name = string
         return Predicate(name, arguments)
 
     def equal(self, p):
