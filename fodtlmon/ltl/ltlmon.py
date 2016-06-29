@@ -33,6 +33,17 @@ def Debug(*args):
         print(*args)
 
 
+class Optimzation(Enum):
+    """
+    Optimization levels
+    """
+    NONE = -1
+    SIMPLIFICATION = 0
+    SATISFIABILITY = 1
+    FIXPOINT = 2
+    BOTH = 3
+
+
 class Mon:
     """
     Abstract monitor
@@ -66,7 +77,7 @@ class Ltlmon(Mon):
     LTL monitor using progression technique.
     """
 
-    def monitor(self, once=False, debug=False, struct_res=False, optimization=-1):
+    def monitor(self, once=False, debug=False, struct_res=False, optimization=Optimzation.NONE):
         self.optimization = optimization
         if debug:
             start_time = time.time()
@@ -142,19 +153,19 @@ class Ltlmon(Mon):
             raise Exception("Error %s of type %s" % (formula, type(formula)))
         return res
 
-    def optimize(self, formula, optimization=-1):
+    def optimize(self, formula, optimization=Optimzation.NONE):
         """
         Optimize the formula
         :param formula:
-        :param optimization: 0: Simplification, 1: Satisfiability , 2: Both
+        :param optimization: (O: Simplification, 1: Solver, 2: Fixpoint, 3: Both simplification and fixpoint)
         :return:
         """
-        if optimization == -1:
+        if optimization == Optimzation.NONE:
             return formula
 
         # Detect optimisation level
-        tspass = True if optimization == 1 or optimization == 2 else False
-        simplify = True if optimization == 0 or optimization == 2 else False
+        tspass = optimization is Optimzation.SATISFIABILITY
+        simplify = optimization is Optimzation.SIMPLIFICATION or optimization is Optimzation.BOTH
 
         res = formula
 

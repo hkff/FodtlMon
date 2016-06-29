@@ -51,9 +51,9 @@ Usage
          	--sys= [file]   	 run a system from json file
          	--rounds= int   	 number of rounds to run in the system
       -z 	--fuzzer        	 run fuzzing tester
-			 --server        	 start web service
-			 --port= int     	 server port number
-             --opt= int           optimization level (O: Simplification, 1: Solver, 2: Both)
+			--server        	 start web service
+			--port= int     	 server port number
+            --opt= int           optimization level (O: Simplification, 1: Solver 2: Fixpoint, 3: Both simplification and fixpoint)
 
 * formula format :
 

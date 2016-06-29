@@ -53,7 +53,7 @@ def main(argv):
     rounds = 1
     server_port = 8080
     webservice = False
-    optimize = -1
+    optimize = Optimzation.NONE
 
     help_str_extended = "fodtlmon V 1.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
@@ -75,7 +75,8 @@ def main(argv):
                         "\n  -d \t--debug         " + "\t enable debug mode" + \
                         "\n     \t--server        " + "\t start web service" + \
                         "\n     \t--port= int     " + "\t server port number" + \
-                        "\n     \t--opt= int      " + "\t optimization level (O: Simplification, 1: Solver, 2: Both)" + \
+                        "\n     \t--opt= int      " + "\t optimization level (O: Simplification, 1: Solver, " \
+                                                      "2: Fixpoint, 3: Both simplification and fixpoint)" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
@@ -133,7 +134,14 @@ def main(argv):
         elif opt in "--port":
             server_port = int(arg)
         elif opt in "--opt":
-            optimize = int(arg)
+            a = int(arg)
+            if -1 <= a <= 3:
+                optimize = Optimzation(a)
+            else:
+                print("Invalid optimization level %s\n"
+                      " Valid are optimization levels are (O: Simplification, 1: Solver, "
+                      "2: Fixpoint, 3: Both simplification and fixpoint)" % arg)
+                exit(-1)
 
     if webservice:
         Webservice.start(server_port)
