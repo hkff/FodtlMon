@@ -178,19 +178,20 @@ def main(argv):
         fl = eval(formula[1:]) if formula.startswith(":") else FodtlParser.parse(formula)
         mon = monitor(fl, tr)
         res = mon.monitor(debug=debug, optimization=optimize, output=output_file)
-        print("")
-        print("Trace        : %s" % tr)
-        print("Formula      : %s" % fl)
-        print("Code         : %s" % fl.toCODE())
-        print("PPrint       : %s" % fl.prefix_print())
-        print("TSPASS       : %s" % fl.toTSPASS())
-        print("LTLFO        : %s" % fl.toLTLFO())
-        print("Result       : %s" % res)
-        print("Rewrite      : %s" % mon.rewrite)
-        if l2m:
-            l2m_mode = "-p"
-            if l2m == "sa": l2m_mode = "-sa"
-            elif l2m == "sao": l2m_mode = ""
+        if monitor is not InstrumentedMon:
+            print("")
+            print("Trace        : %s" % tr)
+            print("Formula      : %s" % fl)
+            print("Code         : %s" % fl.toCODE())
+            print("PPrint       : %s" % fl.prefix_print())
+            print("TSPASS       : %s" % fl.toTSPASS())
+            print("LTLFO        : %s" % fl.toLTLFO())
+            print("Result       : %s" % res)
+            print("Rewrite      : %s" % mon.rewrite)
+            if l2m:
+                l2m_mode = "-p"
+                if l2m == "sa": l2m_mode = "-sa"
+                elif l2m == "sao": l2m_mode = ""
 
-            res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO(), mon=l2m_mode)
-            print("ltl2mon : %s" % res)
+                res = ltlfo2mon(fl.toLTLFO(), tr.toLTLFO(), mon=l2m_mode)
+                print("ltl2mon : %s" % res)
