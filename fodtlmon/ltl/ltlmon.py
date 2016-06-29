@@ -101,7 +101,7 @@ class Ltlmon(Mon):
         :return:
         """
         # print(formula)
-        formula = self.optimize(formula)
+        formula = self.optimize(formula, self.optimization)
 
         if isinstance(formula, Predicate):
             res = true() if event.contains(formula) else false()
@@ -142,18 +142,19 @@ class Ltlmon(Mon):
             raise Exception("Error %s of type %s" % (formula, type(formula)))
         return res
 
-    def optimize(self, formula):
+    def optimize(self, formula, optimization=-1):
         """
         Optimize the formula
         :param formula:
+        :param optimization: 0: Simplification, 1: Satisfiability , 2: Both
         :return:
         """
-        if self.optimization == -1:
+        if optimization == -1:
             return formula
 
         # Detect optimisation level
-        tspass = True if self.optimization == 1 or self.optimization == 2 else False
-        simplify = True if self.optimization == 0 or self.optimization == 2 else False
+        tspass = True if optimization == 1 or optimization == 2 else False
+        simplify = True if optimization == 0 or optimization == 2 else False
 
         res = formula
 
@@ -192,7 +193,7 @@ class Ltlmon(Mon):
 
             elif isinstance(formula, Always):
                 # G true/false  ::= true/false
-                tmp = self.optimize(formula.inner)
+                tmp = self.optimize(formula.inner, optimization)
                 if isinstance(tmp, true) or isinstance(tmp, false):
                     res = tmp
                 # G G p  ::= G p
@@ -202,7 +203,7 @@ class Ltlmon(Mon):
                     res = Always(tmp)
 
             elif isinstance(formula, Future):
-                tmp = self.optimize(formula.inner)
+                tmp = self.optimize(formula.inner, optimization)
                 # F true/false ::= true/false
                 if isinstance(tmp, true) or isinstance(tmp, false):
                     res = tmp
@@ -213,13 +214,13 @@ class Ltlmon(Mon):
                     res = Future(tmp)
 
             elif isinstance(formula, Until):
-                res = Until(self.optimize(formula.left), self.optimize(formula.right))
+                res = Until(self.optimize(formula.left, optimization), self.optimize(formula.right, optimization))
 
             elif isinstance(formula, Release):
                 pass
 
             elif isinstance(formula, Next):
-                res = self.optimize(formula.inner)
+                res = self.optimize(formula.inner, optimization)
 
         # Avoid useless checks
         if isinstance(res, true) or isinstance(res, false): return res
