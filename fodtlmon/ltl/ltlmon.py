@@ -135,16 +135,22 @@ class Ltlmon(Mon):
         elif isinstance(formula, Always):
             if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
                 # Fixpoint optimization
-                tmp = self.optimize(self.prg(formula.inner, event, valuation), Optimzation.SOLVER)
-                res = tmp if isinstance(tmp, true) or isinstance(tmp, false) else And(tmp, G(formula.inner)).eval()
+                tmp = self.optimize(formula.inner, Optimzation.SOLVER)
+                if isinstance(tmp, true) or isinstance(tmp, false):
+                    res = tmp
+                else:
+                    res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
             else:
                 res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
 
         elif isinstance(formula, Future):
             if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
                 # Fixpoint optimization
-                tmp = self.optimize(self.prg(formula.inner, event, valuation), Optimzation.SOLVER)
-                res = tmp if isinstance(tmp, true) or isinstance(tmp, false) else Or(tmp, F(formula.inner)).eval()
+                tmp = self.optimize(formula.inner, Optimzation.SOLVER)
+                if isinstance(tmp, true) or isinstance(tmp, false):
+                    res = tmp
+                else:
+                    res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
             else:
                 res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
 
