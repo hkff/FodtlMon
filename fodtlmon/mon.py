@@ -1,6 +1,6 @@
 #!/usr/bin/python3.4
 """
-fodtlmon version 1.1
+fodtlmon version 1.2
 Copyright (C) 2015 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ def main(argv):
     optimize = Optimzation.NONE
     benchmarks = None
 
-    help_str_extended = "fodtlmon V 1.1 .\n" + \
+    help_str_extended = "fodtlmon V 1.2 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
                         "\n  -h \t--help          " + "\t display this help and exit" + \
                         "\n  -i \t--input= [file] " + "\t the input file" + \

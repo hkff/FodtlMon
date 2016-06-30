@@ -1,5 +1,5 @@
 """
-fodtlmon version 1.1
+fodtlmon version 1.2
 Copyright (C) 2015 Walid Benghabrit
 
 This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ from setuptools import setup
 
 setup(
     name='fodtlmon',
-    version='1.1',
+    version='1.2',
     packages=['fodtlmon', 'fodtlmon.parser', 'fodtlmon.dtl', 'fodtlmon.fodtl', 'fodtlmon.fotl', 'fodtlmon.ltl', 'fodtlmon.tools', 'fodtlmon.webservice'],
     url='https://github.com/hkff/fodtlmon',
     license='GPL3',
