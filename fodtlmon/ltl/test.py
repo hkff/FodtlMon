@@ -86,14 +86,14 @@ def print2(*args, file=None):
         file.write("\n")
 
 
-def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1, alphabet=None,
+def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_length=5, trace_depth=1, alphabet=None,
                   constants=None, interactive=False, output_file="fodtlmon/tests/logs.log", debug=False):
     """
     LTL formula fuzzer
     :param monitor:
     :param formula_nbr:
     :param formula_depth:
-    :param trace_lenght:
+    :param trace_length:
     :param trace_depth:
     :param alphabet:
     :param constants:
@@ -110,7 +110,7 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
         for x in range(nbr):
             print("## %s / %s  Errors %s" % (x+1, nbr, errors))
             formula = fuzzer.gen(formula_depth)
-            trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
+            trace = fuzzer.gen_trace(trace_length, depth=trace_depth, preds=formula.walk(filter_type=P))
             print2("\n\n============ LTLMON : ", file=f)
             print2("Formula   : %s\nFormula C : %s\nTrace     : %s" % (formula, formula.toCODE(), trace), file=f)
             res1 = Ltlmon(formula, trace).monitor(debug=debug)
@@ -137,14 +137,14 @@ def run_ltl_tests(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5,
         print2("\n\n#####\nResult : %s / %s" % (nbr-errors, nbr), file=f)
 
 
-def chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug, write_dir=False):
+def chk(x, fuzzer, formula_nbr, formula_depth, trace_length, trace_depth, debug, write_dir=False):
     """
     Generate a formula and a trace, then checks if it have an Sat => Unsat form
     :param x:
     :param fuzzer:
     :param formula_nbr:
     :param formula_depth:
-    :param trace_lenght:
+    :param trace_length:
     :param trace_depth:
     :param debug:
     :return:
@@ -152,7 +152,7 @@ def chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug,
     res = ""
     pid = os.getpid()
     formula = fuzzer.gen(formula_depth)
-    trace = fuzzer.gen_trace(trace_lenght, depth=trace_depth, preds=formula.walk(filter_type=P))
+    trace = fuzzer.gen_trace(trace_length, depth=trace_depth, preds=formula.walk(filter_type=P))
     print("## %s / %s" % (x, formula_nbr))
     tspass1 = tspassc(formula.toTSPASS(), output="tmp%s.tspass" % pid)
     if tspass1["res"] == "Satisfiable":
@@ -172,14 +172,14 @@ def chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug,
     return res
 
 
-def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_lenght=5, trace_depth=1, alphabet=None,
+def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_length=5, trace_depth=1, alphabet=None,
                         constants=None, output_file="fodtlmon/tests/tricky.log", debug=False, jobs=1):
     """
     Run the tricky formula finder
     :param monitor:
     :param formula_nbr:
     :param formula_depth:
-    :param trace_lenght:
+    :param trace_length:
     :param trace_depth:
     :param alphabet:
     :param constants:
@@ -202,13 +202,13 @@ def find_tricky_formula(monitor="ltl", formula_nbr=1, formula_depth=2, trace_len
     if parallel and jobs > 1:
         # Parallel version
         from joblib import Parallel, delayed
-        Parallel(n_jobs=jobs)(delayed(chk)(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug, write_dir=found_dir)
+        Parallel(n_jobs=jobs)(delayed(chk)(x, fuzzer, formula_nbr, formula_depth, trace_length, trace_depth, debug, write_dir=found_dir)
                               for x in range(formula_nbr))
     else:
         # Sequential version
         with open(output_file, "w+") as f:
             for x in range(formula_nbr):
-                res = chk(x, fuzzer, formula_nbr, formula_depth, trace_lenght, trace_depth, debug)
+                res = chk(x, fuzzer, formula_nbr, formula_depth, trace_length, trace_depth, debug)
                 if res != "":
                     print2(res, file=f)
                     found += 1

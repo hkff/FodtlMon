@@ -150,7 +150,7 @@ def main(argv):
 
     if fuzzer:
         if monitor is Ltlmon:
-            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_lenght=100, formula_depth=5,
+            run_ltl_tests(monitor="ltl", alphabet=["P"], constants=["a", "b", "c"], trace_length=100, formula_depth=5,
                           formula_nbr=10000, debug=debug)
         elif monitor is Dtlmon:
             run_dtl_tests()
