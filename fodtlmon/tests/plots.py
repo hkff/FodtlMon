@@ -17,8 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __author__ = 'walid'
 import pandas as pd
-import numpy as np
+#import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 
 def load_formula_data(formula_dir, bench_dir):
@@ -43,15 +44,20 @@ def plot_formula_stats(formula_dir, bench_dir):
     types = ["Formula-length", "Exec-time(ms)"]
     for type in types:
         plt.clf()
-        plt.plot(data["data_none"][type], label="NONE")
+        plt.plot(data["data_none"][type], label="None")
         plt.plot(data["data_simp"][type], label="Simplification")
         plt.plot(data["data_solver"][type], label="Solver")
         plt.plot(data["data_fxp"][type], label="Fixpoint")
         legend = plt.legend(loc='upper left', shadow=True)
         plt.savefig("%s/%s/plot_%s.png" % (bench_dir, formula_dir, type))
+        #plt.show()
 
 
-bench_dir = "benchmarks_2016-06-30_22:08:52"
-formula_dir = "Formula0"
-plot_formula_stats(formula_dir, bench_dir)
-#plt.show()
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Missing argument ! Usage: plots.py <bench_dir> <formula_nbr>")
+        exit(-1)
+    bench_dir = sys.argv[1]
+    formula_dirs = ["Formula%s" % x for x in range(int(sys.argv[2]))]
+    for formula_dir in formula_dirs:
+        plot_formula_stats(formula_dir, bench_dir)
