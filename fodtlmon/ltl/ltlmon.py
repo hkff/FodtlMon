@@ -335,7 +335,7 @@ def tspassc(code="", output="tmp.tspass", debug: bool=False):
 
     res = ""
     sat = ""
-    generated_tspass = output.replace(".tspass", "_gen.tspass")
+    generated_tspass = output.replace(".tspass", "_gen_%s.tspass" % os.getpid())
     bt = code + "\n"
 
     # TSPASS parsing
