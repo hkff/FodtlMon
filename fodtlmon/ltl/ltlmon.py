@@ -112,7 +112,8 @@ class Ltlmon(Mon):
         :return:
         """
         # print(formula)
-        formula = self.optimize(formula, self.optimization)
+        if self.optimization is not Optimzation.NONE:
+            formula = self.optimize(formula, self.optimization)
 
         if isinstance(formula, Predicate):
             res = true() if event.contains(formula) else false()
@@ -133,25 +134,21 @@ class Ltlmon(Mon):
             res = And(self.prg(formula.left, event, valuation), self.prg(formula.right, event, valuation)).eval()
 
         elif isinstance(formula, Always):
+            res = None
             if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
-                # Fixpoint optimization
-                tmp = self.optimize(formula.inner, Optimzation.SOLVER)
-                if isinstance(tmp, true) or isinstance(tmp, false):
-                    res = tmp
-                else:
-                    res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
-            else:
+                if self.do_sat_optimize(formula.inner):  # Fixpoint optimization
+                    tmp = self.solver(formula.inner)
+                    if isinstance(tmp, true) or isinstance(tmp, false): res = tmp
+            if res is None:
                 res = And(self.prg(formula.inner, event, valuation), G(formula.inner)).eval()
 
         elif isinstance(formula, Future):
+            res = None
             if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
-                # Fixpoint optimization
-                tmp = self.optimize(formula.inner, Optimzation.SOLVER)
-                if isinstance(tmp, true) or isinstance(tmp, false):
-                    res = tmp
-                else:
-                    res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
-            else:
+                if self.do_sat_optimize(formula.inner):  # Fixpoint optimization
+                    tmp = self.solver(formula.inner)
+                    if isinstance(tmp, true) or isinstance(tmp, false): res = tmp
+            if res is None:
                 res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
 
         elif isinstance(formula, Until):
@@ -180,89 +177,120 @@ class Ltlmon(Mon):
             return formula
 
         # Detect optimisation level
-        tspass = optimization is Optimzation.SOLVER or optimization is Optimzation.FIXPOINT
+        tspass = optimization is Optimzation.SOLVER
         simplify = optimization is Optimzation.SIMPLIFICATION or optimization is Optimzation.BOTH
 
         res = formula
 
         # Use simplification rules
         if simplify:
-            if isinstance(formula, Neg):
-                # res = Neg(self.prg(formula.inner, event, valuation)).eval()
-                pass
-
-            elif isinstance(formula, Or):
-                # p | ~p  ::=  true
-                if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
-                    res = true()
-                # (p U q) & q  ::=  p U q
-                elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
-                    res = formula.left
-
-            elif isinstance(formula, And):
-                # p & ~p  ::=  false
-                if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
-                    res = false()
-                # (p U q) & q  ::=  q
-                elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
-                    res = formula.right
-                # F(p) & (F(p) & GF(p))  ::=  F(p) & GF(p)
-                elif isinstance(formula.left, Future) and isinstance(formula.right, And) and \
-                        str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
-                    res = formula.right
-                # p & (p & (p U q))  ::= p & (p U q)
-                elif isinstance(formula.right, And)and isinstance(formula.right.right, Until) and \
-                        str(formula.left) == str(formula.right.left) == str(formula.right.right.left):
-                    res = formula.right
-                # (p U q) & q  ::= q
-                elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
-                    res = formula.right
-
-            elif isinstance(formula, Always):
-                # G true/false  ::= true/false
-                tmp = self.optimize(formula.inner, optimization)
-                if isinstance(tmp, true) or isinstance(tmp, false):
-                    res = tmp
-                # G G p  ::= G p
-                elif isinstance(tmp, Always):
-                    res = tmp
-                else:
-                    res = Always(tmp)
-
-            elif isinstance(formula, Future):
-                tmp = self.optimize(formula.inner, optimization)
-                # F true/false ::= true/false
-                if isinstance(tmp, true) or isinstance(tmp, false):
-                    res = tmp
-                # F F p ::= F p
-                elif isinstance(tmp, Future):
-                    res = tmp
-                else:
-                    res = Future(tmp)
-
-            elif isinstance(formula, Until):
-                res = Until(self.optimize(formula.left, optimization), self.optimize(formula.right, optimization))
-
-            elif isinstance(formula, Release):
-                pass
-
-            elif isinstance(formula, Next):
-                res = self.optimize(formula.inner, optimization)
+            res = self.simplify(formula, optimization)
 
         # Avoid useless checks
         if isinstance(res, true) or isinstance(res, false) or res is Boolean3.Top or res is Boolean3.Bottom: return res
 
         # Check with TSPASS
         if tspass:
-            a = tspassc(res.toTSPASS())
-            if a["res"] == "Unsatisfiable":  # Formula is not satisfiable
-                return false()
-
-            b = tspassc(Neg(res).toTSPASS())
-            if a["res"] == "Satisfiable" and b["res"] == "Unsatisfiable":  # Formula is valid
-                return true()
+            res = self.solver(res)
 
         return res
+
+    def simplify(self, formula, optimization=Optimzation.SIMPLIFICATION):
+        """
+        Simplify a formula using simplification rules
+        :param formula:
+        :param optimization:
+        :return:
+        """
+        res = formula
+
+        if isinstance(formula, Neg):
+            # res = Neg(self.prg(formula.inner, event, valuation)).eval()
+            pass
+
+        elif isinstance(formula, Or):
+            # p | ~p  ::=  true
+            if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
+                res = true()
+            # (p U q) & q  ::=  p U q
+            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.left
+
+        elif isinstance(formula, And):
+            # p & ~p  ::=  false
+            if isinstance(formula.right, Neg) and str(formula.right.inner) == str(formula.left):
+                res = false()
+            # (p U q) & q  ::=  q
+            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.right
+            # F(p) & (F(p) & GF(p))  ::=  F(p) & GF(p)
+            elif isinstance(formula.left, Future) and isinstance(formula.right, And) and \
+                    str(formula.right.left) == str(formula.left) and isinstance(formula.right.right, Always):
+                res = formula.right
+            # p & (p & (p U q))  ::= p & (p U q)
+            elif isinstance(formula.right, And)and isinstance(formula.right.right, Until) and \
+                    str(formula.left) == str(formula.right.left) == str(formula.right.right.left):
+                res = formula.right
+            # (p U q) & q  ::= q
+            elif isinstance(formula.left, Until) and str(formula.left.right) == str(formula.right):
+                res = formula.right
+
+        elif isinstance(formula, Always):
+            # G true/false  ::= true/false
+            tmp = self.optimize(formula.inner, optimization)
+            if isinstance(tmp, true) or isinstance(tmp, false):
+                res = tmp
+            # G G p  ::= G p
+            elif isinstance(tmp, Always):
+                res = tmp
+            else:
+                res = Always(tmp)
+
+        elif isinstance(formula, Future):
+            tmp = self.optimize(formula.inner, optimization)
+            # F true/false ::= true/false
+            if isinstance(tmp, true) or isinstance(tmp, false):
+                res = tmp
+            # F F p ::= F p
+            elif isinstance(tmp, Future):
+                res = tmp
+            else:
+                res = Future(tmp)
+
+        elif isinstance(formula, Until):
+            res = Until(self.optimize(formula.left, optimization), self.optimize(formula.right, optimization))
+
+        elif isinstance(formula, Release):
+            pass
+
+        elif isinstance(formula, Next):
+            res = self.optimize(formula.inner, optimization)
+
+        return res
+
+    def solver(self, formula):
+        """
+        Check validity/unsatisfiability of a formula
+        :param formula:
+        :return:
+        """
+        fts = formula.toTSPASS()
+        a = tspassc(fts)
+        if a["res"] == "Unsatisfiable":  # Formula is not satisfiable
+            return false()
+
+        b = tspassc("~(%s)" % fts)
+        if a["res"] == "Satisfiable" and b["res"] == "Unsatisfiable":  # Formula is valid
+            return true()
+
+        return formula
+
+    def do_sat_optimize(self, formula):
+        """
+        Check if we should perform the sat optimization
+        :return:
+        """
+        return True
 
 
 def ltlfo2mon(formula: Formula, trace: Trace, mon: str="-p"):
