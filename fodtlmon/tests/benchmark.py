@@ -37,7 +37,7 @@ class InstrumentedMon(Fotlmon):
             f.write("# Trace: %s\n" % self.trace)
             f.write("# Trace length: %s\n" % len(self.trace.events))
 
-            f.write("#\n#{:<10}{:<15}{:<20}{:<10}{:<10}\n".
+            f.write("#\n{:<10}{:<15}{:<20}{:<10}{:<10}\n".
                     format("Step", "Event-size", "Formula-length", "Result", "Exec-time(ms)"))
 
             total_start_time = time.time()
