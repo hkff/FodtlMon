@@ -362,4 +362,9 @@ def tspassc(code="", output="tmp.tspass", debug: bool=False):
                 sat = line.replace("SPASS beiseite:", "").replace(".", "").replace(" ", "")
                 break
 
+    try:
+        os.remove(generated_tspass)
+    except:
+        print("TSPASS not found !")
+
     return {"res": sat, "print": res}
