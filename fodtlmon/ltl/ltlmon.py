@@ -164,6 +164,7 @@ class Ltlmon(Mon):
 
         else:
             raise Exception("Error %s of type %s" % (formula, type(formula)))
+
         return res
 
     def optimize(self, formula, optimization=Optimzation.NONE):
@@ -261,10 +262,10 @@ class Ltlmon(Mon):
             res = Until(self.optimize(formula.left, optimization), self.optimize(formula.right, optimization))
 
         elif isinstance(formula, Release):
-            pass
+            res = Release(self.optimize(formula.left, optimization), self.optimize(formula.right, optimization))
 
         elif isinstance(formula, Next):
-            res = self.optimize(formula.inner, optimization)
+            res = Next(self.optimize(formula.inner, optimization))
 
         return res
 
