@@ -175,3 +175,37 @@ def generate_benchmarks(formula_nbr=1, formula_depth=2, trace_length=5, trace_de
             gen_formula_trace(x, fuzzer, formula_nbr, formula_depth, trace_length, trace_depth, write_dir=output_dir)
 
     return output_dir
+
+
+def load_bench_from_file(bench_file):
+    """
+    Read the benchmark from config file and run it
+    :param bench_file: format
+        {
+            "formula_nbr": int,        DEFAULT 1
+            "formula_depth": int,      DEFAULT 2
+            "trace_length": int,       DEFAULT 5
+            "trace_depth": int,        DEFAULT 1
+            "alphabet": list of str,   DEFAULT ["p"]
+            "constants": list of str,  DEFAULT ["a", "b", "c"]
+            "jobs": int
+       }
+    :return:
+    """
+    import ast
+
+    with open(bench_file, 'r') as f:
+        config = ast.literal_eval(f.read())
+
+    keys = config.keys()
+    formula_nbr = int(config["formula_nbr"]) if "formula_nbr" in keys else 1
+    formula_depth = int(config["formula_depth"]) if "formula_depth" in keys else 2
+    trace_length = int(config["trace_length"]) if "trace_length" in keys else 5
+    trace_depth = int(config["trace_depth"]) if "trace_depth" in keys else 1
+    alphabet = list(config["alphabet"]) if "alphabet" in keys else ["P"]
+    constants = list(config["constants"]) if "constants" in keys else ["a", "b", "c"]
+    jobs = 1
+
+    output_dir = generate_benchmarks(formula_nbr=formula_nbr, formula_depth=formula_depth, trace_length=trace_length,
+                                     trace_depth=trace_depth, jobs=jobs, alphabet=alphabet, constants=constants)
+    run_benchmarks(bench_dir=output_dir, jobs=jobs)

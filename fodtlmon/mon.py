@@ -52,6 +52,7 @@ def main(argv):
     server_port = 8080
     webservice = False
     optimize = Optimzation.NONE
+    benchmarks = None
 
     help_str_extended = "fodtlmon V 1.1 .\n" + \
                         "For more information see fodtlmon home page\n Usage : mon.py [OPTIONS] formula trace" + \
@@ -67,7 +68,7 @@ def main(argv):
                         "\n  -2 \t--fotl          " + "\t use FOTL monitor" + \
                         "\n  -3 \t--dtl           " + "\t use DTL monitor" + \
                         "\n  -4 \t--fodtl         " + "\t use FODTL monitor" + \
-                        "\n  -5 \t--fodtl         " + "\t use FODTL monitor" + \
+                        "\n  -5 \t--ifotl         " + "\t use instrumented FOTL monitor" + \
                         "\n     \t--sys= [file]   " + "\t run a system from json file" + \
                         "\n     \t--rounds= int   " + "\t number of rounds to run in the system" + \
                         "\n  -z \t--fuzzer        " + "\t run fuzzing tester" + \
@@ -76,6 +77,7 @@ def main(argv):
                         "\n     \t--port= int     " + "\t server port number" + \
                         "\n     \t--opt= int      " + "\t optimization level (O: Simplification, 1: Solver, " \
                                                       "2: Fixpoint, 3: Both simplification and fixpoint)" + \
+                        "\n     \t--bench= [file]   " + "\t run benchmarks from configuration file" + \
                         "\n\nReport fodtlmon bugs to walid.benghabrit@mines-nantes.fr" + \
                         "\nfodtlmon home page: <https://github.com/hkff/fodtlmon>" + \
                         "\nfodtlmon is a free software released under GPL 3"
@@ -85,7 +87,7 @@ def main(argv):
         opts, args = getopt.getopt(argv[1:], "hi:o:f:t:12345zd",
                                    ["help", "input=", "output=", "trace=", "formula=" "ltl", "fotl", "dtl",
                                     "fodtl", "sys=", "fuzzer", "itrace=", "iformula=", "rounds=", "l2m=", "debug",
-                                    "server", "port=", "opt=", "bench"])
+                                    "server", "port=", "opt=", "ifotl", "bench="])
     except getopt.GetoptError:
         print(help_str_extended)
         sys.exit(2)
@@ -110,7 +112,7 @@ def main(argv):
             monitor = Dtlmon
         elif opt in ("-4", "--fodtl"):
             monitor = Fodtlmon
-        elif opt in ("-5", "--bench"):
+        elif opt in ("-5", "--ifotl"):
             monitor = InstrumentedMon
         elif opt in ("-f", "--formula"):
             formula = arg
@@ -134,6 +136,8 @@ def main(argv):
             webservice = True
         elif opt in "--port":
             server_port = int(arg)
+        elif opt in "--bench":
+            benchmarks = arg
         elif opt in "--opt":
             a = int(arg)
             if -1 <= a <= 3:
@@ -146,6 +150,10 @@ def main(argv):
 
     if webservice:
         Webservice.start(server_port)
+        return
+
+    if benchmarks is not None:
+        load_bench_from_file(benchmarks)
         return
 
     if fuzzer:

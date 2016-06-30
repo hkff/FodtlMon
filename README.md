@@ -48,12 +48,14 @@ Usage
       -2 	--fotl          	 use FOTL monitor
       -3 	--dtl           	 use DTL monitor
       -4 	--fodtl         	 use FODTL monitor
+      -5    --ifotl              use instrumented FOTL monitor
          	--sys= [file]   	 run a system from json file
          	--rounds= int   	 number of rounds to run in the system
       -z 	--fuzzer        	 run fuzzing tester
 			--server        	 start web service
 			--port= int     	 server port number
             --opt= int           optimization level (O: Simplification, 1: Solver 2: Fixpoint, 3: Both simplification and fixpoint)
+            --bench= [file]      run benchmarks from configuration file
 
 * formula format :
 
