@@ -58,6 +58,7 @@ class Mon:
         self.counter2 = 0
         self.rewrite = copy.deepcopy(self.formula)
         self.optimization = False
+        self.opt_runs = [1, 10, 50, 100, 500, 1000, 2500, 5000, 7500, 10000]
 
     def monitor(self, *args, **kargs):
         pass
@@ -191,7 +192,7 @@ class Ltlmon(Mon):
         if isinstance(res, true) or isinstance(res, false) or res is Boolean3.Top or res is Boolean3.Bottom: return res
 
         # Check with TSPASS
-        if tspass:
+        if tspass and self.do_sat_optimize(res):
             res = self.solver(res)
 
         return res
@@ -291,7 +292,7 @@ class Ltlmon(Mon):
         Check if we should perform the sat optimization
         :return:
         """
-        return True
+        return self.counter in self.opt_runs
 
 
 def ltlfo2mon(formula: Formula, trace: Trace, mon: str="-p"):
