@@ -1,0 +1,9 @@
+{
+    "formula_nbr": 1,
+    "formula_depth": 5,
+    "trace_length": 10,
+    "trace_depth": 4,
+    "alphabet": ["P"],
+    "constants": ["a", "b", "c"],
+    "jobs": 1
+}
