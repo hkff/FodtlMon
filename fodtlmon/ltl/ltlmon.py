@@ -153,12 +153,24 @@ class Ltlmon(Mon):
                 res = Or(self.prg(formula.inner, event, valuation), F(formula.inner)).eval()
 
         elif isinstance(formula, Until):
-            res = Or(self.prg(formula.right, event, valuation),
-                     And(self.prg(formula.left, event, valuation), U(formula.left, formula.right)).eval()).eval()
+            res = None
+            if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
+                if self.do_sat_optimize(formula.right):  # Fixpoint optimization
+                    tmp = self.solver(formula.right)
+                    if isinstance(tmp, true) or isinstance(tmp, false): res = tmp
+            if res is None:
+                res = Or(self.prg(formula.right, event, valuation),
+                         And(self.prg(formula.left, event, valuation), U(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Release):
-            res = Or(self.prg(formula.left, event, valuation),
-                     And(self.prg(formula.right, event, valuation), R(formula.left, formula.right)).eval()).eval()
+            res = None
+            if self.optimization is Optimzation.FIXPOINT or self.optimization is Optimzation.BOTH:
+                if self.do_sat_optimize(formula.left):  # Fixpoint optimization
+                    tmp = self.solver(formula.left)
+                    if isinstance(tmp, true) or isinstance(tmp, false): res = tmp
+            if res is None:
+                res = Or(self.prg(formula.left, event, valuation),
+                         And(self.prg(formula.right, event, valuation), R(formula.left, formula.right)).eval()).eval()
 
         elif isinstance(formula, Next):
             res = formula.inner
