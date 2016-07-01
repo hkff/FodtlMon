@@ -188,7 +188,7 @@ def load_bench_from_file(bench_file):
             "trace_depth": int,        DEFAULT 1
             "alphabet": list of str,   DEFAULT ["p"]
             "constants": list of str,  DEFAULT ["a", "b", "c"]
-            "jobs": int
+            "jobs": int                DEFAULT 1
        }
     :return:
     """
@@ -204,7 +204,7 @@ def load_bench_from_file(bench_file):
     trace_depth = int(config["trace_depth"]) if "trace_depth" in keys else 1
     alphabet = list(config["alphabet"]) if "alphabet" in keys else ["P"]
     constants = list(config["constants"]) if "constants" in keys else ["a", "b", "c"]
-    jobs = 1
+    jobs = int(config["jobs"]) if "jobs" in keys else 1
 
     output_dir = generate_benchmarks(formula_nbr=formula_nbr, formula_depth=formula_depth, trace_length=trace_length,
                                      trace_depth=trace_depth, jobs=jobs, alphabet=alphabet, constants=constants)
