@@ -5,5 +5,6 @@
     "trace_depth": 4,
     "alphabet": ["P"],
     "constants": ["a", "b", "c"],
-    "jobs": 1
+    "jobs": 1,
+    "output_dir": "fodtlmon/test/benchmarks0"
 }

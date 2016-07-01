@@ -137,7 +137,8 @@ def gen_formula_trace(x, fuzzer, formula_nbr, formula_depth, trace_length, trace
     with open("%s/%s.trace" % (f_dir, x), "w+") as f: f.write(str(trace))
 
 
-def generate_benchmarks(formula_nbr=1, formula_depth=2, trace_length=5, trace_depth=1, jobs=1, alphabet=None, constants=None):
+def generate_benchmarks(formula_nbr=1, formula_depth=2, trace_length=5, trace_depth=1, jobs=1, alphabet=None,
+                        constants=None, output_dir=None):
     """
     Generate formulas and traces for benchmarks
     :param formula_nbr:
@@ -147,6 +148,7 @@ def generate_benchmarks(formula_nbr=1, formula_depth=2, trace_length=5, trace_de
     :param jobs:
     :param alphabet:
     :param constants:
+    :param output_dir:
     :return:
     """
     alphabet = ["P"] if alphabet is None else alphabet
@@ -155,7 +157,8 @@ def generate_benchmarks(formula_nbr=1, formula_depth=2, trace_length=5, trace_de
     fuzzer.init_fuzzer()
 
     import datetime
-    output_dir = "fodtlmon/tests/benchmarks_%s/" % (datetime.datetime.today().strftime("%Y-%m-%d_%H:%M:%S"))
+    if output_dir is None:
+        output_dir = "fodtlmon/tests/benchmarks_%s/" % (datetime.datetime.today().strftime("%Y-%m-%d_%H:%M:%S"))
 
     os.mkdir(output_dir)
 
@@ -188,7 +191,10 @@ def load_bench_from_file(bench_file):
             "trace_depth": int,        DEFAULT 1
             "alphabet": list of str,   DEFAULT ["p"]
             "constants": list of str,  DEFAULT ["a", "b", "c"]
-            "jobs": int                DEFAULT 1
+            "jobs": int                DEFAULT 1,
+            "output_dir": str          DEFAULT None,  # The output dir to generate formula
+            "bench_dir": str           DEFAULT None   # If specified no formula will be generated,
+                                                      # but it runs benchmarks on the bench_dir instead
        }
     :return:
     """
@@ -205,7 +211,13 @@ def load_bench_from_file(bench_file):
     alphabet = list(config["alphabet"]) if "alphabet" in keys else ["P"]
     constants = list(config["constants"]) if "constants" in keys else ["a", "b", "c"]
     jobs = int(config["jobs"]) if "jobs" in keys else 1
+    output_dir = config["output_dir"] if "output_dir" in keys else None
+    bench_dir = config["bench_dir"] if "bench_dir" in keys else None
 
-    output_dir = generate_benchmarks(formula_nbr=formula_nbr, formula_depth=formula_depth, trace_length=trace_length,
-                                     trace_depth=trace_depth, jobs=jobs, alphabet=alphabet, constants=constants)
-    run_benchmarks(bench_dir=output_dir, jobs=jobs)
+    if bench_dir is None:
+        output_dir = generate_benchmarks(formula_nbr=formula_nbr, formula_depth=formula_depth, trace_length=trace_length,
+                                         trace_depth=trace_depth, jobs=jobs, alphabet=alphabet, constants=constants,
+                                         output_dir=output_dir)
+        run_benchmarks(bench_dir=output_dir, jobs=jobs)
+    else:
+        run_benchmarks(bench_dir=bench_dir, jobs=jobs)
