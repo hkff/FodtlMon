@@ -62,8 +62,19 @@ class Node:
     @staticmethod
     def to_tex(node, output="gen.tex"):
         with open(output, "w+") as f:
-            f.write("\\documentclass{article}\n\\usepackage{bussproofs}\n\\begin{document}\n\\begin{prooftree}\n"
-                    "%s\n\\end{prooftree}\n\\end{document}\n" % node.tex())
+            if isinstance(node, Node):
+                out = "\\begin{prooftree}\n%s\n\\end{prooftree}\n" % node.tex()
+            elif isinstance(node, list):
+                out = ""
+                for x in node:
+                    if isinstance(x, Node):
+                        out += "\\begin{prooftree}\n%s\n\\end{prooftree}\n" % x.tex()
+            else:
+                raise Exception("Invalid type %s " % type(node))
+
+            f.write("\\documentclass{article}\n"
+                    "\\usepackage{bussproofs}\n"
+                    "\\begin{document}\n%s\\end{document}\n" % out)
 
         p = Popen(['pdflatex', output], stdout=PIPE, stderr=PIPE, stdin=PIPE)
         p.stdout.read().decode("utf-8")
@@ -131,8 +142,7 @@ class LtlproofMon(Mon):
     def build(self, formula, struct=None):
         """
         :param formula:
-        :param event:
-        :param valuation:
+        :param struct:
         :return:
         """
         if struct is None:
@@ -157,13 +167,25 @@ class LtlproofMon(Mon):
                     Gamma ⊢ Delta, phi_1 ∨ phi_2
             """
             struct.value = formula
-            # TODO
             n = Node(value=[formula.left, formula.right])
 
             n1 = self.build(formula.left).children
             n2 = self.build(formula.right).children
             n1.extend(n2)
-            n.children.extend(n1)
+
+            # Handle child
+            child = Node(value=[])
+            for x in n1:
+                if isinstance(x.value, list):
+                    for y in x.value:
+                        child.value.append(y)
+                else:
+                    child.value.append(x.value)
+            # Handle child sub tree
+            for x in child.value:
+                child.children.extend(self.build(x).children)
+
+            n.children.append(child)
             struct.children.append(n)
 
         elif isinstance(formula, And):
@@ -188,7 +210,9 @@ class LtlproofMon(Mon):
                                  Gamma ⊢ Delta, G phi
             """
             struct.value = formula
-            struct.children.append(Node(value=formula.inner))
+            n1 = Node(value=formula.inner)
+            n1.children.extend(self.build(formula.inner).children)
+            struct.children.append(n1)
             struct.children.append(Node(value=X(formula)))
 
         elif isinstance(formula, Future):
@@ -198,21 +222,39 @@ class LtlproofMon(Mon):
                            Gamma ⊢ Delta, F phi
             """
             struct.value = formula
-            struct.children.append(Node(value=[formula.inner, X(formula)]))
+            node = Node(value=[formula.inner, X(formula)])
+            node.children.extend(self.build(formula.inner).children)
+            struct.children.append(node)
 
-        # elif isinstance(formula, Next):
-        #     res = formula.inner
-
+        elif isinstance(formula, Next):
+            struct.value = formula
         else:
             raise Exception("Error %s of type %s" % (formula, type(formula)))
 
         return struct
 
+############################################
+#               Test
+############################################
 tr = Trace().parse("{};{};{}")
+
 fl = FodtlParser.parse("(G(p('x'))) | (F(G(h('x'))))")
 mon = LtlproofMon(fl, tr)
 res = mon.monitor()
 print(res)
 print(mon.struct.print())
-Node.to_tex(mon.struct)
+# Node.to_tex(mon.struct)
 
+fl = FodtlParser.parse("(G(p('x'))) & (F(G(h('x'))))")
+mon2 = LtlproofMon(fl, tr)
+res = mon2.monitor()
+print(res)
+print(mon2.struct.print())
+
+fl = FodtlParser.parse("(G(p('x'))) | (F(G(F(h('x')))))")
+mon3 = LtlproofMon(fl, tr)
+res = mon3.monitor()
+print(res)
+print(mon3.struct.print())
+
+Node.to_tex([mon.struct, mon2.struct, mon3.struct])
